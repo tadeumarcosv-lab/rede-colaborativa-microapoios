@@ -1,6 +1,6 @@
 # rede-colaborativa-microapoios
 Sistema colaborativo de microapoios financeiros, com base ética, transparência e automação solidária.
-Sistema colaborativo de microapoios financeiros, com base em ética, transparência e automação solidária.
+
 
 |## Objetivo
 
