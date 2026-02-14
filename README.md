@@ -14,3 +14,4 @@ Este material foi criado como parte de um processo de aprendizado, organização
 - Estruturar melhor a documentação
 - Adicionar novos arquivos conforme a evolução da contribuição
 - Manter o histórico de alterações de forma clara.
+- .
