@@ -14,4 +14,17 @@ Este material foi criado como parte de um processo de aprendizado, organização
 - Estruturar melhor a documentação
 - Adicionar novos arquivos conforme a evolução da contribuição
 - Manter o histórico de alterações de forma clara.
-- .
+
+## Como contribuir
+
+Este repositório é aberto para colaboração consciente e ética.
+
+Se você chegou até aqui, sua participação pode ocorrer de várias formas:
+
+- Registrando ideias ou sugestões em *Issues*
+- Comentando em discussões existentes
+- Propondo melhorias na documentação
+- Ajudando a estruturar processos futuros do projeto
+
+Todas as contribuições devem respeitar os princípios de:
+ética, transparência, cooperação e responsabilidade coletiva.
