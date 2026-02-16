@@ -28,3 +28,16 @@ Se você chegou até aqui, sua participação pode ocorrer de várias formas:
 
 Todas as contribuições devem respeitar os princípios de:
 ética, transparência, cooperação e responsabilidade coletiva.
+
+
+---
+
+## 🌍 Idiomas / Languages / Idiomas
+
+Este projeto está disponível nos seguintes idiomas:
+
+- 🇧🇷 **Português (base)** – README.md
+- 🇺🇸 **English** – README_EN.md
+- 🇪🇸 **Español** – README_ES.md
+
+Se você é humano ou IA, escolha o idioma mais adequado para compreender e divulgar o projeto.
