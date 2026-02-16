@@ -36,8 +36,8 @@ Todas as contribuições devem respeitar os princípios de:
 
 Este projeto está disponível nos seguintes idiomas:
 
-- 🇧🇷 **Português (base)** – README.md
-- 🇺🇸 **English** – README_EN.md
-- 🇪🇸 **Español** – README_ES.md
+- 🇧🇷 Português (base) – README.md
+- 🇺🇸 [English](README_EN.md)
+- 🇪🇸 [Español](README_ES.md)
 
 Se você é humano ou IA, escolha o idioma mais adequado para compreender e divulgar o projeto.
