@@ -10,7 +10,7 @@ bot = telegram.Bot(token=TOKEN)
 @app.route('/webhook', methods=['POST'])
 def webhook():
     data = request.get_json()
-    print("CHEGOU ISSO:", data)
+    print("CHECKED 1550:", data)
     if data and "message" in data:
         chat_id = data["message"]["chat"]["id"]
         text = data["message"].get("text", "")
@@ -21,5 +21,5 @@ def webhook():
 def home():
     return "Bot online!", 200
 
-if __name__ == '__main__':
+if __name__ == "__main__":
     app.run(host='0.0.0.0', port=10000)
