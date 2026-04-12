@@ -1,3 +1,4 @@
+
 import os
 from flask import Flask, request
 import telegram
@@ -14,7 +15,7 @@ def webhook():
     if data and "message" in data:
         chat_id = data["message"]["chat"]["id"]
         text = data["message"].get("text", "")
-        bot.send_message(chat_id=chat_id, text=f"Você disse: {text}")
+        bot.send_message(chat_id=chat_id, text=text)
     return "OK", 200
 
 @app.route('/')
