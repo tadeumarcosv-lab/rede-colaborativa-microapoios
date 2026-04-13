@@ -13,10 +13,12 @@ bot = telegram.Bot(token=TOKEN)
 def webhook():
     data = request.get_json()
     print("CHECKED 1550:", data)
+
     if data and "message" in data:
         chat_id = data["message"]["chat"]["id"]
         text = data["message"].get("text", "")
         bot.send_message(chat_id=chat_id, text=text)
+
     return "OK", 200
 
 @app.route('/')
