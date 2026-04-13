@@ -1,4 +1,3 @@
-
 import os
 from flask import Flask, request
 import telegram
@@ -6,6 +5,8 @@ import telegram
 app = Flask(__name__)
 
 TOKEN = os.getenv("TELEGRAM_TOKEN")
+print("TOKEN AQUI:", TOKEN)
+
 bot = telegram.Bot(token=TOKEN)
 
 @app.route('/webhook', methods=['POST'])
