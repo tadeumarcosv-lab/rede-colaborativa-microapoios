@@ -94,4 +94,5 @@ elif estado == "fim":
 # 🔹 SEGURANÇA
 else:
     return ("Digite 'oi' para reiniciar.", "inicio")
+
             
