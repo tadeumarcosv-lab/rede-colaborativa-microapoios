@@ -53,6 +53,7 @@ def enviar(chat_id, texto):
 def processar_mensagem(texto, estado):
     texto = texto.lower()
 
+    # INÍCIO
     if estado == "inicio":
         if texto in ["oi", "olá", "ola", "start"]:
             return (
@@ -66,18 +67,21 @@ def processar_mensagem(texto, estado):
         else:
             return ("Digite 'oi' para começar.", "inicio")
 
+    # MENU
     elif estado == "menu":
         if texto == "1":
             return (
                 "📌 Como funciona:\n"
-                "A rede conecta pessoas para apoio financeiro colaborativo.",
+                "A rede conecta pessoas para apoio financeiro colaborativo.\n\n"
+                "Deseja participar? (sim/não)",
                 "explicou"
             )
 
         elif texto == "2":
             return (
                 "🤝 Participar:\n"
-                "Você pode começar entendendo o sistema.",
+                "Você pode começar entendendo o sistema.\n\n"
+                "Deseja continuar? (sim/não)",
                 "participar"
             )
 
@@ -85,21 +89,54 @@ def processar_mensagem(texto, estado):
             return (
                 "ℹ️ Informações:\n"
                 "Projeto colaborativo, ético e em evolução.",
-                "info"
+                "menu"
             )
 
         else:
             return ("Escolha 1, 2 ou 3.", "menu")
 
+    # APÓS EXPLICAÇÃO
     elif estado == "explicou":
         if texto in ["sim", "quero"]:
             return (
-                "Ótimo! Vamos avançar para participação.",
+                "Ótimo! Vamos para participação.\n\n"
+                "Você quer entrar na rede agora? (sim/não)",
                 "participar"
             )
         else:
             return ("Digite 'sim' para continuar.", "explicou")
 
+    # PARTICIPAÇÃO
+    elif estado == "participar":
+        if texto in ["sim", "quero"]:
+            return (
+                "✅ Perfeito! Você demonstrou interesse em participar.\n\n"
+                "Em breve o sistema terá cadastro automático.\n"
+                "Fique atento às novidades!",
+                "fim"
+            )
+        elif texto in ["não", "nao"]:
+            return (
+                "Tudo bem 😊\n\n"
+                "Você pode voltar quando quiser.\n"
+                "Digite 'oi' para recomeçar.",
+                "inicio"
+            )
+        else:
+            return (
+                "Responda com 'sim' ou 'não'.",
+                "participar"
+            )
+
+    # FINAL
+    elif estado == "fim":
+        return (
+            "✅ Fluxo concluído!\n\n"
+            "Digite 'oi' para começar novamente.",
+            "inicio"
+        )
+
+    # SEGURANÇA
     else:
         return ("Digite 'oi' para reiniciar.", "inicio")
 
