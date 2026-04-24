@@ -5,7 +5,13 @@ return ("Digite algo para continuar.", estado)
 texto = texto.lower().strip()
 
 # 🔍 INTELIGÊNCIA BÁSICA
-if
+if any(p in texto for p in ["participar", "entrar", "quero participar"]):
+    texto = "2"
+elif any(p in texto for p in ["como funciona", "funciona", "explicar"]):
+    texto = "1"
+elif any(p in texto for p in ["info", "informação", "informacoes"]):
+    texto = "3"
+elif texto in ["quero", "ok", "claro", "sim", "s"]:
     texto = "sim"
 elif texto in ["não", "nao", "n"]:
     texto = "nao"
