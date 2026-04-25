@@ -1,11 +1,62 @@
-Atualização do botdef processar_mensagem(texto, estado):
+from flask import Flask, request
+import requests
+import os
+import sqlite3
+
+app = Flask(__name__)
+
+TOKEN = os.getenv("TELEGRAM_TOKEN")
+
+# =========================
+# 🧠 BANCO DE DADOS
+# =========================
+
+conn = sqlite3.connect("usuarios.db", check_same_thread=False)
+cursor = conn.cursor()
+
+cursor.execute("""
+CREATE TABLE IF NOT EXISTS usuarios (
+    chat_id INTEGER PRIMARY KEY,
+    estado TEXT
+)
+""")
+conn.commit()
+
+def get_estado(chat_id):
+    cursor.execute("SELECT estado FROM usuarios WHERE chat_id = ?", (chat_id,))
+    resultado = cursor.fetchone()
+    return resultado[0] if resultado else "inicio"
+
+def salvar_estado(chat_id, estado):
+    cursor.execute("""
+    INSERT OR REPLACE INTO usuarios (chat_id, estado)
+    VALUES (?, ?)
+    """, (chat_id, estado))
+    conn.commit()
+
+# =========================
+# 📤 ENVIO
+# =========================
+
+def enviar(chat_id, texto):
+    url = f"https://api.telegram.org/bot{TOKEN}/sendMessage"
+    requests.post(url, json={
+        "chat_id": chat_id,
+        "text": texto
+    })
+
+# =========================
+# 🧠 CÉREBRO
+# =========================
+
+def processar_mensagem(texto, estado):
 
     if not texto:
         return ("Digite algo para continuar.", estado)
 
     texto = texto.lower().strip()
 
-    # 🔍 INTELIGÊNCIA BÁSICA
+    # 🔍 INTELIGÊNCIA BÁSICA (ANTES DO ESTADO)
     if any(p in texto for p in ["participar", "entrar", "quero participar"]):
         texto = "2"
     elif any(p in texto for p in ["como funciona", "funciona", "explicar"]):
@@ -93,10 +144,4 @@ Atualização do botdef processar_mensagem(texto, estado):
     elif estado == "fim":
         return (
             "✅ Fluxo concluído!\n\n"
-            "Digite 'oi' para começar novamente.",
-            "inicio"
-        )
-
-    # 🔹 SEGURANÇA
-    else:
-        return ("Digite 'oi' para reiniciar.", "inicio")
+            "Digite
