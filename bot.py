@@ -1,4 +1,4 @@
-def processar_mensagem(texto, estado):
+Atualização do botdef processar_mensagem(texto, estado):
 
     if not texto:
         return ("Digite algo para continuar.", estado)
