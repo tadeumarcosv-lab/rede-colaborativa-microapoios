@@ -35,15 +35,18 @@ def salvar_estado(chat_id, estado):
     conn.commit()
 
 # =========================
-# 📤 ENVIO
+# 📤 ENVIO (COM PROTEÇÃO)
 # =========================
 
 def enviar(chat_id, texto):
-    url = f"https://api.telegram.org/bot{TOKEN}/sendMessage"
-    requests.post(url, json={
-        "chat_id": chat_id,
-        "text": texto
-    })
+    try:
+        url = f"https://api.telegram.org/bot{TOKEN}/sendMessage"
+        requests.post(url, json={
+            "chat_id": chat_id,
+            "text": texto
+        }, timeout=10)
+    except Exception as e:
+        print("Erro ao enviar mensagem:", e)
 
 # =========================
 # 🧠 CÉREBRO
@@ -153,25 +156,29 @@ def processar_mensagem(texto, estado):
         return ("Digite 'oi' para reiniciar.", "inicio")
 
 # =========================
-# 🔗 WEBHOOK
+# 🔗 WEBHOOK (COM PROTEÇÃO)
 # =========================
 
 @app.route('/webhook', methods=['POST'])
 def webhook():
-    data = request.get_json()
-    print(data)
+    try:
+        data = request.get_json()
+        print(data)
 
-    if "message" in data:
-        chat_id = data["message"]["chat"]["id"]
-        texto = data["message"].get("text", "")
+        if "message" in data:
+            chat_id = data["message"]["chat"]["id"]
+            texto = data["message"].get("text", "")
 
-        estado = get_estado(chat_id)
-        resposta, novo_estado = processar_mensagem(texto, estado)
-        salvar_estado(chat_id, novo_estado)
+            estado = get_estado(chat_id)
+            resposta, novo_estado = processar_mensagem(texto, estado)
+            salvar_estado(chat_id, novo_estado)
 
-        enviar(chat_id, resposta)
+            enviar(chat_id, resposta)
 
-    return "ok"
+        return "ok"
+    except Exception as e:
+        print("Erro no webhook:", e)
+        return "erro", 500
 
 # =========================
 # 🏠 HOME
