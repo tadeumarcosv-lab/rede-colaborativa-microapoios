@@ -56,7 +56,7 @@ def processar_mensagem(texto, estado):
 
     texto = texto.lower().strip()
 
-    # 🔍 INTELIGÊNCIA BÁSICA (ANTES DO ESTADO)
+    # 🔍 INTELIGÊNCIA BÁSICA
     if any(p in texto for p in ["participar", "entrar", "quero participar"]):
         texto = "2"
     elif any(p in texto for p in ["como funciona", "funciona", "explicar"]):
@@ -144,4 +144,54 @@ def processar_mensagem(texto, estado):
     elif estado == "fim":
         return (
             "✅ Fluxo concluído!\n\n"
-            "Digite
+            "Digite 'oi' para começar novamente.",
+            "inicio"
+        )
+
+    # 🔹 SEGURANÇA
+    else:
+        return ("Digite 'oi' para reiniciar.", "inicio")
+
+# =========================
+# 🔗 WEBHOOK
+# =========================
+
+@app.route('/webhook', methods=['POST'])
+def webhook():
+    data = request.get_json()
+    print(data)
+
+    if "message" in data:
+        chat_id = data["message"]["chat"]["id"]
+        texto = data["message"].get("text", "")
+
+        estado = get_estado(chat_id)
+        resposta, novo_estado = processar_mensagem(texto, estado)
+        salvar_estado(chat_id, novo_estado)
+
+        enviar(chat_id, resposta)
+
+    return "ok"
+
+# =========================
+# 🏠 HOME
+# =========================
+
+@app.route('/')
+def home():
+    return "Bot online"
+
+# =========================
+# ❤️ HEALTHCHECK
+# =========================
+
+@app.route('/healthcheck')
+def health():
+    return "ok", 200
+
+# =========================
+# 🚀 START
+# =========================
+
+if __name__ == "__main__":
+    app.run(host="0.0.0.0", port=10000)
