@@ -63,15 +63,30 @@ def processar_mensagem(chat_id, texto, estado):
 
     texto = texto.lower().strip()
 
-    # 🔍 INTELIGÊNCIA BÁSICA
+    # 🔥 INTELIGÊNCIA GLOBAL (FUNCIONA EM QUALQUER ESTADO)
     if any(p in texto for p in ["participar", "entrar", "quero participar"]):
-        texto = "2"
+        return (
+            "🤝 Vamos direto para participação!\n\nDeseja entrar agora? (sim/não)",
+            "participar"
+        )
+
     elif any(p in texto for p in ["como funciona", "funciona", "explicar"]):
-        texto = "1"
+        return (
+            "📌 Como funciona:\n"
+            "A rede conecta pessoas para apoio financeiro colaborativo.\n\n"
+            "Deseja participar? (sim/não)",
+            "explicou"
+        )
+
     elif any(p in texto for p in ["info", "informação", "informacoes"]):
-        texto = "3"
+        return (
+            "ℹ️ Informações:\nProjeto colaborativo, ético e em evolução.",
+            "menu"
+        )
+
     elif texto in ["quero", "ok", "claro", "sim", "s"]:
         texto = "sim"
+
     elif texto in ["não", "nao", "n"]:
         texto = "nao"
 
@@ -102,15 +117,13 @@ def processar_mensagem(chat_id, texto, estado):
         elif texto == "2":
             return (
                 "🤝 Participar:\n"
-                "Você pode começar entendendo o sistema.\n\n"
-                "Deseja continuar? (sim/não)",
+                "Deseja entrar na rede agora? (sim/não)",
                 "participar"
             )
 
         elif texto == "3":
             return (
-                "ℹ️ Informações:\n"
-                "Projeto colaborativo, ético e em evolução.",
+                "ℹ️ Informações:\nProjeto colaborativo, ético e em evolução.",
                 "menu"
             )
 
@@ -122,7 +135,7 @@ def processar_mensagem(chat_id, texto, estado):
         if texto == "sim":
             return (
                 "Ótimo! Vamos para participação.\n\n"
-                "Você quer entrar na rede agora? (sim/não)",
+                "Deseja entrar agora? (sim/não)",
                 "participar"
             )
         else:
@@ -131,22 +144,16 @@ def processar_mensagem(chat_id, texto, estado):
     # 🔹 PARTICIPAÇÃO
     elif estado == "participar":
         if texto == "sim":
-
-            salvar_estado(chat_id, estado)
             marcar_interessado(chat_id)
-
             return (
-                "✅ Perfeito! Você agora está na lista de interessados 🎯\n\n"
-                "Em breve você receberá novidades e acesso ao sistema completo.\n"
-                "Obrigado por fazer parte da Rede 🤝",
+                "✅ Perfeito! Você está na lista de interessados 🎯\n\n"
+                "Em breve você receberá novidades.",
                 "fim"
             )
 
         elif texto == "nao":
             return (
-                "Tudo bem 😊\n\n"
-                "Você pode voltar quando quiser.\n"
-                "Digite 'oi' para recomeçar.",
+                "Tudo bem 😊\n\nDigite 'oi' quando quiser voltar.",
                 "inicio"
             )
 
@@ -156,8 +163,7 @@ def processar_mensagem(chat_id, texto, estado):
     # 🔹 FINAL
     elif estado == "fim":
         return (
-            "✅ Fluxo concluído!\n\n"
-            "Digite 'oi' para começar novamente.",
+            "✅ Fluxo concluído!\n\nDigite 'oi' para começar novamente.",
             "inicio"
         )
 
@@ -172,7 +178,6 @@ def processar_mensagem(chat_id, texto, estado):
 @app.route('/webhook', methods=['POST'])
 def webhook():
     data = request.get_json()
-    print(data)
 
     if "message" in data:
         chat_id = data["message"]["chat"]["id"]
@@ -180,8 +185,8 @@ def webhook():
 
         estado = get_estado(chat_id)
         resposta, novo_estado = processar_mensagem(chat_id, texto, estado)
-        salvar_estado(chat_id, novo_estado)
 
+        salvar_estado(chat_id, novo_estado)
         enviar(chat_id, resposta)
 
     return "ok"
@@ -194,17 +199,9 @@ def webhook():
 def home():
     return "Bot online"
 
-# =========================
-# ❤️ HEALTHCHECK
-# =========================
-
 @app.route('/healthcheck')
 def health():
     return "ok", 200
-
-# =========================
-# 🚀 START
-# =========================
 
 if __name__ == "__main__":
     app.run(host="0.0.0.0", port=10000)
