@@ -17,7 +17,8 @@ cursor = conn.cursor()
 cursor.execute("""
 CREATE TABLE IF NOT EXISTS usuarios (
     chat_id INTEGER PRIMARY KEY,
-    estado TEXT
+    estado TEXT,
+    interessado INTEGER DEFAULT 0
 )
 """)
 conn.commit()
@@ -32,6 +33,12 @@ def salvar_estado(chat_id, estado):
     INSERT OR REPLACE INTO usuarios (chat_id, estado)
     VALUES (?, ?)
     """, (chat_id, estado))
+    conn.commit()
+
+def marcar_interessado(chat_id):
+    cursor.execute("""
+    UPDATE usuarios SET interessado = 1 WHERE chat_id = ?
+    """, (chat_id,))
     conn.commit()
 
 # =========================
@@ -49,7 +56,7 @@ def enviar(chat_id, texto):
 # 🧠 CÉREBRO
 # =========================
 
-def processar_mensagem(texto, estado):
+def processar_mensagem(chat_id, texto, estado):
 
     if not texto:
         return ("Digite algo para continuar.", estado)
@@ -124,12 +131,17 @@ def processar_mensagem(texto, estado):
     # 🔹 PARTICIPAÇÃO
     elif estado == "participar":
         if texto == "sim":
+
+            salvar_estado(chat_id, estado)
+            marcar_interessado(chat_id)
+
             return (
-                "✅ Perfeito! Você demonstrou interesse em participar.\n\n"
-                "Em breve o sistema terá cadastro automático.\n"
-                "Fique atento às novidades!",
+                "✅ Perfeito! Você agora está na lista de interessados 🎯\n\n"
+                "Em breve você receberá novidades e acesso ao sistema completo.\n"
+                "Obrigado por fazer parte da Rede 🤝",
                 "fim"
             )
+
         elif texto == "nao":
             return (
                 "Tudo bem 😊\n\n"
@@ -137,6 +149,7 @@ def processar_mensagem(texto, estado):
                 "Digite 'oi' para recomeçar.",
                 "inicio"
             )
+
         else:
             return ("Responda com 'sim' ou 'não'.", "participar")
 
@@ -159,13 +172,14 @@ def processar_mensagem(texto, estado):
 @app.route('/webhook', methods=['POST'])
 def webhook():
     data = request.get_json()
+    print(data)
 
     if "message" in data:
         chat_id = data["message"]["chat"]["id"]
         texto = data["message"].get("text", "")
 
         estado = get_estado(chat_id)
-        resposta, novo_estado = processar_mensagem(texto, estado)
+        resposta, novo_estado = processar_mensagem(chat_id, texto, estado)
         salvar_estado(chat_id, novo_estado)
 
         enviar(chat_id, resposta)
