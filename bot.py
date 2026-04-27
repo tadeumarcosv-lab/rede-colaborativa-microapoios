@@ -1,22 +1,23 @@
 from flask import Flask, request
 import requests
 import os
-import sqlite3
+import psycopg2
 
 app = Flask(__name__)
 
 TOKEN = os.getenv("TELEGRAM_TOKEN")
+DATABASE_URL = os.getenv("DATABASE_URL")
 
 # =========================
-# 🧠 BANCO DE DADOS
+# 🧠 CONEXÃO POSTGRES
 # =========================
 
-conn = sqlite3.connect("usuarios.db", check_same_thread=False)
+conn = psycopg2.connect(DATABASE_URL)
 cursor = conn.cursor()
 
 cursor.execute("""
 CREATE TABLE IF NOT EXISTS usuarios (
-    chat_id INTEGER PRIMARY KEY,
+    chat_id BIGINT PRIMARY KEY,
     estado TEXT,
     nome TEXT,
     interesse TEXT
@@ -25,7 +26,7 @@ CREATE TABLE IF NOT EXISTS usuarios (
 conn.commit()
 
 def get_usuario(chat_id):
-    cursor.execute("SELECT estado, nome, interesse FROM usuarios WHERE chat_id = ?", (chat_id,))
+    cursor.execute("SELECT estado, nome, interesse FROM usuarios WHERE chat_id = %s", (chat_id,))
     resultado = cursor.fetchone()
     if resultado:
         return resultado
@@ -34,11 +35,11 @@ def get_usuario(chat_id):
 def salvar_usuario(chat_id, estado, nome=None, interesse=None):
     cursor.execute("""
     INSERT INTO usuarios (chat_id, estado, nome, interesse)
-    VALUES (?, ?, ?, ?)
-    ON CONFLICT(chat_id) DO UPDATE SET
-        estado=excluded.estado,
-        nome=COALESCE(excluded.nome, usuarios.nome),
-        interesse=COALESCE(excluded.interesse, usuarios.interesse)
+    VALUES (%s, %s, %s, %s)
+    ON CONFLICT (chat_id) DO UPDATE SET
+        estado = EXCLUDED.estado,
+        nome = COALESCE(EXCLUDED.nome, usuarios.nome),
+        interesse = COALESCE(EXCLUDED.interesse, usuarios.interesse)
     """, (chat_id, estado, nome, interesse))
     conn.commit()
 
@@ -65,17 +66,15 @@ def processar_mensagem(texto, estado, nome, interesse):
     texto_original = texto
     texto = texto.lower().strip()
 
-    # 🔍 INTELIGÊNCIA GLOBAL
+    # 🔍 INTELIGÊNCIA
     if any(p in texto for p in ["participar", "entrar"]):
         texto = "2"
     elif any(p in texto for p in ["como funciona", "funciona"]):
         texto = "1"
-    elif any(p in texto for p in ["info", "informação"]):
-        texto = "3"
 
     # 🔹 INÍCIO
     if estado == "inicio":
-        if texto in ["oi", "olá", "ola", "/start", "start"]:
+        if texto in ["oi", "olá", "ola", "/start"]:
             return (
                 "👋 Olá! Bem-vindo à Rede Colaborativa de Microapoios 🤝\n\n"
                 "1 - Como funciona\n"
@@ -117,7 +116,7 @@ def processar_mensagem(texto, estado, nome, interesse):
         else:
             return ("Escolha 1, 2 ou 3.", "menu", nome, interesse)
 
-    # 🔹 APÓS EXPLICAÇÃO
+    # 🔹 EXPLICAÇÃO
     elif estado == "explicou":
         if texto in ["sim", "s"]:
             return (
@@ -126,62 +125,52 @@ def processar_mensagem(texto, estado, nome, interesse):
                 nome,
                 interesse
             )
-        elif texto in ["não", "nao", "n"]:
-            return ("Sem problemas 😊\nDigite 'oi' quando quiser voltar.", "inicio", nome, interesse)
         else:
-            return ("Responda com 'sim' ou 'não'.", "explicou", nome, interesse)
+            return ("Digite 'sim' para continuar.", "explicou", nome, interesse)
 
     # 🔹 PARTICIPAÇÃO
     elif estado == "participar":
         if texto in ["sim", "s"]:
             return (
-                "Perfeito! 🙌\n\nPara continuar, me diga seu nome:",
+                "Perfeito! 🙌\n\nMe diga seu nome:",
                 "captura_nome",
                 nome,
                 interesse
             )
-        elif texto in ["não", "nao", "n"]:
-            return ("Tudo bem 😊\nDigite 'oi' quando quiser voltar.", "inicio", nome, interesse)
         else:
-            return ("Responda com 'sim' ou 'não'.", "participar", nome, interesse)
+            return ("Digite 'sim' para continuar.", "participar", nome, interesse)
 
-    # 🔹 CAPTURA NOME
+    # 🔹 NOME
     elif estado == "captura_nome":
         nome = texto_original.strip().title()
         return (
-            f"Ótimo, {nome}! 👏\n\nVocê quer:\n1 - Receber informações\n2 - Entrar assim que abrir\n\nDigite 1 ou 2:",
+            f"Ótimo, {nome}! 👏\n\n1 - Receber informações\n2 - Entrar assim que abrir\n\nDigite 1 ou 2:",
             "captura_interesse",
             nome,
             interesse
         )
 
-    # 🔹 CAPTURA INTERESSE
+    # 🔹 INTERESSE
     elif estado == "captura_interesse":
         if texto == "1":
             interesse = "info"
-            return (
-                f"Perfeito, {nome}! 👍\nVocê será avisado com novidades.\n\nDigite 'oi' para recomeçar.",
-                "fim",
-                nome,
-                interesse
-            )
         elif texto == "2":
             interesse = "prioridade"
-            return (
-                f"Excelente, {nome}! 🚀\nVocê está na lista de prioridade.\n\nDigite 'oi' para recomeçar.",
-                "fim",
-                nome,
-                interesse
-            )
         else:
             return ("Digite 1 ou 2.", "captura_interesse", nome, interesse)
+
+        return (
+            f"Perfeito, {nome}! 🚀\nVocê está registrado.\n\nDigite 'oi' para recomeçar.",
+            "fim",
+            nome,
+            interesse
+        )
 
     # 🔹 FINAL
     elif estado == "fim":
         return ("Digite 'oi' para começar novamente.", "inicio", nome, interesse)
 
-    else:
-        return ("Digite 'oi' para reiniciar.", "inicio", nome, interesse)
+    return ("Digite 'oi' para reiniciar.", "inicio", nome, interesse)
 
 # =========================
 # 🔗 WEBHOOK
@@ -222,14 +211,6 @@ def webhook():
         enviar(chat_id, resposta)
 
     return "ok"
-
-# =========================
-# 🏠 HOME
-# =========================
-
-@app.route('/')
-def home():
-    return "Bot online"
 
 # =========================
 # 🚀 START
