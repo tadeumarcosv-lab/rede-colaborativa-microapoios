@@ -195,6 +195,22 @@ def webhook():
         chat_id = data["message"]["chat"]["id"]
         texto = data["message"].get("text", "")
 
+        # 🔍 COMANDO /LEADS
+        if texto == "/leads":
+            cursor.execute("SELECT nome, interesse FROM usuarios")
+            dados = cursor.fetchall()
+
+            if not dados:
+                enviar(chat_id, "Nenhum lead ainda.")
+            else:
+                lista = "📊 Leads capturados:\n\n"
+                for nome, interesse in dados:
+                    lista += f"👤 {nome} - {interesse}\n"
+
+                enviar(chat_id, lista)
+
+            return "ok"
+
         estado, nome, interesse = get_usuario(chat_id)
 
         resposta, novo_estado, novo_nome, novo_interesse = processar_mensagem(
