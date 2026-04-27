@@ -17,8 +17,7 @@ cursor = conn.cursor()
 cursor.execute("""
 CREATE TABLE IF NOT EXISTS usuarios (
     chat_id INTEGER PRIMARY KEY,
-    estado TEXT,
-    interessado INTEGER DEFAULT 0
+    estado TEXT
 )
 """)
 conn.commit()
@@ -35,12 +34,6 @@ def salvar_estado(chat_id, estado):
     """, (chat_id, estado))
     conn.commit()
 
-def marcar_interessado(chat_id):
-    cursor.execute("""
-    UPDATE usuarios SET interessado = 1 WHERE chat_id = ?
-    """, (chat_id,))
-    conn.commit()
-
 # =========================
 # 📤 ENVIO
 # =========================
@@ -53,59 +46,42 @@ def enviar(chat_id, texto):
     })
 
 # =========================
-# 🧠 CÉREBRO
+# 🧠 CÉREBRO FINAL
 # =========================
 
-def processar_mensagem(chat_id, texto, estado):
+def processar_mensagem(texto, estado):
 
     if not texto:
         return ("Digite algo para continuar.", estado)
 
     texto = texto.lower().strip()
 
-    # 🔥 INTELIGÊNCIA GLOBAL (FUNCIONA EM QUALQUER ESTADO)
-    if any(p in texto for p in ["participar", "entrar", "quero participar"]):
+    # 🔁 REINÍCIO GLOBAL (funciona em qualquer estado)
+    if texto in ["oi", "olá", "ola", "/start", "start"]:
         return (
-            "🤝 Vamos direto para participação!\n\nDeseja entrar agora? (sim/não)",
-            "participar"
-        )
-
-    elif any(p in texto for p in ["como funciona", "funciona", "explicar"]):
-        return (
-            "📌 Como funciona:\n"
-            "A rede conecta pessoas para apoio financeiro colaborativo.\n\n"
-            "Deseja participar? (sim/não)",
-            "explicou"
-        )
-
-    elif any(p in texto for p in ["info", "informação", "informacoes"]):
-        return (
-            "ℹ️ Informações:\nProjeto colaborativo, ético e em evolução.",
+            "👋 Olá! Bem-vindo à Rede Colaborativa de Microapoios 🤝\n\n"
+            "Você pode escrever normalmente ou usar o menu:\n\n"
+            "1 - Como funciona\n"
+            "2 - Participar\n"
+            "3 - Informações",
             "menu"
         )
 
+    # 🔍 INTELIGÊNCIA GLOBAL
+    if any(p in texto for p in ["participar", "entrar", "quero participar"]):
+        texto = "2"
+    elif any(p in texto for p in ["como funciona", "funciona", "explicar"]):
+        texto = "1"
+    elif any(p in texto for p in ["info", "informação", "informacoes"]):
+        texto = "3"
     elif texto in ["quero", "ok", "claro", "sim", "s"]:
         texto = "sim"
-
     elif texto in ["não", "nao", "n"]:
         texto = "nao"
 
-    # 🔹 INÍCIO
-    if estado == "inicio":
-        if texto in ["oi", "olá", "ola", "/start", "start"]:
-            return (
-                "👋 Olá! Bem-vindo à Rede Colaborativa de Microapoios 🤝\n\n"
-                "Você pode escrever normalmente ou usar o menu:\n\n"
-                "1 - Como funciona\n"
-                "2 - Participar\n"
-                "3 - Informações",
-                "menu"
-            )
-        else:
-            return ("Digite 'oi' para começar.", "inicio")
-
     # 🔹 MENU
-    elif estado == "menu":
+    if estado == "menu":
+
         if texto == "1":
             return (
                 "📌 Como funciona:\n"
@@ -117,43 +93,57 @@ def processar_mensagem(chat_id, texto, estado):
         elif texto == "2":
             return (
                 "🤝 Participar:\n"
-                "Deseja entrar na rede agora? (sim/não)",
+                "Você pode começar entendendo o sistema.\n\n"
+                "Deseja continuar? (sim/não)",
                 "participar"
             )
 
         elif texto == "3":
             return (
-                "ℹ️ Informações:\nProjeto colaborativo, ético e em evolução.",
+                "ℹ️ Informações:\n"
+                "Projeto colaborativo, ético e em evolução.",
                 "menu"
             )
 
         else:
-            return ("Você pode escrever livremente ou escolher 1, 2 ou 3.", "menu")
+            return ("Escolha 1, 2 ou 3 ou escreva normalmente.", "menu")
 
     # 🔹 APÓS EXPLICAÇÃO
     elif estado == "explicou":
+
         if texto == "sim":
             return (
                 "Ótimo! Vamos para participação.\n\n"
+                "Você quer entrar na rede agora? (sim/não)",
+                "participar"
+            )
+
+        elif texto == "2":
+            return (
+                "🤝 Vamos direto para participação!\n\n"
                 "Deseja entrar agora? (sim/não)",
                 "participar"
             )
+
         else:
-            return ("Responda com 'sim' se quiser continuar.", "explicou")
+            return ("Responda com 'sim' ou diga que quer participar.", "explicou")
 
     # 🔹 PARTICIPAÇÃO
     elif estado == "participar":
+
         if texto == "sim":
-            marcar_interessado(chat_id)
             return (
-                "✅ Perfeito! Você está na lista de interessados 🎯\n\n"
-                "Em breve você receberá novidades.",
+                "✅ Perfeito! Você demonstrou interesse em participar.\n\n"
+                "Em breve o sistema terá cadastro automático.\n"
+                "Fique atento às novidades!",
                 "fim"
             )
 
         elif texto == "nao":
             return (
-                "Tudo bem 😊\n\nDigite 'oi' quando quiser voltar.",
+                "Tudo bem 😊\n\n"
+                "Você pode voltar quando quiser.\n"
+                "Digite 'oi' para recomeçar.",
                 "inicio"
             )
 
@@ -163,13 +153,14 @@ def processar_mensagem(chat_id, texto, estado):
     # 🔹 FINAL
     elif estado == "fim":
         return (
-            "✅ Fluxo concluído!\n\nDigite 'oi' para começar novamente.",
+            "✅ Fluxo concluído!\n\n"
+            "Digite 'oi' para começar novamente.",
             "inicio"
         )
 
-    # 🔹 SEGURANÇA
+    # 🔹 INÍCIO (fallback)
     else:
-        return ("Digite 'oi' para reiniciar.", "inicio")
+        return ("Digite 'oi' para começar.", "inicio")
 
 # =========================
 # 🔗 WEBHOOK
@@ -184,7 +175,7 @@ def webhook():
         texto = data["message"].get("text", "")
 
         estado = get_estado(chat_id)
-        resposta, novo_estado = processar_mensagem(chat_id, texto, estado)
+        resposta, novo_estado = processar_mensagem(texto, estado)
 
         salvar_estado(chat_id, novo_estado)
         enviar(chat_id, resposta)
@@ -199,9 +190,17 @@ def webhook():
 def home():
     return "Bot online"
 
+# =========================
+# ❤️ HEALTHCHECK
+# =========================
+
 @app.route('/healthcheck')
 def health():
     return "ok", 200
+
+# =========================
+# 🚀 START
+# =========================
 
 if __name__ == "__main__":
     app.run(host="0.0.0.0", port=10000)
