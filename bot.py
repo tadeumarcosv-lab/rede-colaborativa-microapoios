@@ -25,16 +25,20 @@ CREATE TABLE IF NOT EXISTS usuarios (
 conn.commit()
 
 def get_usuario(chat_id):
-    cursor.execute("SELECT estado, nome FROM usuarios WHERE chat_id = ?", (chat_id,))
+    cursor.execute("SELECT estado, nome, interesse FROM usuarios WHERE chat_id = ?", (chat_id,))
     resultado = cursor.fetchone()
     if resultado:
         return resultado
-    return ("inicio", None)
+    return ("inicio", None, None)
 
 def salvar_usuario(chat_id, estado, nome=None, interesse=None):
     cursor.execute("""
-    INSERT OR REPLACE INTO usuarios (chat_id, estado, nome, interesse)
+    INSERT INTO usuarios (chat_id, estado, nome, interesse)
     VALUES (?, ?, ?, ?)
+    ON CONFLICT(chat_id) DO UPDATE SET
+        estado=excluded.estado,
+        nome=COALESCE(excluded.nome, usuarios.nome),
+        interesse=COALESCE(excluded.interesse, usuarios.interesse)
     """, (chat_id, estado, nome, interesse))
     conn.commit()
 
@@ -53,14 +57,15 @@ def enviar(chat_id, texto):
 # 🧠 CÉREBRO
 # =========================
 
-def processar_mensagem(texto, estado, nome):
+def processar_mensagem(texto, estado, nome, interesse):
 
     if not texto:
-        return ("Digite algo para continuar.", estado, nome)
+        return ("Digite algo para continuar.", estado, nome, interesse)
 
+    texto_original = texto
     texto = texto.lower().strip()
 
-    # 🔍 INTELIGÊNCIA
+    # 🔍 INTELIGÊNCIA GLOBAL
     if any(p in texto for p in ["participar", "entrar"]):
         texto = "2"
     elif any(p in texto for p in ["como funciona", "funciona"]):
@@ -77,10 +82,11 @@ def processar_mensagem(texto, estado, nome):
                 "2 - Participar\n"
                 "3 - Informações",
                 "menu",
-                nome
+                nome,
+                interesse
             )
         else:
-            return ("Digite 'oi' para começar.", "inicio", nome)
+            return ("Digite 'oi' para começar.", "inicio", nome, interesse)
 
     # 🔹 MENU
     elif estado == "menu":
@@ -88,36 +94,42 @@ def processar_mensagem(texto, estado, nome):
             return (
                 "📌 Como funciona:\nA rede conecta pessoas para apoio financeiro colaborativo.\n\nDeseja participar? (sim/não)",
                 "explicou",
-                nome
+                nome,
+                interesse
             )
 
         elif texto == "2":
             return (
                 "🤝 Vamos direto para participação!\n\nDeseja entrar agora? (sim/não)",
                 "participar",
-                nome
+                nome,
+                interesse
             )
 
         elif texto == "3":
             return (
                 "ℹ️ Projeto colaborativo, ético e em evolução.",
                 "menu",
-                nome
+                nome,
+                interesse
             )
 
         else:
-            return ("Escolha 1, 2 ou 3.", "menu", nome)
+            return ("Escolha 1, 2 ou 3.", "menu", nome, interesse)
 
     # 🔹 APÓS EXPLICAÇÃO
     elif estado == "explicou":
-        if texto == "sim":
+        if texto in ["sim", "s"]:
             return (
                 "🤝 Vamos para participação!\n\nDeseja entrar agora? (sim/não)",
                 "participar",
-                nome
+                nome,
+                interesse
             )
+        elif texto in ["não", "nao", "n"]:
+            return ("Sem problemas 😊\nDigite 'oi' quando quiser voltar.", "inicio", nome, interesse)
         else:
-            return ("Responda com 'sim' para continuar.", "explicou", nome)
+            return ("Responda com 'sim' ou 'não'.", "explicou", nome, interesse)
 
     # 🔹 PARTICIPAÇÃO
     elif estado == "participar":
@@ -125,49 +137,51 @@ def processar_mensagem(texto, estado, nome):
             return (
                 "Perfeito! 🙌\n\nPara continuar, me diga seu nome:",
                 "captura_nome",
-                nome
+                nome,
+                interesse
             )
         elif texto in ["não", "nao", "n"]:
-            return (
-                "Tudo bem 😊\nDigite 'oi' quando quiser voltar.",
-                "inicio",
-                nome
-            )
+            return ("Tudo bem 😊\nDigite 'oi' quando quiser voltar.", "inicio", nome, interesse)
         else:
-            return ("Responda com 'sim' ou 'não'.", "participar", nome)
+            return ("Responda com 'sim' ou 'não'.", "participar", nome, interesse)
 
     # 🔹 CAPTURA NOME
     elif estado == "captura_nome":
-        nome = texto.capitalize()
+        nome = texto_original.strip().title()
         return (
             f"Ótimo, {nome}! 👏\n\nVocê quer:\n1 - Receber informações\n2 - Entrar assim que abrir\n\nDigite 1 ou 2:",
             "captura_interesse",
-            nome
+            nome,
+            interesse
         )
 
     # 🔹 CAPTURA INTERESSE
     elif estado == "captura_interesse":
         if texto == "1":
+            interesse = "info"
             return (
                 f"Perfeito, {nome}! 👍\nVocê será avisado com novidades.\n\nDigite 'oi' para recomeçar.",
                 "fim",
-                nome
+                nome,
+                interesse
             )
         elif texto == "2":
+            interesse = "prioridade"
             return (
                 f"Excelente, {nome}! 🚀\nVocê está na lista de prioridade.\n\nDigite 'oi' para recomeçar.",
                 "fim",
-                nome
+                nome,
+                interesse
             )
         else:
-            return ("Digite 1 ou 2.", "captura_interesse", nome)
+            return ("Digite 1 ou 2.", "captura_interesse", nome, interesse)
 
     # 🔹 FINAL
     elif estado == "fim":
-        return ("Digite 'oi' para começar novamente.", "inicio", nome)
+        return ("Digite 'oi' para começar novamente.", "inicio", nome, interesse)
 
     else:
-        return ("Digite 'oi' para reiniciar.", "inicio", nome)
+        return ("Digite 'oi' para reiniciar.", "inicio", nome, interesse)
 
 # =========================
 # 🔗 WEBHOOK
@@ -181,11 +195,13 @@ def webhook():
         chat_id = data["message"]["chat"]["id"]
         texto = data["message"].get("text", "")
 
-        estado, nome = get_usuario(chat_id)
+        estado, nome, interesse = get_usuario(chat_id)
 
-        resposta, novo_estado, novo_nome = processar_mensagem(texto, estado, nome)
+        resposta, novo_estado, novo_nome, novo_interesse = processar_mensagem(
+            texto, estado, nome, interesse
+        )
 
-        salvar_usuario(chat_id, novo_estado, novo_nome)
+        salvar_usuario(chat_id, novo_estado, novo_nome, novo_interesse)
 
         enviar(chat_id, resposta)
 
