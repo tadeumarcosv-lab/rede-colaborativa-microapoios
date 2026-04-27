@@ -17,21 +17,25 @@ cursor = conn.cursor()
 cursor.execute("""
 CREATE TABLE IF NOT EXISTS usuarios (
     chat_id INTEGER PRIMARY KEY,
-    estado TEXT
+    estado TEXT,
+    nome TEXT,
+    interesse TEXT
 )
 """)
 conn.commit()
 
-def get_estado(chat_id):
-    cursor.execute("SELECT estado FROM usuarios WHERE chat_id = ?", (chat_id,))
+def get_usuario(chat_id):
+    cursor.execute("SELECT estado, nome FROM usuarios WHERE chat_id = ?", (chat_id,))
     resultado = cursor.fetchone()
-    return resultado[0] if resultado else "inicio"
+    if resultado:
+        return resultado
+    return ("inicio", None)
 
-def salvar_estado(chat_id, estado):
+def salvar_usuario(chat_id, estado, nome=None, interesse=None):
     cursor.execute("""
-    INSERT OR REPLACE INTO usuarios (chat_id, estado)
-    VALUES (?, ?)
-    """, (chat_id, estado))
+    INSERT OR REPLACE INTO usuarios (chat_id, estado, nome, interesse)
+    VALUES (?, ?, ?, ?)
+    """, (chat_id, estado, nome, interesse))
     conn.commit()
 
 # =========================
@@ -46,121 +50,124 @@ def enviar(chat_id, texto):
     })
 
 # =========================
-# 🧠 CÉREBRO FINAL
+# 🧠 CÉREBRO
 # =========================
 
-def processar_mensagem(texto, estado):
+def processar_mensagem(texto, estado, nome):
 
     if not texto:
-        return ("Digite algo para continuar.", estado)
+        return ("Digite algo para continuar.", estado, nome)
 
     texto = texto.lower().strip()
 
-    # 🔁 REINÍCIO GLOBAL (funciona em qualquer estado)
-    if texto in ["oi", "olá", "ola", "/start", "start"]:
-        return (
-            "👋 Olá! Bem-vindo à Rede Colaborativa de Microapoios 🤝\n\n"
-            "Você pode escrever normalmente ou usar o menu:\n\n"
-            "1 - Como funciona\n"
-            "2 - Participar\n"
-            "3 - Informações",
-            "menu"
-        )
-
-    # 🔍 INTELIGÊNCIA GLOBAL
-    if any(p in texto for p in ["participar", "entrar", "quero participar"]):
+    # 🔍 INTELIGÊNCIA
+    if any(p in texto for p in ["participar", "entrar"]):
         texto = "2"
-    elif any(p in texto for p in ["como funciona", "funciona", "explicar"]):
+    elif any(p in texto for p in ["como funciona", "funciona"]):
         texto = "1"
-    elif any(p in texto for p in ["info", "informação", "informacoes"]):
+    elif any(p in texto for p in ["info", "informação"]):
         texto = "3"
-    elif texto in ["quero", "ok", "claro", "sim", "s"]:
-        texto = "sim"
-    elif texto in ["não", "nao", "n"]:
-        texto = "nao"
+
+    # 🔹 INÍCIO
+    if estado == "inicio":
+        if texto in ["oi", "olá", "ola", "/start", "start"]:
+            return (
+                "👋 Olá! Bem-vindo à Rede Colaborativa de Microapoios 🤝\n\n"
+                "1 - Como funciona\n"
+                "2 - Participar\n"
+                "3 - Informações",
+                "menu",
+                nome
+            )
+        else:
+            return ("Digite 'oi' para começar.", "inicio", nome)
 
     # 🔹 MENU
-    if estado == "menu":
-
+    elif estado == "menu":
         if texto == "1":
             return (
-                "📌 Como funciona:\n"
-                "A rede conecta pessoas para apoio financeiro colaborativo.\n\n"
-                "Deseja participar? (sim/não)",
-                "explicou"
+                "📌 Como funciona:\nA rede conecta pessoas para apoio financeiro colaborativo.\n\nDeseja participar? (sim/não)",
+                "explicou",
+                nome
             )
 
         elif texto == "2":
             return (
-                "🤝 Participar:\n"
-                "Você pode começar entendendo o sistema.\n\n"
-                "Deseja continuar? (sim/não)",
-                "participar"
+                "🤝 Vamos direto para participação!\n\nDeseja entrar agora? (sim/não)",
+                "participar",
+                nome
             )
 
         elif texto == "3":
             return (
-                "ℹ️ Informações:\n"
-                "Projeto colaborativo, ético e em evolução.",
-                "menu"
+                "ℹ️ Projeto colaborativo, ético e em evolução.",
+                "menu",
+                nome
             )
 
         else:
-            return ("Escolha 1, 2 ou 3 ou escreva normalmente.", "menu")
+            return ("Escolha 1, 2 ou 3.", "menu", nome)
 
     # 🔹 APÓS EXPLICAÇÃO
     elif estado == "explicou":
-
         if texto == "sim":
             return (
-                "Ótimo! Vamos para participação.\n\n"
-                "Você quer entrar na rede agora? (sim/não)",
-                "participar"
+                "🤝 Vamos para participação!\n\nDeseja entrar agora? (sim/não)",
+                "participar",
+                nome
             )
-
-        elif texto == "2":
-            return (
-                "🤝 Vamos direto para participação!\n\n"
-                "Deseja entrar agora? (sim/não)",
-                "participar"
-            )
-
         else:
-            return ("Responda com 'sim' ou diga que quer participar.", "explicou")
+            return ("Responda com 'sim' para continuar.", "explicou", nome)
 
     # 🔹 PARTICIPAÇÃO
     elif estado == "participar":
-
-        if texto == "sim":
+        if texto in ["sim", "s"]:
             return (
-                "✅ Perfeito! Você demonstrou interesse em participar.\n\n"
-                "Em breve o sistema terá cadastro automático.\n"
-                "Fique atento às novidades!",
-                "fim"
+                "Perfeito! 🙌\n\nPara continuar, me diga seu nome:",
+                "captura_nome",
+                nome
             )
-
-        elif texto == "nao":
+        elif texto in ["não", "nao", "n"]:
             return (
-                "Tudo bem 😊\n\n"
-                "Você pode voltar quando quiser.\n"
-                "Digite 'oi' para recomeçar.",
-                "inicio"
+                "Tudo bem 😊\nDigite 'oi' quando quiser voltar.",
+                "inicio",
+                nome
             )
-
         else:
-            return ("Responda com 'sim' ou 'não'.", "participar")
+            return ("Responda com 'sim' ou 'não'.", "participar", nome)
+
+    # 🔹 CAPTURA NOME
+    elif estado == "captura_nome":
+        nome = texto.capitalize()
+        return (
+            f"Ótimo, {nome}! 👏\n\nVocê quer:\n1 - Receber informações\n2 - Entrar assim que abrir\n\nDigite 1 ou 2:",
+            "captura_interesse",
+            nome
+        )
+
+    # 🔹 CAPTURA INTERESSE
+    elif estado == "captura_interesse":
+        if texto == "1":
+            return (
+                f"Perfeito, {nome}! 👍\nVocê será avisado com novidades.\n\nDigite 'oi' para recomeçar.",
+                "fim",
+                nome
+            )
+        elif texto == "2":
+            return (
+                f"Excelente, {nome}! 🚀\nVocê está na lista de prioridade.\n\nDigite 'oi' para recomeçar.",
+                "fim",
+                nome
+            )
+        else:
+            return ("Digite 1 ou 2.", "captura_interesse", nome)
 
     # 🔹 FINAL
     elif estado == "fim":
-        return (
-            "✅ Fluxo concluído!\n\n"
-            "Digite 'oi' para começar novamente.",
-            "inicio"
-        )
+        return ("Digite 'oi' para começar novamente.", "inicio", nome)
 
-    # 🔹 INÍCIO (fallback)
     else:
-        return ("Digite 'oi' para começar.", "inicio")
+        return ("Digite 'oi' para reiniciar.", "inicio", nome)
 
 # =========================
 # 🔗 WEBHOOK
@@ -174,10 +181,12 @@ def webhook():
         chat_id = data["message"]["chat"]["id"]
         texto = data["message"].get("text", "")
 
-        estado = get_estado(chat_id)
-        resposta, novo_estado = processar_mensagem(texto, estado)
+        estado, nome = get_usuario(chat_id)
 
-        salvar_estado(chat_id, novo_estado)
+        resposta, novo_estado, novo_nome = processar_mensagem(texto, estado, nome)
+
+        salvar_usuario(chat_id, novo_estado, novo_nome)
+
         enviar(chat_id, resposta)
 
     return "ok"
@@ -189,14 +198,6 @@ def webhook():
 @app.route('/')
 def home():
     return "Bot online"
-
-# =========================
-# ❤️ HEALTHCHECK
-# =========================
-
-@app.route('/healthcheck')
-def health():
-    return "ok", 200
 
 # =========================
 # 🚀 START
