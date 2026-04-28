@@ -9,7 +9,7 @@ TOKEN = os.getenv("TELEGRAM_TOKEN")
 DATABASE_URL = os.getenv("DATABASE_URL")
 
 # =========================
-# 🧠 CONEXÃO POSTGRES
+# 🧠 BANCO POSTGRES
 # =========================
 
 conn = psycopg2.connect(DATABASE_URL)
@@ -25,21 +25,23 @@ CREATE TABLE IF NOT EXISTS usuarios (
 """)
 conn.commit()
 
+# =========================
+# 📥 ESTADO
+# =========================
+
 def get_usuario(chat_id):
     cursor.execute("SELECT estado, nome, interesse FROM usuarios WHERE chat_id = %s", (chat_id,))
     resultado = cursor.fetchone()
-    if resultado:
-        return resultado
-    return ("inicio", None, None)
+    return resultado if resultado else ("inicio", None, None)
 
 def salvar_usuario(chat_id, estado, nome=None, interesse=None):
     cursor.execute("""
     INSERT INTO usuarios (chat_id, estado, nome, interesse)
     VALUES (%s, %s, %s, %s)
-    ON CONFLICT (chat_id) DO UPDATE SET
-        estado = EXCLUDED.estado,
-        nome = COALESCE(EXCLUDED.nome, usuarios.nome),
-        interesse = COALESCE(EXCLUDED.interesse, usuarios.interesse)
+    ON CONFLICT (chat_id)
+    DO UPDATE SET estado = EXCLUDED.estado,
+                  nome = EXCLUDED.nome,
+                  interesse = EXCLUDED.interesse
     """, (chat_id, estado, nome, interesse))
     conn.commit()
 
@@ -63,114 +65,92 @@ def processar_mensagem(texto, estado, nome, interesse):
     if not texto:
         return ("Digite algo para continuar.", estado, nome, interesse)
 
-    texto_original = texto
     texto = texto.lower().strip()
 
-    # 🔍 INTELIGÊNCIA
-    if any(p in texto for p in ["participar", "entrar"]):
+    # comandos especiais
+    if texto == "/leads":
+        cursor.execute("SELECT nome, interesse FROM usuarios WHERE nome IS NOT NULL")
+        dados = cursor.fetchall()
+
+        if not dados:
+            return ("Nenhum lead ainda.", estado, nome, interesse)
+
+        lista = "📊 Leads capturados:\n\n"
+        for n, i in dados:
+            lista += f"👤 {n} - {i}\n"
+
+        return (lista, estado, nome, interesse)
+
+    # inteligência
+    if "participar" in texto:
         texto = "2"
-    elif any(p in texto for p in ["como funciona", "funciona"]):
+    elif "funciona" in texto:
         texto = "1"
 
-    # 🔹 INÍCIO
+    # fluxo
     if estado == "inicio":
-        if texto in ["oi", "olá", "ola", "/start"]:
-            return (
-                "👋 Olá! Bem-vindo à Rede Colaborativa de Microapoios 🤝\n\n"
-                "1 - Como funciona\n"
-                "2 - Participar\n"
-                "3 - Informações",
-                "menu",
-                nome,
-                interesse
-            )
-        else:
-            return ("Digite 'oi' para começar.", "inicio", nome, interesse)
+        return (
+            "👋 Olá! Bem-vindo à Rede Colaborativa de Microapoios 🤝\n\n"
+            "1 - Como funciona\n"
+            "2 - Participar\n"
+            "3 - Informações",
+            "menu", nome, interesse
+        )
 
-    # 🔹 MENU
     elif estado == "menu":
         if texto == "1":
             return (
-                "📌 Como funciona:\nA rede conecta pessoas para apoio financeiro colaborativo.\n\nDeseja participar? (sim/não)",
-                "explicou",
-                nome,
-                interesse
+                "📌 Como funciona:\nA rede conecta pessoas para apoio financeiro.\n\nDeseja participar? (sim/não)",
+                "explicou", nome, interesse
             )
 
         elif texto == "2":
             return (
                 "🤝 Vamos direto para participação!\n\nDeseja entrar agora? (sim/não)",
-                "participar",
-                nome,
-                interesse
-            )
-
-        elif texto == "3":
-            return (
-                "ℹ️ Projeto colaborativo, ético e em evolução.",
-                "menu",
-                nome,
-                interesse
+                "participar", nome, interesse
             )
 
         else:
             return ("Escolha 1, 2 ou 3.", "menu", nome, interesse)
 
-    # 🔹 EXPLICAÇÃO
     elif estado == "explicou":
-        if texto in ["sim", "s"]:
+        if texto == "sim":
             return (
-                "🤝 Vamos para participação!\n\nDeseja entrar agora? (sim/não)",
-                "participar",
-                nome,
-                interesse
+                "Ótimo! Deseja entrar agora? (sim/não)",
+                "participar", nome, interesse
             )
         else:
-            return ("Digite 'sim' para continuar.", "explicou", nome, interesse)
+            return ("Responda 'sim' para continuar.", "explicou", nome, interesse)
 
-    # 🔹 PARTICIPAÇÃO
     elif estado == "participar":
-        if texto in ["sim", "s"]:
-            return (
-                "Perfeito! 🙌\n\nMe diga seu nome:",
-                "captura_nome",
-                nome,
-                interesse
-            )
+        if texto == "sim":
+            return ("Perfeito! 🙌\n\nMe diga seu nome:", "nome", nome, interesse)
         else:
-            return ("Digite 'sim' para continuar.", "participar", nome, interesse)
+            return ("Tudo bem! Digite 'oi' quando quiser.", "inicio", nome, interesse)
 
-    # 🔹 NOME
-    elif estado == "captura_nome":
-        nome = texto_original.strip().title()
+    elif estado == "nome":
+        nome = texto.capitalize()
         return (
-            f"Ótimo, {nome}! 👏\n\n1 - Receber informações\n2 - Entrar assim que abrir\n\nDigite 1 ou 2:",
-            "captura_interesse",
-            nome,
-            interesse
+            f"Ótimo, {nome}! 👏\n\n"
+            "1 - Receber informações\n"
+            "2 - Entrar assim que abrir\n\nDigite 1 ou 2:",
+            "interesse", nome, interesse
         )
 
-    # 🔹 INTERESSE
-    elif estado == "captura_interesse":
+    elif estado == "interesse":
         if texto == "1":
-            interesse = "info"
+            interesse = "informações"
         elif texto == "2":
             interesse = "prioridade"
         else:
-            return ("Digite 1 ou 2.", "captura_interesse", nome, interesse)
+            return ("Digite 1 ou 2.", "interesse", nome, interesse)
 
         return (
-            f"Perfeito, {nome}! 🚀\nVocê está registrado.\n\nDigite 'oi' para recomeçar.",
-            "fim",
-            nome,
-            interesse
+            f"Excelente, {nome}! 🚀\nVocê está na lista de {interesse}.\n\nDigite 'oi' para recomeçar.",
+            "inicio", nome, interesse
         )
 
-    # 🔹 FINAL
-    elif estado == "fim":
-        return ("Digite 'oi' para começar novamente.", "inicio", nome, interesse)
-
-    return ("Digite 'oi' para reiniciar.", "inicio", nome, interesse)
+    return ("Digite 'oi' para começar.", "inicio", nome, interesse)
 
 # =========================
 # 🔗 WEBHOOK
@@ -184,33 +164,23 @@ def webhook():
         chat_id = data["message"]["chat"]["id"]
         texto = data["message"].get("text", "")
 
-        # 🔍 COMANDO /LEADS
-        if texto == "/leads":
-            cursor.execute("SELECT nome, interesse FROM usuarios")
-            dados = cursor.fetchall()
-
-            if not dados:
-                enviar(chat_id, "Nenhum lead ainda.")
-            else:
-                lista = "📊 Leads capturados:\n\n"
-                for nome, interesse in dados:
-                    lista += f"👤 {nome} - {interesse}\n"
-
-                enviar(chat_id, lista)
-
-            return "ok"
-
         estado, nome, interesse = get_usuario(chat_id)
 
-        resposta, novo_estado, novo_nome, novo_interesse = processar_mensagem(
-            texto, estado, nome, interesse
-        )
+        resposta, novo_estado, nome, interesse = processar_mensagem(texto, estado, nome, interesse)
 
-        salvar_usuario(chat_id, novo_estado, novo_nome, novo_interesse)
+        salvar_usuario(chat_id, novo_estado, nome, interesse)
 
         enviar(chat_id, resposta)
 
     return "ok"
+
+# =========================
+# 🏠 HOME
+# =========================
+
+@app.route('/')
+def home():
+    return "Bot online"
 
 # =========================
 # 🚀 START
