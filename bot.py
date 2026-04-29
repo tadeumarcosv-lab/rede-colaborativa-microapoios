@@ -1,240 +1,154 @@
+import os
+import sqlite3
 from flask import Flask, request
 import requests
-import sqlite3
 
 app = Flask(__name__)
 
-TOKEN = 7903734471:AAH87bQtPPyqjeBlwX2u7zTk262jkQZeSD8
+TOKEN = os.getenv("TOKEN")
+URL = f"https://api.telegram.org/bot{TOKEN}/sendMessage"
 
-# =========================
-# 🧠 BANCO DE DADOS
-# =========================
+usuarios = {}
 
-conn = sqlite3.connect("usuarios.db", check_same_thread=False)
-cursor = conn.cursor()
-
-cursor.execute("""
-CREATE TABLE IF NOT EXISTS usuarios (
-    chat_id INTEGER PRIMARY KEY,
-    estado TEXT,
-    nome TEXT
-)
-""")
-
-cursor.execute("""
-CREATE TABLE IF NOT EXISTS leads (
-    id INTEGER PRIMARY KEY AUTOINCREMENT,
-    nome TEXT,
-    interesse TEXT
-)
-""")
-
-conn.commit()
-
-def get_usuario(chat_id):
-    cursor.execute("SELECT estado, nome FROM usuarios WHERE chat_id = ?", (chat_id,))
-    result = cursor.fetchone()
-    if result:
-        return result
-    return ("inicio", None)
-
-def salvar_usuario(chat_id, estado, nome):
+# ================= BANCO =================
+def criar_banco():
+    conn = sqlite3.connect("leads.db")
+    cursor = conn.cursor()
     cursor.execute("""
-    INSERT OR REPLACE INTO usuarios (chat_id, estado, nome)
-    VALUES (?, ?, ?)
-    """, (chat_id, estado, nome))
+        CREATE TABLE IF NOT EXISTS leads (
+            id INTEGER PRIMARY KEY AUTOINCREMENT,
+            nome TEXT,
+            interesse TEXT
+        )
+    """)
     conn.commit()
+    conn.close()
 
 def salvar_lead(nome, interesse):
-    cursor.execute("""
-    INSERT INTO leads (nome, interesse)
-    VALUES (?, ?)
-    """, (nome, interesse))
+    conn = sqlite3.connect("leads.db")
+    cursor = conn.cursor()
+    cursor.execute("INSERT INTO leads (nome, interesse) VALUES (?, ?)", (nome, interesse))
     conn.commit()
+    conn.close()
 
-# =========================
-# 📤 ENVIO
-# =========================
+def listar_leads():
+    conn = sqlite3.connect("leads.db")
+    cursor = conn.cursor()
+    cursor.execute("SELECT nome, interesse FROM leads")
+    dados = cursor.fetchall()
+    conn.close()
+    return dados
 
-def enviar(chat_id, texto):
-    url = f"https://api.telegram.org/bot{TOKEN}/sendMessage"
-    requests.post(url, json={
+criar_banco()
+
+# ================= TELEGRAM =================
+def enviar_mensagem(chat_id, texto):
+    requests.post(URL, json={
         "chat_id": chat_id,
         "text": texto
     })
 
-# =========================
-# 🧠 CÉREBRO
-# =========================
+def processar_mensagem(texto, chat_id):
+    texto = texto.lower()
 
-def processar(texto, estado, nome):
+    if chat_id not in usuarios:
+        usuarios[chat_id] = {"estado": "inicio"}
 
-    texto = texto.lower().strip()
+    estado = usuarios[chat_id]["estado"]
 
-    # RESET GLOBAL
-    if texto in ["oi", "olá", "ola", "/start", "start"]:
-        return (
-            "👋 Olá! Bem-vindo à Rede Colaborativa de Microapoios 🤝\n\n"
-            "1 - Como funciona\n"
-            "2 - Participar\n"
-            "3 - Informações",
-            "menu",
-            None
-        )
+    # 🔁 reset global
+    if texto in ["oi", "olá", "ola", "/start"]:
+        usuarios[chat_id] = {"estado": "menu"}
+        return """👋 Olá! Bem-vindo à Rede Colaborativa de Microapoios 🤝
 
-    # INTELIGÊNCIA
-    if "participar" in texto:
-        texto = "2"
-    elif "funciona" in texto:
-        texto = "1"
+1 - Como funciona
+2 - Participar
+3 - Informações"""
 
     # MENU
     if estado == "menu":
+        if "1" in texto or "funciona" in texto:
+            usuarios[chat_id]["estado"] = "fluxo"
+            return "📌 Como funciona:\nA rede conecta pessoas para apoio financeiro colaborativo.\n\nDeseja participar? (sim/não)"
 
-        if texto == "1":
-            return (
-                "📌 Como funciona:\n"
-                "A rede conecta pessoas para apoio financeiro colaborativo.\n\n"
-                "Deseja participar? (sim/não)",
-                "explicou",
-                nome
-            )
+        elif "2" in texto or "participar" in texto:
+            usuarios[chat_id]["estado"] = "fluxo"
+            return "🤝 Vamos direto para participação!\n\nDeseja entrar agora? (sim/não)"
 
-        elif texto == "2":
-            return (
-                "🤝 Vamos direto para participação!\n\n"
-                "Deseja entrar agora? (sim/não)",
-                "participar",
-                nome
-            )
+        elif "3" in texto or "info" in texto:
+            return "ℹ️ Mais informações em breve."
 
         else:
-            return ("Escolha 1, 2 ou 3.", "menu", nome)
+            return "Escolha 1, 2 ou 3."
 
-    # EXPLICAÇÃO
-    elif estado == "explicou":
-
-        if texto == "sim":
-            return (
-                "🤝 Vamos direto para participação!\n\n"
-                "Deseja entrar agora? (sim/não)",
-                "participar",
-                nome
-            )
+    # FLUXO
+    elif estado == "fluxo":
+        if "sim" in texto:
+            usuarios[chat_id]["estado"] = "nome"
+            return "Perfeito! 🙌\n\nPara continuar, me diga seu nome:"
         else:
-            return ("Responda com 'sim' para continuar.", "explicou", nome)
+            return "Responda com 'sim' ou 'não'."
 
-    # PARTICIPAR
-    elif estado == "participar":
-
-        if texto == "sim":
-            return (
-                "Perfeito! 🙌\n\n"
-                "Para continuar, me diga seu nome:",
-                "nome",
-                nome
-            )
-
-        elif texto == "nao":
-            return ("Tudo bem! Digite 'oi' quando quiser voltar.", "inicio", None)
-
-        else:
-            return ("Responda com 'sim' ou 'não'.", "participar", nome)
-
-    # PEGAR NOME
+    # NOME
     elif estado == "nome":
+        usuarios[chat_id]["nome"] = texto.capitalize()
+        usuarios[chat_id]["estado"] = "escolha"
 
-        nome = texto.capitalize()
+        return f"Ótimo, {usuarios[chat_id]['nome']}! 👏\n\nVocê quer:\n1 - Receber informações\n2 - Entrar assim que abrir\n\nDigite 1 ou 2:"
 
-        return (
-            f"Ótimo, {nome}! 👏\n\n"
-            "Você quer:\n"
-            "1 - Receber informações\n"
-            "2 - Entrar assim que abrir\n\n"
-            "Digite 1 ou 2:",
-            "interesse",
-            nome
-        )
+    # ESCOLHA FINAL
+    elif estado == "escolha":
+        nome = usuarios[chat_id]["nome"]
 
-    # INTERESSE
-    elif estado == "interesse":
+        if texto in ["1", "informação", "informacoes"]:
+            salvar_lead(nome, "informações")
+            usuarios[chat_id]["estado"] = "inicio"
+            return f"Perfeito, {nome}! 📩 Você receberá mais informações.\n\nDigite 'oi' para recomeçar."
 
-        if texto == "1":
-            salvar_lead(nome, "info")
-            return (
-                f"Perfeito, {nome}! Você receberá informações 📩",
-                "fim",
-                nome
-            )
-
-        elif texto == "2":
+        elif texto in ["2", "sim", "quero", "participar"]:
             salvar_lead(nome, "prioridade")
-            return (
-                f"Excelente, {nome}! 🚀\nVocê está na lista de prioridade.",
-                "fim",
-                nome
-            )
+            usuarios[chat_id]["estado"] = "inicio"
+            return f"Excelente, {nome}! 🚀\nVocê está na lista de prioridade.\n\nDigite 'oi' para recomeçar."
 
         else:
-            return ("Digite 1 ou 2.", "interesse", nome)
+            return "Digite 1 ou 2."
 
-    # FINAL
-    elif estado == "fim":
-        return ("Digite 'oi' para recomeçar.", "inicio", None)
+    return "Digite 'oi' para começar."
 
-    return ("Digite 'oi' para começar.", "inicio", None)
-
-# =========================
-# 🔗 WEBHOOK
-# =========================
-
-@app.route('/webhook', methods=['POST'])
+# ================= WEBHOOK =================
+@app.route("/webhook", methods=["POST"])
 def webhook():
-    data = request.get_json()
+    data = request.json
 
     if "message" in data:
         chat_id = data["message"]["chat"]["id"]
         texto = data["message"].get("text", "")
 
-        estado, nome = get_usuario(chat_id)
-
-        resposta, novo_estado, novo_nome = processar(texto, estado, nome)
-
-        salvar_usuario(chat_id, novo_estado, novo_nome)
-
-        enviar(chat_id, resposta)
+        resposta = processar_mensagem(texto, chat_id)
+        enviar_mensagem(chat_id, resposta)
 
     return "ok"
 
-# =========================
-# 🌐 PAINEL WEB
-# =========================
+# ================= PAINEL WEB =================
+@app.route("/leads")
+def ver_leads():
+    dados = listar_leads()
 
-@app.route('/leads')
-def painel():
-    cursor.execute("SELECT nome, interesse FROM leads")
-    dados = cursor.fetchall()
+    if not dados:
+        return "Nenhum lead ainda."
 
-    html = "<h2>📊 Leads capturados</h2><ul>"
+    html = "<h2>📊 Leads capturados:</h2>"
 
     for nome, interesse in dados:
-        html += f"<li>👤 {nome} - {interesse}</li>"
-
-    html += "</ul>"
+        html += f"<p>👤 {nome} - {interesse}</p>"
 
     return html
 
-# =========================
-# 🏠 HOME
-# =========================
-
-@app.route('/')
+# ================= HOME =================
+@app.route("/")
 def home():
-    return "Bot online"
+    return "Bot online 🚀"
 
-# =========================
-# 🚀 START
-# =========================
-
+# ================= RUN =================
 if __name__ == "__main__":
     app.run(host="0.0.0.0", port=10000)
