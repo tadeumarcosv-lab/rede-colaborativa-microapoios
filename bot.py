@@ -141,19 +141,51 @@ def webhook():
 
     return "ok"
 
-# ================= PAINEL =================
+# ================= PAINEL PROFISSIONAL =================
 @app.route("/leads")
 def leads():
     dados = listar_leads()
 
+    html = """
+    <html>
+    <head>
+        <title>Painel de Leads</title>
+        <style>
+            body {
+                font-family: Arial;
+                background: #0f172a;
+                color: white;
+                text-align: center;
+            }
+            h1 {
+                color: #22c55e;
+            }
+            .card {
+                background: #1e293b;
+                margin: 10px auto;
+                padding: 15px;
+                border-radius: 10px;
+                width: 300px;
+                box-shadow: 0 0 10px rgba(0,0,0,0.3);
+            }
+        </style>
+    </head>
+    <body>
+        <h1>📊 Leads Capturados</h1>
+    """
+
     if not dados:
-        return "Nenhum lead ainda."
+        html += "<p>Nenhum lead ainda.</p>"
+    else:
+        for nome, interesse in dados:
+            html += f"""
+            <div class="card">
+                <p><strong>👤 Nome:</strong> {nome}</p>
+                <p><strong>🔥 Interesse:</strong> {interesse}</p>
+            </div>
+            """
 
-    html = "<h2>📊 Leads capturados:</h2>"
-
-    for nome, interesse in dados:
-        html += f"<p>👤 {nome} - {interesse}</p>"
-
+    html += "</body></html>"
     return html
 
 # ================= HOME =================
