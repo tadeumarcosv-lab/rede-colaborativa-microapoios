@@ -51,7 +51,7 @@ def enviar_mensagem(chat_id, texto):
 def processar_mensagem(texto, chat_id):
     texto = texto.lower().strip()
 
-    # 🔁 RESET GLOBAL
+    # RESET GLOBAL
     if texto in ["oi", "olá", "ola", "/start"]:
         usuarios[chat_id] = {"estado": "menu"}
         return """👋 Olá! Bem-vindo à Rede Colaborativa de Microapoios 🤝
@@ -60,7 +60,7 @@ def processar_mensagem(texto, chat_id):
 2 - Participar
 3 - Informações"""
 
-    # 🔥 INTELIGÊNCIA GLOBAL (funciona em qualquer momento)
+    # INTELIGÊNCIA GLOBAL
     if "participar" in texto:
         usuarios[chat_id] = {"estado": "fluxo"}
         return "🤝 Vamos direto para participação!\n\nDeseja entrar agora? (sim/não)"
@@ -95,7 +95,7 @@ def processar_mensagem(texto, chat_id):
         if texto == "sim":
             usuarios[chat_id]["estado"] = "nome"
             return "Perfeito! 🙌\n\nPara continuar, me diga seu nome:"
-        elif texto == "não" or texto == "nao":
+        elif texto in ["não", "nao"]:
             usuarios[chat_id]["estado"] = "menu"
             return "Tudo bem 😊\n\nDigite 1, 2 ou 3."
         else:
@@ -159,7 +159,7 @@ def ver_leads():
 # ================= HOME =================
 @app.route("/")
 def home():
-    return "Bot online 🚀"
+    return "VERSAO NOVA ATIVA 🚀"
 
 # ================= RUN =================
 if __name__ == "__main__":
