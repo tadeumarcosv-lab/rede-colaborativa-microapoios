@@ -49,14 +49,9 @@ def enviar_mensagem(chat_id, texto):
     })
 
 def processar_mensagem(texto, chat_id):
-    texto = texto.lower()
+    texto = texto.lower().strip()
 
-    if chat_id not in usuarios:
-        usuarios[chat_id] = {"estado": "inicio"}
-
-    estado = usuarios[chat_id]["estado"]
-
-    # 🔁 reset global
+    # 🔁 RESET GLOBAL
     if texto in ["oi", "olá", "ola", "/start"]:
         usuarios[chat_id] = {"estado": "menu"}
         return """👋 Olá! Bem-vindo à Rede Colaborativa de Microapoios 🤝
@@ -65,17 +60,31 @@ def processar_mensagem(texto, chat_id):
 2 - Participar
 3 - Informações"""
 
+    # 🔥 INTELIGÊNCIA GLOBAL (funciona em qualquer momento)
+    if "participar" in texto:
+        usuarios[chat_id] = {"estado": "fluxo"}
+        return "🤝 Vamos direto para participação!\n\nDeseja entrar agora? (sim/não)"
+
+    if "funciona" in texto:
+        usuarios[chat_id] = {"estado": "fluxo"}
+        return "📌 Como funciona:\nA rede conecta pessoas para apoio financeiro colaborativo.\n\nDeseja participar? (sim/não)"
+
+    if chat_id not in usuarios:
+        usuarios[chat_id] = {"estado": "menu"}
+
+    estado = usuarios[chat_id]["estado"]
+
     # MENU
     if estado == "menu":
-        if "1" in texto or "funciona" in texto:
+        if texto == "1":
             usuarios[chat_id]["estado"] = "fluxo"
             return "📌 Como funciona:\nA rede conecta pessoas para apoio financeiro colaborativo.\n\nDeseja participar? (sim/não)"
 
-        elif "2" in texto or "participar" in texto:
+        elif texto == "2":
             usuarios[chat_id]["estado"] = "fluxo"
             return "🤝 Vamos direto para participação!\n\nDeseja entrar agora? (sim/não)"
 
-        elif "3" in texto or "info" in texto:
+        elif texto == "3":
             return "ℹ️ Mais informações em breve."
 
         else:
@@ -83,9 +92,12 @@ def processar_mensagem(texto, chat_id):
 
     # FLUXO
     elif estado == "fluxo":
-        if "sim" in texto:
+        if texto == "sim":
             usuarios[chat_id]["estado"] = "nome"
             return "Perfeito! 🙌\n\nPara continuar, me diga seu nome:"
+        elif texto == "não" or texto == "nao":
+            usuarios[chat_id]["estado"] = "menu"
+            return "Tudo bem 😊\n\nDigite 1, 2 ou 3."
         else:
             return "Responda com 'sim' ou 'não'."
 
@@ -100,14 +112,14 @@ def processar_mensagem(texto, chat_id):
     elif estado == "escolha":
         nome = usuarios[chat_id]["nome"]
 
-        if texto in ["1", "informação", "informacoes"]:
+        if texto == "1":
             salvar_lead(nome, "informações")
-            usuarios[chat_id]["estado"] = "inicio"
+            usuarios[chat_id]["estado"] = "menu"
             return f"Perfeito, {nome}! 📩 Você receberá mais informações.\n\nDigite 'oi' para recomeçar."
 
-        elif texto in ["2", "sim", "quero", "participar"]:
+        elif texto == "2":
             salvar_lead(nome, "prioridade")
-            usuarios[chat_id]["estado"] = "inicio"
+            usuarios[chat_id]["estado"] = "menu"
             return f"Excelente, {nome}! 🚀\nVocê está na lista de prioridade.\n\nDigite 'oi' para recomeçar."
 
         else:
