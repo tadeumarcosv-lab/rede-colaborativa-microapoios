@@ -4,7 +4,7 @@ import sqlite3
 
 app = Flask(__name__)
 
-TOKEN = "SEU_TOKEN_AQUI"
+TOKEN = 7903734471:AAH87bQtPPyqjeBlwX2u7zTk262jkQZeSD8
 
 # =========================
 # 🧠 BANCO DE DADOS
