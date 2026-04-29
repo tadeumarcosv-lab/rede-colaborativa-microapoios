@@ -12,7 +12,7 @@ usuarios = {}
 
 # ================= BANCO =================
 def criar_banco():
-    conn = sqlite3.connect("leads.db")
+    conn = sqlite3.connect("/tmp/leads.db")
     cursor = conn.cursor()
     cursor.execute("""
         CREATE TABLE IF NOT EXISTS leads (
@@ -25,14 +25,14 @@ def criar_banco():
     conn.close()
 
 def salvar_lead(nome, interesse):
-    conn = sqlite3.connect("leads.db")
+    conn = sqlite3.connect("/tmp/leads.db")
     cursor = conn.cursor()
     cursor.execute("INSERT INTO leads (nome, interesse) VALUES (?, ?)", (nome, interesse))
     conn.commit()
     conn.close()
 
 def listar_leads():
-    conn = sqlite3.connect("leads.db")
+    conn = sqlite3.connect("/tmp/leads.db")
     cursor = conn.cursor()
     cursor.execute("SELECT nome, interesse FROM leads")
     dados = cursor.fetchall()
@@ -51,7 +51,7 @@ def enviar_mensagem(chat_id, texto):
 def processar_mensagem(texto, chat_id):
     texto = texto.lower().strip()
 
-    # RESET
+    # RESET GLOBAL
     if texto in ["oi", "olá", "ola", "/start"]:
         usuarios[chat_id] = {"estado": "menu"}
         return """👋 Olá! Bem-vindo à Rede Colaborativa de Microapoios 🤝
@@ -60,27 +60,37 @@ def processar_mensagem(texto, chat_id):
 2 - Participar
 3 - Informações"""
 
+    # INTELIGÊNCIA GLOBAL
     if "participar" in texto:
         usuarios[chat_id] = {"estado": "fluxo"}
         return "🤝 Vamos direto para participação!\n\nDeseja entrar agora? (sim/não)"
+
+    if "funciona" in texto:
+        usuarios[chat_id] = {"estado": "fluxo"}
+        return "📌 Como funciona:\nA rede conecta pessoas para apoio financeiro colaborativo.\n\nDeseja participar? (sim/não)"
 
     if chat_id not in usuarios:
         usuarios[chat_id] = {"estado": "menu"}
 
     estado = usuarios[chat_id]["estado"]
 
+    # MENU
     if estado == "menu":
         if texto == "1":
             usuarios[chat_id]["estado"] = "fluxo"
             return "📌 Como funciona:\nA rede conecta pessoas para apoio financeiro colaborativo.\n\nDeseja participar? (sim/não)"
+
         elif texto == "2":
             usuarios[chat_id]["estado"] = "fluxo"
             return "🤝 Vamos direto para participação!\n\nDeseja entrar agora? (sim/não)"
+
         elif texto == "3":
             return "ℹ️ Mais informações em breve."
+
         else:
             return "Escolha 1, 2 ou 3."
 
+    # FLUXO
     elif estado == "fluxo":
         if texto == "sim":
             usuarios[chat_id]["estado"] = "nome"
@@ -91,11 +101,14 @@ def processar_mensagem(texto, chat_id):
         else:
             return "Responda com 'sim' ou 'não'."
 
+    # NOME
     elif estado == "nome":
         usuarios[chat_id]["nome"] = texto.capitalize()
         usuarios[chat_id]["estado"] = "escolha"
+
         return f"Ótimo, {usuarios[chat_id]['nome']}! 👏\n\nVocê quer:\n1 - Receber informações\n2 - Entrar assim que abrir\n\nDigite 1 ou 2:"
 
+    # ESCOLHA FINAL
     elif estado == "escolha":
         nome = usuarios[chat_id]["nome"]
 
