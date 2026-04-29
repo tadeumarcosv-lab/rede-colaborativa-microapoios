@@ -1,45 +1,50 @@
 import os
-import sqlite3
 from flask import Flask, request
 import requests
+import psycopg
 
 app = Flask(__name__)
 
 TOKEN = os.getenv("TOKEN")
+DATABASE_URL = os.getenv("DATABASE_URL")
+
 URL = f"https://api.telegram.org/bot{TOKEN}/sendMessage"
 
 usuarios = {}
 
 # ================= BANCO =================
-def criar_banco():
-    conn = sqlite3.connect("/tmp/leads.db")
-    cursor = conn.cursor()
-    cursor.execute("""
-        CREATE TABLE IF NOT EXISTS leads (
-            id INTEGER PRIMARY KEY AUTOINCREMENT,
-            nome TEXT,
-            interesse TEXT
-        )
-    """)
-    conn.commit()
-    conn.close()
+def conectar():
+    return psycopg.connect(DATABASE_URL)
+
+def criar_tabela():
+    with conectar() as conn:
+        with conn.cursor() as cur:
+            cur.execute("""
+                CREATE TABLE IF NOT EXISTS leads (
+                    id SERIAL PRIMARY KEY,
+                    nome TEXT,
+                    interesse TEXT
+                )
+            """)
+criar_tabela()
 
 def salvar_lead(nome, interesse):
-    conn = sqlite3.connect("/tmp/leads.db")
-    cursor = conn.cursor()
-    cursor.execute("INSERT INTO leads (nome, interesse) VALUES (?, ?)", (nome, interesse))
-    conn.commit()
-    conn.close()
+    with conectar() as conn:
+        with conn.cursor() as cur:
+            cur.execute("SELECT * FROM leads WHERE nome = %s", (nome,))
+            existe = cur.fetchone()
+
+            if not existe:
+                cur.execute(
+                    "INSERT INTO leads (nome, interesse) VALUES (%s, %s)",
+                    (nome, interesse)
+                )
 
 def listar_leads():
-    conn = sqlite3.connect("/tmp/leads.db")
-    cursor = conn.cursor()
-    cursor.execute("SELECT nome, interesse FROM leads")
-    dados = cursor.fetchall()
-    conn.close()
-    return dados
-
-criar_banco()
+    with conectar() as conn:
+        with conn.cursor() as cur:
+            cur.execute("SELECT nome, interesse FROM leads")
+            return cur.fetchall()
 
 # ================= TELEGRAM =================
 def enviar_mensagem(chat_id, texto):
@@ -51,7 +56,6 @@ def enviar_mensagem(chat_id, texto):
 def processar_mensagem(texto, chat_id):
     texto = texto.lower().strip()
 
-    # RESET GLOBAL
     if texto in ["oi", "olá", "ola", "/start"]:
         usuarios[chat_id] = {"estado": "menu"}
         return """👋 Olá! Bem-vindo à Rede Colaborativa de Microapoios 🤝
@@ -60,21 +64,15 @@ def processar_mensagem(texto, chat_id):
 2 - Participar
 3 - Informações"""
 
-    # INTELIGÊNCIA GLOBAL
     if "participar" in texto:
         usuarios[chat_id] = {"estado": "fluxo"}
         return "🤝 Vamos direto para participação!\n\nDeseja entrar agora? (sim/não)"
-
-    if "funciona" in texto:
-        usuarios[chat_id] = {"estado": "fluxo"}
-        return "📌 Como funciona:\nA rede conecta pessoas para apoio financeiro colaborativo.\n\nDeseja participar? (sim/não)"
 
     if chat_id not in usuarios:
         usuarios[chat_id] = {"estado": "menu"}
 
     estado = usuarios[chat_id]["estado"]
 
-    # MENU
     if estado == "menu":
         if texto == "1":
             usuarios[chat_id]["estado"] = "fluxo"
@@ -90,7 +88,6 @@ def processar_mensagem(texto, chat_id):
         else:
             return "Escolha 1, 2 ou 3."
 
-    # FLUXO
     elif estado == "fluxo":
         if texto == "sim":
             usuarios[chat_id]["estado"] = "nome"
@@ -101,14 +98,12 @@ def processar_mensagem(texto, chat_id):
         else:
             return "Responda com 'sim' ou 'não'."
 
-    # NOME
     elif estado == "nome":
         usuarios[chat_id]["nome"] = texto.capitalize()
         usuarios[chat_id]["estado"] = "escolha"
 
         return f"Ótimo, {usuarios[chat_id]['nome']}! 👏\n\nVocê quer:\n1 - Receber informações\n2 - Entrar assim que abrir\n\nDigite 1 ou 2:"
 
-    # ESCOLHA FINAL
     elif estado == "escolha":
         nome = usuarios[chat_id]["nome"]
 
@@ -141,57 +136,25 @@ def webhook():
 
     return "ok"
 
-# ================= PAINEL PROFISSIONAL =================
+# ================= PAINEL =================
 @app.route("/leads")
 def leads():
     dados = listar_leads()
 
-    html = """
-    <html>
-    <head>
-        <title>Painel de Leads</title>
-        <style>
-            body {
-                font-family: Arial;
-                background: #0f172a;
-                color: white;
-                text-align: center;
-            }
-            h1 {
-                color: #22c55e;
-            }
-            .card {
-                background: #1e293b;
-                margin: 10px auto;
-                padding: 15px;
-                border-radius: 10px;
-                width: 300px;
-                box-shadow: 0 0 10px rgba(0,0,0,0.3);
-            }
-        </style>
-    </head>
-    <body>
-        <h1>📊 Leads Capturados</h1>
-    """
-
     if not dados:
-        html += "<p>Nenhum lead ainda.</p>"
-    else:
-        for nome, interesse in dados:
-            html += f"""
-            <div class="card">
-                <p><strong>👤 Nome:</strong> {nome}</p>
-                <p><strong>🔥 Interesse:</strong> {interesse}</p>
-            </div>
-            """
+        return "Nenhum lead ainda."
 
-    html += "</body></html>"
+    html = "<h2>📊 Leads Capturados</h2>"
+
+    for nome, interesse in dados:
+        html += f"<p>👤 Nome: {nome}<br>🔥 Interesse: {interesse}</p><hr>"
+
     return html
 
 # ================= HOME =================
 @app.route("/")
 def home():
-    return "VERSAO NOVA ATIVA 🚀"
+    return "POSTGRESQL ATIVO 🚀"
 
 # ================= RUN =================
 if __name__ == "__main__":
