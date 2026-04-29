@@ -1,14 +1,13 @@
 from flask import Flask, request
 import requests
-import os
 import sqlite3
 
 app = Flask(__name__)
 
-TOKEN = os.getenv("TELEGRAM_TOKEN")
+TOKEN = "SEU_TOKEN_AQUI"
 
 # =========================
-# 🧠 BANCO SQLITE
+# 🧠 BANCO DE DADOS
 # =========================
 
 conn = sqlite3.connect("usuarios.db", check_same_thread=False)
@@ -18,29 +17,39 @@ cursor.execute("""
 CREATE TABLE IF NOT EXISTS usuarios (
     chat_id INTEGER PRIMARY KEY,
     estado TEXT,
+    nome TEXT
+)
+""")
+
+cursor.execute("""
+CREATE TABLE IF NOT EXISTS leads (
+    id INTEGER PRIMARY KEY AUTOINCREMENT,
     nome TEXT,
     interesse TEXT
 )
 """)
+
 conn.commit()
 
 def get_usuario(chat_id):
     cursor.execute("SELECT estado, nome FROM usuarios WHERE chat_id = ?", (chat_id,))
-    r = cursor.fetchone()
-    if r:
-        return r
+    result = cursor.fetchone()
+    if result:
+        return result
     return ("inicio", None)
 
-def salvar_usuario(chat_id, estado=None, nome=None, interesse=None):
-    atual = get_usuario(chat_id)
-
-    estado = estado if estado else atual[0]
-    nome = nome if nome else atual[1]
-
+def salvar_usuario(chat_id, estado, nome):
     cursor.execute("""
-    INSERT OR REPLACE INTO usuarios (chat_id, estado, nome, interesse)
-    VALUES (?, ?, ?, ?)
-    """, (chat_id, estado, nome, interesse))
+    INSERT OR REPLACE INTO usuarios (chat_id, estado, nome)
+    VALUES (?, ?, ?)
+    """, (chat_id, estado, nome))
+    conn.commit()
+
+def salvar_lead(nome, interesse):
+    cursor.execute("""
+    INSERT INTO leads (nome, interesse)
+    VALUES (?, ?)
+    """, (nome, interesse))
     conn.commit()
 
 # =========================
@@ -58,121 +67,122 @@ def enviar(chat_id, texto):
 # 🧠 CÉREBRO
 # =========================
 
-def processar_mensagem(texto, estado):
+def processar(texto, estado, nome):
 
-    texto = (texto or "").lower().strip()
+    texto = texto.lower().strip()
 
-    # 🔥 RESET GLOBAL (PRIORIDADE MÁXIMA)
-    if texto in ["oi", "/start", "start"]:
+    # RESET GLOBAL
+    if texto in ["oi", "olá", "ola", "/start", "start"]:
         return (
             "👋 Olá! Bem-vindo à Rede Colaborativa de Microapoios 🤝\n\n"
             "1 - Como funciona\n"
             "2 - Participar\n"
             "3 - Informações",
             "menu",
-            None,
             None
         )
 
-    # 🔒 INTELIGÊNCIA SÓ NO MENU
-    if estado == "menu":
-        if any(p in texto for p in ["participar", "entrar"]):
-            texto = "2"
-        elif "funciona" in texto:
-            texto = "1"
+    # INTELIGÊNCIA
+    if "participar" in texto:
+        texto = "2"
+    elif "funciona" in texto:
+        texto = "1"
 
-    # =========================
-    # FLUXO
-    # =========================
-
+    # MENU
     if estado == "menu":
 
         if texto == "1":
             return (
-                "📌 Como funciona:\nA rede conecta pessoas para apoio financeiro.\n\nDeseja participar? (sim/não)",
+                "📌 Como funciona:\n"
+                "A rede conecta pessoas para apoio financeiro colaborativo.\n\n"
+                "Deseja participar? (sim/não)",
                 "explicou",
-                None,
-                None
+                nome
             )
 
         elif texto == "2":
             return (
-                "🤝 Vamos direto para participação!\n\nDeseja entrar agora? (sim/não)",
+                "🤝 Vamos direto para participação!\n\n"
+                "Deseja entrar agora? (sim/não)",
                 "participar",
-                None,
-                None
+                nome
             )
 
         else:
-            return ("Escolha 1, 2 ou 3.", "menu", None, None)
+            return ("Escolha 1, 2 ou 3.", "menu", nome)
 
+    # EXPLICAÇÃO
     elif estado == "explicou":
 
-        if texto in ["sim", "s"]:
+        if texto == "sim":
             return (
-                "Ótimo! Vamos participar.\nDeseja entrar agora? (sim/não)",
+                "🤝 Vamos direto para participação!\n\n"
+                "Deseja entrar agora? (sim/não)",
                 "participar",
-                None,
-                None
+                nome
             )
         else:
-            return ("Responda com 'sim' ou 'não'.", "explicou", None, None)
+            return ("Responda com 'sim' para continuar.", "explicou", nome)
 
+    # PARTICIPAR
     elif estado == "participar":
 
-        if texto in ["sim", "s"]:
+        if texto == "sim":
             return (
-                "Perfeito! 🙌\n\nMe diga seu nome:",
+                "Perfeito! 🙌\n\n"
+                "Para continuar, me diga seu nome:",
                 "nome",
-                None,
-                None
+                nome
             )
-        elif texto in ["nao", "não", "n"]:
-            return (
-                "Tudo bem 😊\nDigite 'oi' quando quiser voltar.",
-                "inicio",
-                None,
-                None
-            )
-        else:
-            return ("Responda com 'sim' ou 'não'.", "participar", None, None)
 
+        elif texto == "nao":
+            return ("Tudo bem! Digite 'oi' quando quiser voltar.", "inicio", None)
+
+        else:
+            return ("Responda com 'sim' ou 'não'.", "participar", nome)
+
+    # PEGAR NOME
     elif estado == "nome":
 
-        nome = texto.title()
+        nome = texto.capitalize()
 
         return (
-            f"Ótimo, {nome}! 👏\n\nVocê quer:\n1 - Receber informações\n2 - Entrar assim que abrir\n\nDigite 1 ou 2:",
+            f"Ótimo, {nome}! 👏\n\n"
+            "Você quer:\n"
+            "1 - Receber informações\n"
+            "2 - Entrar assim que abrir\n\n"
+            "Digite 1 ou 2:",
             "interesse",
-            nome,
-            None
+            nome
         )
 
+    # INTERESSE
     elif estado == "interesse":
 
         if texto == "1":
+            salvar_lead(nome, "info")
             return (
-                "Perfeito! Você receberá informações 📩\n\nDigite 'oi' para recomeçar.",
+                f"Perfeito, {nome}! Você receberá informações 📩",
                 "fim",
-                None,
-                "info"
+                nome
             )
 
         elif texto == "2":
+            salvar_lead(nome, "prioridade")
             return (
-                "Excelente! 🚀 Você está na lista de prioridade.\n\nDigite 'oi' para recomeçar.",
+                f"Excelente, {nome}! 🚀\nVocê está na lista de prioridade.",
                 "fim",
-                None,
-                "prioridade"
+                nome
             )
 
         else:
-            return ("Digite 1 ou 2.", "interesse", None, None)
+            return ("Digite 1 ou 2.", "interesse", nome)
 
+    # FINAL
     elif estado == "fim":
-        return ("Digite 'oi' para começar novamente.", "inicio", None, None)
+        return ("Digite 'oi' para recomeçar.", "inicio", None)
 
-    return ("Digite 'oi' para começar.", "inicio", None, None)
+    return ("Digite 'oi' para começar.", "inicio", None)
 
 # =========================
 # 🔗 WEBHOOK
@@ -188,34 +198,31 @@ def webhook():
 
         estado, nome = get_usuario(chat_id)
 
-        resposta, novo_estado, nome_novo, interesse = processar_mensagem(texto, estado)
+        resposta, novo_estado, novo_nome = processar(texto, estado, nome)
 
-        if nome_novo:
-            nome = nome_novo
-
-        salvar_usuario(chat_id, novo_estado, nome, interesse)
+        salvar_usuario(chat_id, novo_estado, novo_nome)
 
         enviar(chat_id, resposta)
 
     return "ok"
 
 # =========================
-# 📊 VER LEADS
+# 🌐 PAINEL WEB
 # =========================
 
 @app.route('/leads')
-def leads():
-    cursor.execute("SELECT nome, interesse FROM usuarios WHERE nome IS NOT NULL")
+def painel():
+    cursor.execute("SELECT nome, interesse FROM leads")
     dados = cursor.fetchall()
 
-    if not dados:
-        return "Nenhum lead ainda."
+    html = "<h2>📊 Leads capturados</h2><ul>"
 
-    resposta = "📊 Leads capturados:\n\n"
     for nome, interesse in dados:
-        resposta += f"👤 {nome} - {interesse}\n"
+        html += f"<li>👤 {nome} - {interesse}</li>"
 
-    return resposta
+    html += "</ul>"
+
+    return html
 
 # =========================
 # 🏠 HOME
@@ -225,6 +232,8 @@ def leads():
 def home():
     return "Bot online"
 
+# =========================
+# 🚀 START
 # =========================
 
 if __name__ == "__main__":
