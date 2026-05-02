@@ -11,33 +11,39 @@ DATABASE_URL = os.getenv("DATABASE_URL")
 usuarios = {}
 
 def salvar_lead(nome, interesse):
+    nome = nome.strip().lower()
+    interesse = interesse.strip().lower()
+
     with psycopg.connect(DATABASE_URL) as conn:
         with conn.cursor() as cur:
+
+            # cria tabela com proteção contra duplicado
             cur.execute("""
                 CREATE TABLE IF NOT EXISTS leads (
                     id SERIAL PRIMARY KEY,
                     nome TEXT,
-                    interesse TEXT
+                    interesse TEXT,
+                    UNIQUE (nome, interesse)
                 )
             """)
-            cur.execute("""
-                SELECT * FROM leads WHERE nome = %s AND interesse = %s
-            """, (nome, interesse))
-            existente = cur.fetchone()
 
-            if not existente:
-                cur.execute("""
-                    INSERT INTO leads (nome, interesse)
-                    VALUES (%s, %s)
-                """, (nome, interesse))
+            # insere sem duplicar
+            cur.execute("""
+                INSERT INTO leads (nome, interesse)
+                VALUES (%s, %s)
+                ON CONFLICT (nome, interesse) DO NOTHING
+            """, (nome, interesse))
+
 
 @app.route("/")
 def home():
     return "VERSAO NOVA ATIVA 🚀"
 
+
 @app.route("/leads")
 def ver_leads():
     html = "<h2>📊 Leads Capturados</h2>"
+
     with psycopg.connect(DATABASE_URL) as conn:
         with conn.cursor() as cur:
             cur.execute("SELECT nome, interesse FROM leads")
@@ -47,13 +53,15 @@ def ver_leads():
                 return html + "<p>Nenhum lead ainda.</p>"
 
             for nome, interesse in dados:
-                html += f"<p>👤 Nome: {nome}<br>🔥 Interesse: {interesse}</p><hr>"
+                html += f"<p>👤 Nome: {nome.capitalize()}<br>🔥 Interesse: {interesse}</p><hr>"
 
     return html
+
 
 def responder(chat_id, texto):
     url = f"https://api.telegram.org/bot{TOKEN}/sendMessage"
     requests.post(url, json={"chat_id": chat_id, "text": texto})
+
 
 def responder_inteligente(texto):
     texto = texto.lower()
@@ -62,12 +70,13 @@ def responder_inteligente(texto):
         return "Sim. Não há cadastro, nem promessa de lucro. É uma rede voluntária baseada em confiança."
 
     if "como funciona" in texto:
-        return "Você cria um grupo, envia pequenos valores via Pix para até 10 pessoas e recebe delas também."
+        return "Você cria um grupo no WhatsApp, envia pequenos valores via Pix para até 10 pessoas e recebe delas também, criando um ciclo colaborativo."
 
     if "participar" in texto:
         return "Perfeito. Vamos começar! Você deseja participar? (Sim/Não)"
 
     return None
+
 
 @app.route("/webhook", methods=["POST"])
 def webhook():
