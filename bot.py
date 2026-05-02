@@ -10,50 +10,45 @@ DATABASE_URL = os.getenv("DATABASE_URL")
 
 usuarios = {}
 
-# 🔹 BASE COMPLETA DO SEU PROJETO (IA SIMULADA)
-TEXTO_BASE = """
-A Rede de Apoio Financeiro Colaborativo é um sistema baseado em microdoações voluntárias entre pessoas.
-Não é empresa, não promete lucro e não exige cadastro.
-
-Funciona assim:
-- Você cria um grupo no WhatsApp
-- Envia pequenos valores via Pix (centavos até R$1)
-- Troca ajuda com até 10 pessoas
-- Posta comprovantes no grupo
-
-A base do sistema é:
-confiança, simplicidade, continuidade e reciprocidade.
-
-Não é enriquecimento rápido.
-É ajuda mútua real entre pessoas.
-
-Qualquer pessoa pode participar.
-"""
-
+# 🔥 IA MAIS COMPLETA BASEADA NO SEU PROJETO
 def responder_inteligente(texto):
-    texto = texto.lower()
+    texto = texto.lower().strip()
 
-    if "seguro" in texto:
-        return "Sim. É seguro porque não envolve cadastro, empresa ou promessa de lucro. É apenas troca voluntária entre pessoas."
+    respostas = {
+        "seguro": "Sim. É seguro porque não envolve cadastro, empresa ou promessa de lucro. É uma troca voluntária entre pessoas.",
 
-    if "como funciona" in texto:
-        return "Funciona com microdoações via Pix entre pequenos grupos. Cada pessoa ajuda outras e recebe também, criando um ciclo colaborativo."
+        "como funciona": "Você cria um grupo no WhatsApp, envia pequenos valores via Pix para até 10 pessoas e recebe também. Isso cria um ciclo colaborativo simples e contínuo.",
 
-    if "é pirâmide" in texto or "golpe" in texto:
-        return "Não é pirâmide porque não há promessa de lucro, nem entrada obrigatória. É apenas ajuda voluntária entre pessoas."
+        "golpe": "Não é golpe porque não existe promessa de lucro, nem obrigação. Tudo é voluntário e transparente.",
 
-    if "participar" in texto:
-        return "Perfeito. Vamos começar. Você deseja participar? (Sim/Não)"
+        "pirâmide": "Não é pirâmide. Não há hierarquia, nem entrada obrigatória, nem ganhos garantidos.",
 
-    if "pix" in texto:
-        return "Os valores são pequenos (centavos até R$1), justamente para ser acessível e sustentável."
+        "pix": "Os valores são pequenos, de centavos até R$1, justamente para ser acessível a qualquer pessoa.",
 
-    if "funciona mesmo" in texto:
-        return "Funciona na medida da participação. Quanto mais pessoas colaboram, mais o sistema se mantém ativo."
+        "quem pode participar": "Qualquer pessoa pode participar: estudantes, trabalhadores, aposentados.",
 
-    return None
+        "precisa pagar": "Não há taxa. Você só envia valores pequenos se quiser participar da dinâmica.",
 
+        "quanto ganha": "Não é um sistema de ganho financeiro. É ajuda mútua contínua entre pessoas.",
 
+        "vale a pena": "Vale para quem acredita em colaboração, constância e ajuda entre pessoas.",
+
+        "funciona mesmo": "Funciona na medida da participação. Quanto mais pessoas colaboram, mais ativo o sistema fica.",
+
+        "grupo": "Você precisa criar um grupo no WhatsApp com seu nome e sua chave Pix para iniciar sua rede.",
+
+        "comprovante": "Os comprovantes devem ser postados no grupo para manter transparência.",
+
+        "participar": "Perfeito. Vamos começar. Você deseja participar? (Sim/Não)"
+    }
+
+    for chave in respostas:
+        if chave in texto:
+            return respostas[chave]
+
+    return "Posso te explicar melhor como funciona ou te ajudar a participar. O que você quer saber?"
+
+# 🔹 SALVAR LEAD SEM DUPLICAR
 def salvar_lead(nome, interesse):
     nome = nome.strip().lower()
     interesse = interesse.strip().lower()
@@ -76,12 +71,12 @@ def salvar_lead(nome, interesse):
                 ON CONFLICT (nome, interesse) DO NOTHING
             """, (nome, interesse))
 
-
+# 🔹 HOME
 @app.route("/")
 def home():
-    return "IA COMPLETA ATIVA 🚀"
+    return "IA MAXIMA ATIVA 🚀"
 
-
+# 🔹 PAINEL
 @app.route("/leads")
 def ver_leads():
     html = "<h2>📊 Leads Capturados</h2>"
@@ -99,12 +94,12 @@ def ver_leads():
 
     return html
 
-
+# 🔹 ENVIAR RESPOSTA
 def responder(chat_id, texto):
     url = f"https://api.telegram.org/bot{TOKEN}/sendMessage"
     requests.post(url, json={"chat_id": chat_id, "text": texto})
 
-
+# 🔹 WEBHOOK
 @app.route("/webhook", methods=["POST"])
 def webhook():
     data = request.json
