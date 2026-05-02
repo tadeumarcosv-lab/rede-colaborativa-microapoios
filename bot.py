@@ -10,16 +10,16 @@ DATABASE_URL = os.getenv("DATABASE_URL")
 
 usuarios = {}
 
-# 🔥 CRIA TABELA SEM APAGAR DADOS
+# 🔥 BANCO PROFISSIONAL
 def inicializar_banco():
     with psycopg.connect(DATABASE_URL) as conn:
         with conn.cursor() as cur:
-
             cur.execute("""
                 CREATE TABLE IF NOT EXISTS leads (
                     id SERIAL PRIMARY KEY,
                     nome TEXT,
                     interesse TEXT,
+                    origem TEXT,
                     UNIQUE (nome, interesse)
                 )
             """)
@@ -27,44 +27,42 @@ def inicializar_banco():
 inicializar_banco()
 
 
-# 🤖 RESPOSTAS INTELIGENTES
+# 🤖 RESPOSTAS MAIS HUMANAS
 def responder_inteligente(texto):
-    texto = texto.lower().strip()
+    texto = texto.lower()
 
-    respostas = {
-        "seguro": "Sim. É seguro porque não envolve cadastro, empresa ou promessa de lucro. É uma troca voluntária entre pessoas.",
-        "como funciona": "Você cria um grupo no WhatsApp, envia pequenos valores via Pix para até 10 pessoas e recebe também. Isso cria um ciclo colaborativo simples.",
-        "golpe": "Não é golpe. Não há promessa de lucro nem obrigação.",
-        "pirâmide": "Não é pirâmide. Não existe hierarquia nem ganhos garantidos.",
-        "quem pode participar": "Qualquer pessoa pode participar.",
-        "participar": "Perfeito. Vamos começar. Você deseja participar? (Sim/Não)"
-    }
+    if "seguro" in texto or "golpe" in texto:
+        return "Entendo sua preocupação. Aqui não existe promessa de lucro nem empresa. É apenas uma troca voluntária entre pessoas usando valores pequenos."
 
-    for chave in respostas:
-        if chave in texto:
-            return respostas[chave]
+    if "como funciona" in texto:
+        return "Funciona assim: você cria um grupo no WhatsApp, envia pequenos valores (centavos até R$1) para algumas pessoas e também pode receber. É um modelo simples de colaboração."
 
-    return "Posso te explicar melhor como funciona ou te ajudar a participar."
+    if "quem pode participar" in texto:
+        return "Qualquer pessoa pode participar: estudantes, trabalhadores, aposentados. Não tem restrição."
+
+    if "participar" in texto:
+        return "Perfeito. Vamos começar. Você quer participar? (Sim/Não)"
+
+    return None
 
 
-# 💾 SALVAR LEAD SEM DUPLICAR
-def salvar_lead(nome, interesse):
+# 💾 SALVAR LEAD COM ORIGEM
+def salvar_lead(nome, interesse, origem="telegram"):
     nome = nome.strip().lower()
     interesse = interesse.strip().lower()
 
     with psycopg.connect(DATABASE_URL) as conn:
         with conn.cursor() as cur:
-
             cur.execute("""
-                INSERT INTO leads (nome, interesse)
-                VALUES (%s, %s)
+                INSERT INTO leads (nome, interesse, origem)
+                VALUES (%s, %s, %s)
                 ON CONFLICT (nome, interesse) DO NOTHING
-            """, (nome, interesse))
+            """, (nome, interesse, origem))
 
 
 @app.route("/")
 def home():
-    return "IA PROFISSIONAL ATIVA 🚀"
+    return "SISTEMA DE CAPTAÇÃO ATIVO 🚀"
 
 
 @app.route("/leads")
@@ -73,14 +71,14 @@ def ver_leads():
 
     with psycopg.connect(DATABASE_URL) as conn:
         with conn.cursor() as cur:
-            cur.execute("SELECT nome, interesse FROM leads")
+            cur.execute("SELECT nome, interesse, origem FROM leads")
             dados = cur.fetchall()
 
             if not dados:
                 return html + "<p>Nenhum lead ainda.</p>"
 
-            for nome, interesse in dados:
-                html += f"<p>👤 Nome: {nome.capitalize()}<br>🔥 Interesse: {interesse}</p><hr>"
+            for nome, interesse, origem in dados:
+                html += f"<p>👤 {nome.capitalize()}<br>🔥 {interesse}<br>🌐 {origem}</p><hr>"
 
     return html
 
@@ -108,11 +106,11 @@ def webhook():
 
     if texto == "/start":
         usuarios[chat_id] = "inicio"
-        responder(chat_id, "Olá! Quer entender como funciona ou participar?")
+        responder(chat_id, "Olá! Posso te explicar ou te ajudar a participar.")
 
     elif estado == "inicio" and "participar" in texto.lower():
         usuarios[chat_id] = "confirmar"
-        responder(chat_id, "Você deseja participar? (Sim/Não)")
+        responder(chat_id, "Você quer participar? (Sim/Não)")
 
     elif estado == "confirmar" and texto.lower() == "sim":
         usuarios[chat_id] = "nome"
@@ -128,7 +126,7 @@ def webhook():
 
         salvar_lead(nome, interesse)
 
-        responder(chat_id, "Perfeito! Você foi registrado com sucesso.")
+        responder(chat_id, "Perfeito! Você entrou no sistema.")
         usuarios[chat_id] = "fim"
 
     return "ok"
