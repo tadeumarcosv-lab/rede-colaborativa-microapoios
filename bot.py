@@ -10,15 +10,13 @@ DATABASE_URL = os.getenv("DATABASE_URL")
 
 usuarios = {}
 
-# 🔥 RESETA TABELA UMA VEZ AO INICIAR
+# 🔥 CRIA TABELA SEM APAGAR DADOS
 def inicializar_banco():
     with psycopg.connect(DATABASE_URL) as conn:
         with conn.cursor() as cur:
 
-            cur.execute("DROP TABLE IF EXISTS leads")
-
             cur.execute("""
-                CREATE TABLE leads (
+                CREATE TABLE IF NOT EXISTS leads (
                     id SERIAL PRIMARY KEY,
                     nome TEXT,
                     interesse TEXT,
@@ -29,23 +27,16 @@ def inicializar_banco():
 inicializar_banco()
 
 
-# 🤖 RESPOSTAS AUTOMÁTICAS
+# 🤖 RESPOSTAS INTELIGENTES
 def responder_inteligente(texto):
     texto = texto.lower().strip()
 
     respostas = {
         "seguro": "Sim. É seguro porque não envolve cadastro, empresa ou promessa de lucro. É uma troca voluntária entre pessoas.",
-
-        "como funciona": "Você cria um grupo no WhatsApp, envia pequenos valores via Pix para até 10 pessoas e recebe também. Isso cria um ciclo colaborativo simples e contínuo.",
-
-        "golpe": "Não é golpe porque não existe promessa de lucro nem obrigação. Tudo é voluntário.",
-
-        "pirâmide": "Não é pirâmide. Não existe hierarquia nem promessa de ganhos.",
-
-        "pix": "Os valores são pequenos: centavos até R$1.",
-
-        "quem pode participar": "Qualquer pessoa pode participar: estudantes, trabalhadores, aposentados.",
-
+        "como funciona": "Você cria um grupo no WhatsApp, envia pequenos valores via Pix para até 10 pessoas e recebe também. Isso cria um ciclo colaborativo simples.",
+        "golpe": "Não é golpe. Não há promessa de lucro nem obrigação.",
+        "pirâmide": "Não é pirâmide. Não existe hierarquia nem ganhos garantidos.",
+        "quem pode participar": "Qualquer pessoa pode participar.",
         "participar": "Perfeito. Vamos começar. Você deseja participar? (Sim/Não)"
     }
 
@@ -56,13 +47,14 @@ def responder_inteligente(texto):
     return "Posso te explicar melhor como funciona ou te ajudar a participar."
 
 
-# 💾 SALVAR LEAD
+# 💾 SALVAR LEAD SEM DUPLICAR
 def salvar_lead(nome, interesse):
     nome = nome.strip().lower()
     interesse = interesse.strip().lower()
 
     with psycopg.connect(DATABASE_URL) as conn:
         with conn.cursor() as cur:
+
             cur.execute("""
                 INSERT INTO leads (nome, interesse)
                 VALUES (%s, %s)
@@ -72,7 +64,7 @@ def salvar_lead(nome, interesse):
 
 @app.route("/")
 def home():
-    return "IA MAXIMA ATIVA 🚀"
+    return "IA PROFISSIONAL ATIVA 🚀"
 
 
 @app.route("/leads")
