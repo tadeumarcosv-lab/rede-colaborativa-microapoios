@@ -1,19 +1,16 @@
-import os
-import psycopg
 from flask import Flask, request
 import requests
+import os
+import psycopg
 
 app = Flask(__name__)
 
 TOKEN = os.getenv("TOKEN")
 DATABASE_URL = os.getenv("DATABASE_URL")
 
-URL = f"https://api.telegram.org/bot{TOKEN}/sendMessage"
-
 usuarios = {}
 
-# ================= BANCO =================
-def criar_banco():
+def salvar_lead(nome, interesse):
     with psycopg.connect(DATABASE_URL) as conn:
         with conn.cursor() as cur:
             cur.execute("""
@@ -23,158 +20,94 @@ def criar_banco():
                     interesse TEXT
                 )
             """)
+            cur.execute("""
+                SELECT * FROM leads WHERE nome = %s AND interesse = %s
+            """, (nome, interesse))
+            existente = cur.fetchone()
 
-def salvar_lead(nome, interesse):
-    with psycopg.connect(DATABASE_URL) as conn:
-        with conn.cursor() as cur:
-            cur.execute(
-                "INSERT INTO leads (nome, interesse) VALUES (%s, %s)",
-                (nome, interesse)
-            )
+            if not existente:
+                cur.execute("""
+                    INSERT INTO leads (nome, interesse)
+                    VALUES (%s, %s)
+                """, (nome, interesse))
 
-def listar_leads():
+@app.route("/")
+def home():
+    return "VERSAO NOVA ATIVA 🚀"
+
+@app.route("/leads")
+def ver_leads():
+    html = "<h2>📊 Leads Capturados</h2>"
     with psycopg.connect(DATABASE_URL) as conn:
         with conn.cursor() as cur:
             cur.execute("SELECT nome, interesse FROM leads")
-            return cur.fetchall()
+            dados = cur.fetchall()
 
-criar_banco()
+            if not dados:
+                return html + "<p>Nenhum lead ainda.</p>"
 
-# ================= RESPOSTAS INTELIGENTES =================
+            for nome, interesse in dados:
+                html += f"<p>👤 Nome: {nome}<br>🔥 Interesse: {interesse}</p><hr>"
+
+    return html
+
+def responder(chat_id, texto):
+    url = f"https://api.telegram.org/bot{TOKEN}/sendMessage"
+    requests.post(url, json={"chat_id": chat_id, "text": texto})
+
 def responder_inteligente(texto):
+    texto = texto.lower()
+
     if "seguro" in texto:
-        return "🔐 Sim, é seguro.\n\nVocê decide com quem participar e os valores são baixos.\nNão há acesso a contas, senhas ou dados sensíveis."
+        return "Sim. Não há cadastro, nem promessa de lucro. É uma rede voluntária baseada em confiança."
 
-    if "legal" in texto:
-        return "⚖️ Sim, é legal.\n\nSão transferências voluntárias entre pessoas, usando Pix.\nNão envolve empresa nem promessa de lucro."
+    if "como funciona" in texto:
+        return "Você cria um grupo, envia pequenos valores via Pix para até 10 pessoas e recebe delas também."
 
-    if "piramide" in texto or "esquema" in texto:
-        return "❌ Não é pirâmide.\n\nNão existe recrutamento obrigatório, nem níveis, nem promessa de ganho.\nÉ apenas colaboração entre pessoas."
-
-    if "funciona" in texto:
-        return "📌 Funciona assim:\n\nVocê cria um grupo, troca apoio com até 10 pessoas e reinveste parte.\nTudo simples e direto."
-
-    if "ganhar" in texto or "dinheiro" in texto:
-        return "💰 Não é para enriquecer.\n\nÉ um sistema de ajuda mútua para pequenas necessidades."
-
-    if "começar" in texto or "como faço" in texto:
-        return "🚀 Para começar:\n\n1. Crie um grupo no WhatsApp\n2. Convide até 10 pessoas\n3. Troque apoio via Pix\n4. Compartilhe comprovantes"
+    if "participar" in texto:
+        return "Perfeito. Vamos começar! Você deseja participar? (Sim/Não)"
 
     return None
 
-# ================= TELEGRAM =================
-def enviar_mensagem(chat_id, texto):
-    requests.post(URL, json={
-        "chat_id": chat_id,
-        "text": texto
-    })
-
-def processar_mensagem(texto, chat_id):
-    texto = texto.lower().strip()
-
-    # 🔁 RESET
-    if texto in ["oi", "olá", "ola", "/start"]:
-        usuarios[chat_id] = {"estado": "menu"}
-        return """👋 Olá! Bem-vindo à Rede de Apoio Financeiro Colaborativo 🤝
-
-1 - Como funciona
-2 - Participar
-3 - Dúvidas"""
-
-    # 🧠 INTELIGENTE GLOBAL
-    resposta = responder_inteligente(texto)
-    if resposta:
-        return resposta
-
-    if "participar" in texto or texto == "2":
-        usuarios[chat_id] = {"estado": "fluxo"}
-        return "🤝 Quer entrar agora? (sim/não)"
-
-    if chat_id not in usuarios:
-        usuarios[chat_id] = {"estado": "menu"}
-
-    estado = usuarios[chat_id]["estado"]
-
-    # MENU
-    if estado == "menu":
-        if texto == "1":
-            return "📌 A rede conecta pessoas para apoio financeiro simples via Pix."
-        elif texto == "2":
-            usuarios[chat_id]["estado"] = "fluxo"
-            return "Quer entrar agora? (sim/não)"
-        elif texto == "3":
-            return "Pode me perguntar qualquer coisa 👍"
-        else:
-            return "Digite 1, 2 ou 3."
-
-    # FLUXO
-    elif estado == "fluxo":
-        if texto == "sim":
-            usuarios[chat_id]["estado"] = "nome"
-            return "Perfeito! Qual seu nome?"
-        elif texto in ["não", "nao"]:
-            usuarios[chat_id]["estado"] = "menu"
-            return "Tudo bem 😊"
-        else:
-            return "Responda com sim ou não."
-
-    # NOME
-    elif estado == "nome":
-        usuarios[chat_id]["nome"] = texto.capitalize()
-        usuarios[chat_id]["estado"] = "escolha"
-        return "Você quer:\n1 - Receber informações\n2 - Entrar na prioridade"
-
-    # ESCOLHA
-    elif estado == "escolha":
-        nome = usuarios[chat_id]["nome"]
-
-        if texto == "1":
-            salvar_lead(nome, "informações")
-            return f"Perfeito, {nome}! Você receberá mais informações 👍"
-
-        elif texto == "2":
-            salvar_lead(nome, "prioridade")
-            return f"Excelente, {nome}! Você está na prioridade 🚀"
-
-        else:
-            return "Digite 1 ou 2."
-
-    return "Digite 'oi' para começar."
-
-# ================= WEBHOOK =================
 @app.route("/webhook", methods=["POST"])
 def webhook():
     data = request.json
 
-    if "message" in data:
-        chat_id = data["message"]["chat"]["id"]
-        texto = data["message"].get("text", "")
+    if "message" not in data:
+        return "ok"
 
-        resposta = processar_mensagem(texto, chat_id)
-        enviar_mensagem(chat_id, resposta)
+    chat_id = data["message"]["chat"]["id"]
+    texto = data["message"].get("text", "")
+
+    resposta_auto = responder_inteligente(texto)
+    if resposta_auto:
+        responder(chat_id, resposta_auto)
+
+    estado = usuarios.get(chat_id, "inicio")
+
+    if texto == "/start":
+        usuarios[chat_id] = "inicio"
+        responder(chat_id, "Olá! Quer entender como funciona ou participar?")
+
+    elif estado == "inicio" and "participar" in texto.lower():
+        usuarios[chat_id] = "confirmar"
+        responder(chat_id, "Você deseja participar? (Sim/Não)")
+
+    elif estado == "confirmar" and texto.lower() == "sim":
+        usuarios[chat_id] = "nome"
+        responder(chat_id, "Qual seu nome?")
+
+    elif estado == "nome":
+        usuarios[chat_id] = {"nome": texto}
+        responder(chat_id, "Qual seu nível de interesse?\n1 - conhecer\n2 - prioridade")
+
+    elif isinstance(estado, dict) and "nome" in estado:
+        nome = estado["nome"]
+        interesse = "prioridade" if texto == "2" else "curiosidade"
+
+        salvar_lead(nome, interesse)
+
+        responder(chat_id, "Perfeito! Você foi registrado com sucesso.")
+        usuarios[chat_id] = "fim"
 
     return "ok"
-
-# ================= PAINEL =================
-@app.route("/leads")
-def leads():
-    dados = listar_leads()
-
-    if not dados:
-        return "Nenhum lead ainda."
-
-    html = "<h2>📊 Leads Capturados</h2>"
-
-    for nome, interesse in dados:
-        html += f"<p>👤 Nome: {nome}<br>🔥 Interesse: {interesse}</p>"
-
-    return html
-
-# ================= HOME =================
-@app.route("/")
-def home():
-    return "BOT INTELIGENTE ATIVO 🚀"
-
-# ================= RUN =================
-if __name__ == "__main__":
-    app.run(host="0.0.0.0", port=10000)
