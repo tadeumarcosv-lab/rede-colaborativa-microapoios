@@ -1,0 +1,6 @@
+services:
+  - type: web
+    name: rede-colaborativa-microapoios
+    runtime: python
+    buildCommand: ""
+    startCommand: gunicorn bot:app
