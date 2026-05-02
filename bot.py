@@ -10,6 +10,50 @@ DATABASE_URL = os.getenv("DATABASE_URL")
 
 usuarios = {}
 
+# 🔹 BASE COMPLETA DO SEU PROJETO (IA SIMULADA)
+TEXTO_BASE = """
+A Rede de Apoio Financeiro Colaborativo é um sistema baseado em microdoações voluntárias entre pessoas.
+Não é empresa, não promete lucro e não exige cadastro.
+
+Funciona assim:
+- Você cria um grupo no WhatsApp
+- Envia pequenos valores via Pix (centavos até R$1)
+- Troca ajuda com até 10 pessoas
+- Posta comprovantes no grupo
+
+A base do sistema é:
+confiança, simplicidade, continuidade e reciprocidade.
+
+Não é enriquecimento rápido.
+É ajuda mútua real entre pessoas.
+
+Qualquer pessoa pode participar.
+"""
+
+def responder_inteligente(texto):
+    texto = texto.lower()
+
+    if "seguro" in texto:
+        return "Sim. É seguro porque não envolve cadastro, empresa ou promessa de lucro. É apenas troca voluntária entre pessoas."
+
+    if "como funciona" in texto:
+        return "Funciona com microdoações via Pix entre pequenos grupos. Cada pessoa ajuda outras e recebe também, criando um ciclo colaborativo."
+
+    if "é pirâmide" in texto or "golpe" in texto:
+        return "Não é pirâmide porque não há promessa de lucro, nem entrada obrigatória. É apenas ajuda voluntária entre pessoas."
+
+    if "participar" in texto:
+        return "Perfeito. Vamos começar. Você deseja participar? (Sim/Não)"
+
+    if "pix" in texto:
+        return "Os valores são pequenos (centavos até R$1), justamente para ser acessível e sustentável."
+
+    if "funciona mesmo" in texto:
+        return "Funciona na medida da participação. Quanto mais pessoas colaboram, mais o sistema se mantém ativo."
+
+    return None
+
+
 def salvar_lead(nome, interesse):
     nome = nome.strip().lower()
     interesse = interesse.strip().lower()
@@ -17,7 +61,6 @@ def salvar_lead(nome, interesse):
     with psycopg.connect(DATABASE_URL) as conn:
         with conn.cursor() as cur:
 
-            # cria tabela com proteção contra duplicado
             cur.execute("""
                 CREATE TABLE IF NOT EXISTS leads (
                     id SERIAL PRIMARY KEY,
@@ -27,7 +70,6 @@ def salvar_lead(nome, interesse):
                 )
             """)
 
-            # insere sem duplicar
             cur.execute("""
                 INSERT INTO leads (nome, interesse)
                 VALUES (%s, %s)
@@ -37,7 +79,7 @@ def salvar_lead(nome, interesse):
 
 @app.route("/")
 def home():
-    return "VERSAO NOVA ATIVA 🚀"
+    return "IA COMPLETA ATIVA 🚀"
 
 
 @app.route("/leads")
@@ -61,21 +103,6 @@ def ver_leads():
 def responder(chat_id, texto):
     url = f"https://api.telegram.org/bot{TOKEN}/sendMessage"
     requests.post(url, json={"chat_id": chat_id, "text": texto})
-
-
-def responder_inteligente(texto):
-    texto = texto.lower()
-
-    if "seguro" in texto:
-        return "Sim. Não há cadastro, nem promessa de lucro. É uma rede voluntária baseada em confiança."
-
-    if "como funciona" in texto:
-        return "Você cria um grupo no WhatsApp, envia pequenos valores via Pix para até 10 pessoas e recebe delas também, criando um ciclo colaborativo."
-
-    if "participar" in texto:
-        return "Perfeito. Vamos começar! Você deseja participar? (Sim/Não)"
-
-    return None
 
 
 @app.route("/webhook", methods=["POST"])
@@ -110,8 +137,8 @@ def webhook():
         usuarios[chat_id] = {"nome": texto}
         responder(chat_id, "Qual seu nível de interesse?\n1 - conhecer\n2 - prioridade")
 
-    elif isinstance(estado, dict) and "nome" in estado:
-        nome = estado["nome"]
+    elif isinstance(usuarios.get(chat_id), dict):
+        nome = usuarios[chat_id]["nome"]
         interesse = "prioridade" if texto == "2" else "curiosidade"
 
         salvar_lead(nome, interesse)
