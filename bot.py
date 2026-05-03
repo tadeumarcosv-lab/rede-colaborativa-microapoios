@@ -1,86 +1,36 @@
 from flask import Flask, request
 import requests
 import os
-import psycopg
 
 app = Flask(__name__)
 
-TOKEN = os.getenv("TOKEN")
-DATABASE_URL = os.getenv("DATABASE_URL")
+# 🔥 COLOQUE SEU TOKEN AQUI (TEMPORÁRIO)
+TOKEN = "7903734471:AAH87bQtPPyqjeBlwX2u7zTk262jkQZeSD8"
 
 usuarios = {}
 
-# 🔥 BANCO PROFISSIONAL
-def inicializar_banco():
-    with psycopg.connect(DATABASE_URL) as conn:
-        with conn.cursor() as cur:
-            cur.execute("""
-                CREATE TABLE IF NOT EXISTS leads (
-                    id SERIAL PRIMARY KEY,
-                    nome TEXT,
-                    interesse TEXT,
-                    origem TEXT,
-                    UNIQUE (nome, interesse)
-                )
-            """)
-
-inicializar_banco()
-
-
-# 🤖 RESPOSTAS MAIS HUMANAS
+# 🤖 RESPOSTAS INTELIGENTES
 def responder_inteligente(texto):
     texto = texto.lower()
 
     if "seguro" in texto or "golpe" in texto:
-        return "Entendo sua preocupação. Aqui não existe promessa de lucro nem empresa. É apenas uma troca voluntária entre pessoas usando valores pequenos."
+        return "Entendo sua preocupação. Aqui não existe promessa de lucro. É apenas colaboração voluntária entre pessoas."
 
     if "como funciona" in texto:
-        return "Funciona assim: você cria um grupo no WhatsApp, envia pequenos valores (centavos até R$1) para algumas pessoas e também pode receber. É um modelo simples de colaboração."
+        return "Funciona assim: pessoas se ajudam com pequenos valores. É uma rede colaborativa simples."
 
     if "quem pode participar" in texto:
-        return "Qualquer pessoa pode participar: estudantes, trabalhadores, aposentados. Não tem restrição."
+        return "Qualquer pessoa pode participar."
 
     if "participar" in texto:
-        return "Perfeito. Vamos começar. Você quer participar? (Sim/Não)"
+        return "Perfeito. Você quer participar? (Sim/Não)"
 
     return None
 
 
-# 💾 SALVAR LEAD COM ORIGEM
-def salvar_lead(nome, interesse, origem="telegram"):
-    nome = nome.strip().lower()
-    interesse = interesse.strip().lower()
-
-    with psycopg.connect(DATABASE_URL) as conn:
-        with conn.cursor() as cur:
-            cur.execute("""
-                INSERT INTO leads (nome, interesse, origem)
-                VALUES (%s, %s, %s)
-                ON CONFLICT (nome, interesse) DO NOTHING
-            """, (nome, interesse, origem))
-
-
 @app.route("/")
 def home():
-    return "SISTEMA DE CAPTAÇÃO ATIVO 🚀"
-
-
-@app.route("/leads")
-def ver_leads():
-    html = "<h2>📊 Leads Capturados</h2>"
-
-    with psycopg.connect(DATABASE_URL) as conn:
-        with conn.cursor() as cur:
-            cur.execute("SELECT nome, interesse, origem FROM leads")
-            dados = cur.fetchall()
-
-            if not dados:
-                return html + "<p>Nenhum lead ainda.</p>"
-
-            for nome, interesse, origem in dados:
-                html += f"<p>👤 {nome.capitalize()}<br>🔥 {interesse}<br>🌐 {origem}</p><hr>"
-
-    return html
+    return "VERSAO NOVA ATIVA 🚀"
 
 
 def responder(chat_id, texto):
@@ -98,35 +48,11 @@ def webhook():
     chat_id = data["message"]["chat"]["id"]
     texto = data["message"].get("text", "")
 
-    resposta_auto = responder_inteligente(texto)
-    if resposta_auto:
-        responder(chat_id, resposta_auto)
+    resposta = responder_inteligente(texto)
 
-    estado = usuarios.get(chat_id, "inicio")
-
-    if texto == "/start":
-        usuarios[chat_id] = "inicio"
-        responder(chat_id, "Olá! Posso te explicar ou te ajudar a participar.")
-
-    elif estado == "inicio" and "participar" in texto.lower():
-        usuarios[chat_id] = "confirmar"
-        responder(chat_id, "Você quer participar? (Sim/Não)")
-
-    elif estado == "confirmar" and texto.lower() == "sim":
-        usuarios[chat_id] = "nome"
-        responder(chat_id, "Qual seu nome?")
-
-    elif estado == "nome":
-        usuarios[chat_id] = {"nome": texto}
-        responder(chat_id, "Qual seu nível de interesse?\n1 - conhecer\n2 - prioridade")
-
-    elif isinstance(usuarios.get(chat_id), dict):
-        nome = usuarios[chat_id]["nome"]
-        interesse = "prioridade" if texto == "2" else "curiosidade"
-
-        salvar_lead(nome, interesse)
-
-        responder(chat_id, "Perfeito! Você entrou no sistema.")
-        usuarios[chat_id] = "fim"
+    if resposta:
+        responder(chat_id, resposta)
+    else:
+        responder(chat_id, "Digite: Como funciona / Quero participar")
 
     return "ok"
