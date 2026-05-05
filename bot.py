@@ -3,43 +3,63 @@ import requests
 
 app = Flask(__name__)
 
-# 🔥 COLE SEU TOKEN AQUI (ENTRE ASPAS)
-TOKEN = "SEU_TOKEN_AQUI"
+# 🔥 COLE SEU TOKEN AQUI
+TOKEN = "7903734471:AAH87bQtPPyqjeBlwX2u7zTk262jkQZeSD8"
 
 usuarios = {}
 leads = []
 
-# 📩 ENVIAR MENSAGEM
-def enviar_mensagem(chat_id, texto):
+def enviar(chat_id, texto):
     url = f"https://api.telegram.org/bot{TOKEN}/sendMessage"
-    requests.post(url, json={
-        "chat_id": chat_id,
-        "text": texto
-    })
+    requests.post(url, json={"chat_id": chat_id, "text": texto})
 
-# 🤖 PROCESSAMENTO
-def processar_mensagem(chat_id, texto):
-    estado = usuarios.get(chat_id, "inicio")
+@app.route("/")
+def home():
+    return "BOT ONLINE 🚀"
 
+@app.route("/leads")
+def ver_leads():
+    html = "<h2>📊 Leads Capturados</h2>"
+
+    if not leads:
+        return html + "<p>Nenhum lead ainda.</p>"
+
+    for l in leads:
+        html += f"<p>👤 {l['nome']}<br>🔥 {l['interesse']}</p><hr>"
+
+    return html
+
+@app.route("/webhook", methods=["POST"])
+def webhook():
+    data = request.json
+
+    if "message" not in data:
+        return "ok"
+
+    chat_id = data["message"]["chat"]["id"]
+    texto = data["message"].get("text", "").lower()
+
+    estado = usuarios.get(chat_id)
+
+    # INÍCIO
     if texto == "/start":
         usuarios[chat_id] = "inicio"
-        enviar_mensagem(chat_id, "Olá 👋\n\nDigite:\n👉 Quero participar\n👉 Como funciona")
-        return
+        enviar(chat_id, "Olá 👋\nDigite:\n👉 Quero participar")
+        return "ok"
 
-    if "como funciona" in texto.lower():
-        enviar_mensagem(chat_id, "Funciona com ajuda entre pessoas com pequenos valores.")
-        return
-
-    if "quero participar" in texto.lower():
+    # ENTRAR
+    if "participar" in texto:
         usuarios[chat_id] = "nome"
-        enviar_mensagem(chat_id, "Qual seu nome?")
-        return
+        enviar(chat_id, "Qual seu nome?")
+        return "ok"
 
+    # NOME
     if estado == "nome":
         usuarios[chat_id] = {"etapa": "interesse", "nome": texto}
-        enviar_mensagem(chat_id, "Escolha:\n1 - Curiosidade\n2 - Renda extra")
-        return
+        enviar(chat_id, "Escolha:\n1 - Curiosidade\n2 - Renda extra")
+        return "ok"
 
+    # INTERESSE
     if isinstance(estado, dict):
         nome = estado["nome"]
 
@@ -48,8 +68,8 @@ def processar_mensagem(chat_id, texto):
         elif texto == "2":
             interesse = "renda extra"
         else:
-            enviar_mensagem(chat_id, "Digite 1 ou 2")
-            return
+            enviar(chat_id, "Digite 1 ou 2")
+            return "ok"
 
         leads.append({
             "nome": nome,
@@ -58,36 +78,7 @@ def processar_mensagem(chat_id, texto):
 
         usuarios[chat_id] = "fim"
 
-        enviar_mensagem(chat_id, f"Pronto {nome}! ✅\nVocê entrou como: {interesse}")
-        return
-
-# 🌐 HOME
-@app.route("/")
-def home():
-    return "BOT SIMPLES ATIVO 🚀"
-
-# 📊 VER LEADS
-@app.route("/leads")
-def ver_leads():
-    html = "<h2>📊 Leads Capturados</h2>"
-
-    if not leads:
-        return html + "<p>Nenhum lead ainda.</p>"
-
-    for lead in leads:
-        html += f"<p>👤 {lead['nome']}<br>🔥 {lead['interesse']}</p><hr>"
-
-    return html
-
-# 🚀 WEBHOOK (SEM TRAVAR)
-@app.route("/webhook", methods=["POST"])
-def webhook():
-    data = request.json
-
-    if "message" in data:
-        chat_id = data["message"]["chat"]["id"]
-        texto = data["message"].get("text", "")
-
-        processar_mensagem(chat_id, texto)
+        enviar(chat_id, f"Pronto {nome}! ✅\nInteresse: {interesse}")
+        return "ok"
 
     return "ok"
