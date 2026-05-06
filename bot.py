@@ -6,7 +6,6 @@ app = Flask(__name__)
 TOKEN = "7903734471:AAH87bQtPPyqjeBlwX2u7zTk262jkQZeSD8"
 URL = f"https://api.telegram.org/bot{TOKEN}/sendMessage"
 
-# memória simples (temporária)
 usuarios = {}
 
 @app.route("/")
@@ -38,12 +37,15 @@ def webhook():
             else:
                 responder(chat_id, "Digite 1 ou 2.")
 
-        # 🔹 CAPTURA NOME
+        # 🔹 CAPTURA NOME + SALVA
         elif estado == "nome":
-            usuarios[chat_id] = "fim"
-            responder(chat_id, f"Prazer, {texto}!\n\nCadastro concluído ✅")
+            nome = texto
 
-        # 🔹 PADRÃO
+            salvar_lead(nome)
+
+            usuarios[chat_id] = "fim"
+            responder(chat_id, f"Prazer, {nome}!\n\nCadastro salvo com sucesso ✅")
+
         else:
             responder(chat_id, "Digite /start para começar.")
 
@@ -55,3 +57,8 @@ def responder(chat_id, mensagem):
         "chat_id": chat_id,
         "text": mensagem
     })
+
+
+def salvar_lead(nome):
+    with open("leads.txt", "a") as arquivo:
+        arquivo.write(f"{nome} - interessado\n")
