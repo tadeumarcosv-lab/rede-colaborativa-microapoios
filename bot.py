@@ -3,7 +3,7 @@ import requests
 
 app = Flask(__name__)
 
-# 🔥 COLOQUE SEU TOKEN AQUI
+# 🔥 COLE SEU TOKEN AQUI
 TOKEN = "7903734471:AAH87bQtPPyqjeBlwX2u7zTk262jkQZeSD8"
 
 def enviar(chat_id, texto):
