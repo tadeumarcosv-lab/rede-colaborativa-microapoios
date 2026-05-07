@@ -10,7 +10,7 @@ URL = f"https://api.telegram.org/bot{TOKEN}/sendMessage"
 
 usuarios = {}
 
-WHATSAPP_LINK = "https://wa.me/5531991150767?text=Quero%20participar%20da%20Rede%20de%20Apoio%20Financeiro%20Colaborativo"
+WHATSAPP_LINK = "https://wa.me/5531991150767"
 
 @app.route("/")
 def home():
@@ -24,131 +24,200 @@ def webhook():
         chat_id = data["message"]["chat"]["id"]
         texto = data["message"].get("text", "").lower()
 
-        estado = usuarios.get(chat_id, "inicio")
+        usuarios.setdefault(chat_id, "menu")
 
-        # 🔹 INÍCIO
+        # 🔹 START
         if texto == "/start":
+
             usuarios[chat_id] = "menu"
+
             responder(chat_id,
 """Rede de Apoio Financeiro Colaborativo
 
 Bem-vindo 👇
 
-1 - Ver resumo geral
-2 - Entender passo a passo
-3 - Falar comigo no WhatsApp 📱
+Escolha um assunto:
+
+1 - O que é
+2 - Como funciona
+3 - Como criar seu grupo
+4 - Segurança
+5 - Reinvestimento
+6 - Integração entre grupos
+7 - Participar
+8 - Falar comigo no WhatsApp 📱
 """)
 
         # 🔹 MENU PRINCIPAL
-        elif estado == "menu":
-            if texto == "1":
-                usuarios[chat_id] = "menu"
-                responder(chat_id,
+        elif texto == "1":
+
+            responder(chat_id,
 """Rede de Apoio Financeiro Colaborativo
 
-Resumo geral 👇
+📖 O QUE É
 
-É um sistema onde pessoas se ajudam financeiramente de forma organizada, através de micro apoios entre participantes.
+Rede de apoio financeiro colaborativo entre parentes, amigos e pessoas diversas, baseada em microdoações voluntárias.
 
-Objetivo: criar uma rede forte de ajuda mútua.
-
-Escolha:
-
-2 - Ver passo a passo
-3 - Falar no WhatsApp 📱
+O objetivo é criar uma rede simples, descentralizada e acessível de ajuda mútua.
 """)
 
-            elif texto == "2":
-                usuarios[chat_id] = "passo1"
-                responder(chat_id,
+        elif texto == "2":
+
+            responder(chat_id,
 """Rede de Apoio Financeiro Colaborativo
 
-Passo 1 👇
+⚙ COMO FUNCIONA
 
-A rede conecta pessoas dispostas a ajudar e receber ajuda.
-
-Digite OK para continuar.
+1. Crie seu grupo no WhatsApp
+2. Compartilhe o Texto Geral
+3. Envie micro apoios via Pix
+4. Receba apoios
+5. Poste comprovantes
+6. Troque links entre grupos
+7. Continue o ciclo
 """)
 
-            elif texto == "3":
-                responder(chat_id,
-f"""Rede de Apoio Financeiro Colaborativo
+        elif texto == "3":
 
-Fale comigo diretamente no WhatsApp 👇
-
-{WHATSAPP_LINK}
-""")
-
-            else:
-                responder(chat_id, "Digite 1, 2 ou 3.")
-
-        # 🔹 PASSO A PASSO
-        elif estado == "passo1":
-            if "ok" in texto:
-                usuarios[chat_id] = "passo2"
-                responder(chat_id,
+            responder(chat_id,
 """Rede de Apoio Financeiro Colaborativo
 
-Passo 2 👇
+📱 COMO CRIAR SEU GRUPO
 
-Cada pessoa contribui com pequenos valores para ajudar outras.
+Nome recomendado:
 
-Digite OK para continuar.
+Rede de Apoio Financeiro Colaborativo – [Sua Chave Pix] – [Seu Primeiro Nome]
+
+Configuração recomendada:
+
+✔ Apenas administradores podem postar
+✔ WhatsApp visível para contato
 """)
 
-        elif estado == "passo2":
-            if "ok" in texto:
-                usuarios[chat_id] = "nome"
-                responder(chat_id,
+        elif texto == "4":
+
+            responder(chat_id,
 """Rede de Apoio Financeiro Colaborativo
 
-Passo 3 👇
+🔐 SEGURANÇA
 
-Agora vamos finalizar seu cadastro.
+Ao postar comprovantes, deixe visível apenas:
 
-Qual seu nome?
+✔ Primeiro nome
+✔ Banco
+✔ Chave Pix
+
+Evite divulgar dados desnecessários.
 """)
 
-        # 🔹 CAPTURA NOME
-        elif estado == "nome":
-            nome = texto
+        elif texto == "5":
 
-            salvar_lead(nome)
-            enviar_para_admin(nome)
+            responder(chat_id,
+"""Rede de Apoio Financeiro Colaborativo
 
-            usuarios[chat_id] = "fim"
+♻ REINVESTIMENTO
+
+Sugestão prática:
+
+✔ 50% do que receber → guardar
+✔ 50% → reinvestir na rede
+
+A força do sistema está na continuidade.
+""")
+
+        elif texto == "6":
+
+            responder(chat_id,
+"""Rede de Apoio Financeiro Colaborativo
+
+🌐 INTEGRAÇÃO ENTRE GRUPOS
+
+✔ Troque links dos grupos
+✔ Adicione outros grupos
+✔ Conecte pessoas
+
+Isso cria uma rede interligada e descentralizada.
+""")
+
+        elif texto == "7":
+
+            usuarios[chat_id] = "cadastro"
+
+            responder(chat_id,
+"""Rede de Apoio Financeiro Colaborativo
+
+👤 PARTICIPAR
+
+Qual seu primeiro nome?
+""")
+
+        elif texto == "8":
 
             responder(chat_id,
 f"""Rede de Apoio Financeiro Colaborativo
 
-Prazer, {nome}! 👇
+📱 CONTATO
 
-Cadastro concluído ✅
-
-Se quiser acelerar sua entrada, fale comigo no WhatsApp:
+Qualquer dúvida, fale comigo no WhatsApp:
 
 {WHATSAPP_LINK}
 """)
 
+        # 🔹 CADASTRO
+        elif usuarios.get(chat_id) == "cadastro":
+
+            nome = texto.title()
+
+            salvar_lead(nome)
+            enviar_para_admin(nome)
+
+            usuarios[chat_id] = "menu"
+
+            responder(chat_id,
+"""Rede de Apoio Financeiro Colaborativo
+
+✅ Cadastro recebido com sucesso.
+
+Agora continue explorando os assuntos do sistema pelo menu.
+
+Se necessário:
+
+8 - Falar comigo no WhatsApp 📱
+""")
+
         else:
-            responder(chat_id, "Digite /start para começar.")
+
+            responder(chat_id,
+"""Rede de Apoio Financeiro Colaborativo
+
+Digite uma opção válida:
+
+1 - O que é
+2 - Como funciona
+3 - Como criar seu grupo
+4 - Segurança
+5 - Reinvestimento
+6 - Integração entre grupos
+7 - Participar
+8 - Falar comigo no WhatsApp 📱
+""")
 
     return "ok"
 
-
 def responder(chat_id, mensagem):
+
     requests.post(URL, json={
         "chat_id": chat_id,
         "text": mensagem
     })
 
-
 def salvar_lead(nome):
+
     with open("leads.txt", "a") as arquivo:
         arquivo.write(f"{nome} - interessado\n")
 
-
 def enviar_para_admin(nome):
+
     mensagem = f"""📥 Novo Lead
 
 Nome: {nome}
