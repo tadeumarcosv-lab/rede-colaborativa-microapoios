@@ -162,7 +162,14 @@ Escolha um assunto, digitando um dos números abaixo:
 5 - Reinvestimento
 6 - Integração entre grupos
 7 - Participar
-8 - Contato 📱"""
+8 - Contato 📱
+
+══════════════════
+
+🚀 🧠 9 - Assistente Inteligente
+
+══════════════════
+"""
 
 @app.route("/")
 def home():
