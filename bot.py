@@ -146,7 +146,28 @@ Tadeu Marcos Viana
 
 {WHATSAPP_LINK}
 
-📱 (31) 9 9115-0767"""
+📱 (31) 9 9115-0767""",
+
+    "9": """Assistente Inteligente
+
+🧠 TÓPICO 9 — ASSISTENTE INTELIGENTE
+
+Esta área está sendo preparada para futuras funções de inteligência artificial.
+
+No futuro, o assistente poderá auxiliar em:
+
+✔ organização de informações
+✔ pesquisas
+✔ geração de ideias
+✔ integração entre módulos
+✔ apoio operacional
+✔ coordenação inteligente
+✔ memória contextual
+✔ evolução do sistema
+
+Esta funcionalidade encontra-se em desenvolvimento contínuo.
+
+Digite OK para voltar ao menu principal."""
 }
 
 MENU = """Rede de Apoio Financeiro Colaborativo
