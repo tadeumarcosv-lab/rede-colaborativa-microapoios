@@ -1,209 +1,91 @@
-📚 CENTRO DE REFERÊNCIAS — REDE COLABORATIVA DE MICROAPOIOS
+────────────────────────
 
-📅 Data de criação: 04/06/2026
+🔢 Atualização de Referências: 0007
 
-🕒 Horário de criação: 10:20:00
+📅 Data: 06/06/2026
 
-🔢 Registro estrutural: 0001
+🕒 Horário: 00:00:00
 
-🎯 OBJETIVO
+🎯 Referências de Governança
 
-Este documento funciona como centro de referências da Rede Colaborativa de Microapoios.
+📋 Documentos incorporados
 
-Seu objetivo é conectar os principais documentos, estruturas, registros históricos, índices, planos e diretrizes existentes no sistema.
+GOVERNANCA_SISTEMA.md
 
-🧠 PRINCÍPIO GERAL
+REGISTRO_DECISOES.md
 
-Toda documentação estratégica deverá estar conectada direta ou indiretamente a este centro de referências.
+CRONOLOGIA_OFICIAL.md
 
-O objetivo é facilitar:
-
-localização de informações
-
-continuidade organizacional
-
-rastreabilidade documental
-
-navegação estrutural
-
-preservação histórica
-
-consulta por agentes de IA
-
-consulta por participantes
-
-📚 DOCUMENTOS ESTRATÉGICOS
-
-SYSTEM_INDEX.md
+HISTORICO_ESTRUTURAL.md
 
 PLANO_MESTRE.md
 
-MAPA_EXPANSAO_FUTURA.md
+📈 Finalidade
 
-CRONOLOGIA_OFICIAL.md
+Centralizar as referências responsáveis pela coordenação estratégica, rastreabilidade e continuidade organizacional.
 
-HISTORICO_ESTRUTURAL.md
+────────────────────────
 
-REGISTRO_DECISOES.md
+🔢 Atualização de Referências: 0008
 
-INDICE_DOCUMENTOS.md
+📅 Data: 06/06/2026
 
-sistema_indices.md
+🕒 Horário: 00:00:00
 
-estrutura_repositorio.md
+🎯 Referências do Ecossistema de Agentes
 
-📋 DOCUMENTOS OPERACIONAIS
+📋 Documentos incorporados
 
-funcionamento_rede.md
+CATALOGO_AGENTES.md
 
-entrada_participante.md
+COORDENACAO_MULTIAGENTES.md
 
-processo_microapoio.md
+MAPA_INTERACOES_AGENTES.md
 
-criterios_participacao.md
+MATRIZ_COMPETENCIAS_AGENTES.md
 
-validacao_participantes.md
+PERMISSOES_AGENTES.md
 
-historico_microapoios.md
+MEMORIA_COLETIVA_AGENTES.md
 
-registro_participantes.md
+ECOSSISTEMA_AUTONOMO_AGENTES.md
 
-regras_participacao.md
+PLANEJAMENTO_EVOLUCAO_AGENTES.md
 
-codigo_conduta.md
+📈 Finalidade
 
-politica_transparencia.md
+Centralizar as referências relacionadas à organização, coordenação, evolução e inteligência coletiva dos agentes.
 
-politica_privacidade.md
+────────────────────────
 
-📂 ESTRUTURAS PRINCIPAIS
+🔢 Atualização de Referências: 0009
 
-microapoios
+📅 Data: 06/06/2026
 
-participantes
+🕒 Horário: 00:00:00
 
-processos
+🎯 Referências de Auditoria e Validação
 
-regras
+📋 Documentos incorporados
 
-relatorios
+AUDITORIA_ESTRUTURAL.md
 
-estatisticas
+AUDITORIA_COMPLETA_ESTRUTURAL.md
 
-planejamento
+VALIDACAO_CONTINUIDADE.md
 
-projetos
+VALIDACAO_COMPLETA_ECOSSISTEMA.md
 
-parcerias
+MAPA_DEPENDENCIAS_DOCUMENTAIS.md
 
-validacoes
+MATRIZ_HIERARQUIA_DOCUMENTAL.md
 
-documentacao
+CONSOLIDACAO_GOVERNANCA_ECOSSISTEMA.md
 
-conversas
+INDICADORES_ECOSSISTEMA_AGENTES.md
 
-aprendizado
+📈 Finalidade
 
-governanca
+Centralizar as referências responsáveis pela integridade documental, auditoria contínua, validação estrutural e governança integrada.
 
-automacao
-
-inteligencia
-
-agentes
-
-memoria
-
-logs
-
-seguranca
-
-compliance
-
-monitoramento
-
-infraestrutura
-
-integracao
-
-📈 EVOLUÇÃO FUTURA
-
-Este documento poderá futuramente referenciar:
-
-INDICE_1
-
-INDICE_2
-
-INDICE_3
-
-INDICE_4
-
-novos agentes
-
-novas integrações
-
-novas plataformas
-
-novos sistemas documentais
-
-novos históricos
-
-novos mapas estruturais
-
-🔗 INTERLIGAÇÃO DOCUMENTAL
-
-Sempre que possível, novos documentos relevantes deverão ser registrados em:
-
-SYSTEM_INDEX.md
-
-INDICE_DOCUMENTOS.md
-
-CRONOLOGIA_OFICIAL.md
-
-REGISTRO_DECISOES.md
-
-HISTORICO_ESTRUTURAL.md
-
-CENTRO_REFERENCIAS.md
-
-🔒 LIMITES OBRIGATÓRIOS
-
-Este documento NÃO deve:
-
-armazenar senhas
-
-armazenar tokens
-
-armazenar credenciais privadas
-
-armazenar chaves de acesso
-
-expor dados protegidos
-
-comprometer segurança operacional
-
-🤖 REGRAS PARA IA
-
-Agentes conectados futuramente deverão:
-
-utilizar este documento como referência central
-
-preservar rastreabilidade
-
-evitar duplicações
-
-preservar contexto histórico
-
-respeitar supervisão humana
-
-preservar continuidade organizacional
-
-👤 AUTORIA
-
-Autor principal: Tadeu Marcos Viana
-
-GitHub: tadeumarcosv-lab
-
-🧠 PRINCÍPIO FINAL
-
-"Conhecimento conectado é conhecimento mais fácil de localizar, compreender, preservar e expandir."
+────────────────────────
