@@ -6,7 +6,7 @@
 
 Expansão da governança documental.
 
-Criação do GOVORNANCA_SISTEMA.md.
+Criação do GOVERNANCA_SISTEMA.md.
 
 Criação do REGISTRO_DECISOES.md.
 
