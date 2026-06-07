@@ -1,5 +1,4 @@
-Atualizar índice 
-────────────────────────
+
 
 🔢 Atualização do Índice: 0007
 
