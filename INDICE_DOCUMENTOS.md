@@ -1,51 +1,89 @@
-📚 ÍNDICE DE DOCUMENTOS — REDE COLABORATIVA DE MICROAPOIOS
+────────────────────────
 
-📅 Data de criação: 03/06/2026
+🔢 Atualização do Índice: 0007
 
-🕒 Horário de criação: 00:00:00
+📅 Data: 06/06/2026
 
-🎯 OBJETIVO
+🕒 Horário: 00:00:00
 
-Este documento centraliza a localização dos principais documentos organizacionais da Rede Colaborativa de Microapoios.
+🎯 Inclusão dos Documentos de Governança
 
-Seu objetivo é facilitar navegação, rastreabilidade, organização e continuidade operacional.
+📋 Documentos incorporados
 
-📋 DOCUMENTOS EXISTENTES
+GOVERNANCA_SISTEMA.md
 
-Estrutura Microapoios
+REGISTRO_DECISOES.md
 
-- microapoios/funcionamento_rede.md
-- microapoios/entrada_participante.md
-- microapoios/processo_microapoio.md
-- microapoios/criterios_participacao.md
-- microapoios/validacao_participantes.md
+CRONOLOGIA_OFICIAL.md
 
-Documentos Organizacionais
+HISTORICO_ESTRUTURAL.md
 
-- historico_microapoios.md
-- registro_participantes.md
-- regras_participacao.md
-- politica_transparencia.md
-- politica_privacidade.md
-- codigo_conduta.md
+📈 Objetivo
 
-📚 EVOLUÇÃO FUTURA
+Fortalecer a organização, rastreabilidade e continuidade documental do sistema.
 
-Futuramente este índice poderá ser dividido em:
+────────────────────────
 
-- INDICE_1
-- INDICE_2
-- INDICE_3
-- INDICE_4
+🔢 Atualização do Índice: 0008
 
-Conforme o crescimento do sistema.
+📅 Data: 06/06/2026
 
-👤 AUTORIA
+🕒 Horário: 00:00:00
 
-Autor principal: Tadeu Marcos Viana
+🎯 Inclusão do Ecossistema de Agentes
 
-GitHub: tadeumarcosv-lab
+📋 Documentos incorporados
 
-🧠 PRINCÍPIO FINAL
+CATALOGO_AGENTES.md
 
-"Documentação organizada reduz complexidade, facilita manutenção e fortalece a continuidade da rede."
+COORDENACAO_MULTIAGENTES.md
+
+MAPA_INTERACOES_AGENTES.md
+
+MATRIZ_COMPETENCIAS_AGENTES.md
+
+PERMISSOES_AGENTES.md
+
+MEMORIA_COLETIVA_AGENTES.md
+
+ECOSSISTEMA_AUTONOMO_AGENTES.md
+
+PLANEJAMENTO_EVOLUCAO_AGENTES.md
+
+📈 Objetivo
+
+Organizar e documentar a futura atuação coordenada dos agentes especializados.
+
+────────────────────────
+
+🔢 Atualização do Índice: 0009
+
+📅 Data: 06/06/2026
+
+🕒 Horário: 00:00:00
+
+🎯 Inclusão das Estruturas de Auditoria e Validação
+
+📋 Documentos incorporados
+
+AUDITORIA_ESTRUTURAL.md
+
+AUDITORIA_COMPLETA_ESTRUTURAL.md
+
+VALIDACAO_CONTINUIDADE.md
+
+VALIDACAO_COMPLETA_ECOSSISTEMA.md
+
+INDICADORES_ECOSSISTEMA_AGENTES.md
+
+MAPA_DEPENDENCIAS_DOCUMENTAIS.md
+
+MATRIZ_HIERARQUIA_DOCUMENTAL.md
+
+CONSOLIDACAO_GOVERNANCA_ECOSSISTEMA.md
+
+📈 Objetivo
+
+Garantir integridade documental, validação contínua e governança integrada do ecossistema.
+
+────────────────────────
