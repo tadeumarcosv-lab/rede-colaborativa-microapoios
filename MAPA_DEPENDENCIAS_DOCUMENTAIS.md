@@ -1,217 +1,85 @@
-🗺️ MAPA DE DEPENDÊNCIAS DOCUMENTAIS — REDE COLABORATIVA DE MICROAPOIOS
-
-📅 Data de criação: 06/06/2026
-
-🔢 Registro estrutural: 0001
-
-🎯 OBJETIVO
-
-Este documento estabelece o Mapa Oficial de Dependências Documentais da Rede Colaborativa de Microapoios.
-
-Seu objetivo é identificar relações entre documentos, dependências estruturais, fluxos de conhecimento e vínculos organizacionais existentes no ecossistema.
-
 ────────────────────────
 
-🧠 PRINCÍPIO GERAL
+🔢 Atualização de Dependências: 0007
 
-Nenhum documento importante existe de forma isolada.
+📅 Data: 06/06/2026
 
-Os documentos formam uma rede interconectada de conhecimento, governança, auditoria, memória e coordenação.
+🕒 Horário: 00:00:00
 
-────────────────────────
+🎯 Dependências de Governança
 
-🏛️ DOCUMENTOS FUNDACIONAIS
+📋 Relações documentais
 
-Os seguintes documentos são considerados bases estruturais do ecossistema:
+GOVERNANCA_SISTEMA.md depende de:
+
+REGISTRO_DECISOES.md
+
+CRONOLOGIA_OFICIAL.md
+
+HISTORICO_ESTRUTURAL.md
 
 PLANO_MESTRE.md
 
-GOVERNANCA_SISTEMA.md
+📈 Finalidade
 
-SYSTEM_INDEX.md
-
-CONSOLIDACAO_GOVERNANCA_ECOSSISTEMA.md
+Garantir supervisão organizacional, rastreabilidade estratégica e continuidade estrutural.
 
 ────────────────────────
 
-⚖️ DOCUMENTOS NORMATIVOS
+🔢 Atualização de Dependências: 0008
 
-Dependem diretamente dos documentos fundacionais:
+📅 Data: 06/06/2026
 
-PROTOCOLO_APROVACAO_ALTERACOES.md
+🕒 Horário: 00:00:00
 
-PERMISSOES_AGENTES.md
+🎯 Dependências do Ecossistema de Agentes
 
-PROTOCOLO_CRIACAO_AGENTES.md
+📋 Relações documentais
 
-PROTOCOLO_APRENDIZADO_AGENTES.md
-
-PROTOCOLO_AUTONOMIA_DOCUMENTAL.md
-
-────────────────────────
-
-🤖 DOCUMENTOS DOS AGENTES
-
-Dependem dos documentos normativos:
-
-CATALOGO_AGENTES.md
-
-COORDENACAO_MULTIAGENTES.md
-
-ECOSSISTEMA_AUTONOMO_AGENTES.md
-
-DELEGACAO_INTELIGENTE_TAREFAS.md
-
-MAPA_INTERACOES_AGENTES.md
-
-EVOLUCAO_HIERARQUICA_AGENTES.md
+CATALOGO_AGENTES.md depende de:
 
 MATRIZ_COMPETENCIAS_AGENTES.md
 
-────────────────────────
+PERMISSOES_AGENTES.md
 
-💾 DOCUMENTOS DE MEMÓRIA E CONHECIMENTO
-
-Dependem dos documentos dos agentes:
+COORDENACAO_MULTIAGENTES.md
 
 MEMORIA_COLETIVA_AGENTES.md
 
-REGISTRO_ATIVIDADES_AGENTES.md
+ECOSSISTEMA_AUTONOMO_AGENTES.md
 
-PROTOCOLO_APRENDIZADO_AGENTES.md
+PLANEJAMENTO_EVOLUCAO_AGENTES.md
+
+📈 Finalidade
+
+Garantir consistência organizacional, competências definidas e evolução coordenada dos agentes.
 
 ────────────────────────
 
-📊 DOCUMENTOS DE CONTROLE
+🔢 Atualização de Dependências: 0009
 
-Dependem da governança, agentes e registros:
+📅 Data: 06/06/2026
 
-AVALIACAO_DESEMPENHO_AGENTES.md
+🕒 Horário: 00:00:00
 
-INDICADORES_ECOSSISTEMA_AGENTES.md
+🎯 Dependências de Auditoria e Validação
 
-AUDITORIA_COMPLETA_ESTRUTURAL.md
+📋 Relações documentais
+
+AUDITORIA_COMPLETA_ESTRUTURAL.md depende de:
 
 VALIDACAO_COMPLETA_ECOSSISTEMA.md
 
-────────────────────────
-
-📈 FLUXO DE DEPENDÊNCIA
-
-Fundação
-
-↓
-
-Governança
-
-↓
-
-Protocolos
-
-↓
-
-Agentes
-
-↓
-
-Memória
-
-↓
-
-Auditoria
-
-↓
-
-Validação
-
-↓
-
-Melhoria Contínua
-
-────────────────────────
-
-🔄 IMPACTO DAS ALTERAÇÕES
-
-Alterações em documentos fundacionais poderão impactar:
-
-governança
-
-protocolos
-
-agentes
-
-auditorias
-
-validações
-
-indicadores
-
-memória coletiva
-
-────────────────────────
-
-⚠️ CUIDADOS OBRIGATÓRIOS
-
-Antes de alterar documentos estruturais deverão ser avaliados:
-
-impactos documentais
-
-impactos operacionais
-
-impactos históricos
-
-impactos de governança
-
-impactos sobre agentes
-
-────────────────────────
-
-📚 BENEFÍCIOS
-
-O mapa de dependências deverá proporcionar:
-
-melhor compreensão estrutural
-
-menor risco de inconsistências
-
-maior rastreabilidade
-
-maior previsibilidade
-
-crescimento sustentável
-
-facilidade de auditoria
-
-────────────────────────
-
-👤 SUPERVISÃO HUMANA
-
-Responsável principal:
-
-Tadeu Marcos Viana
-
-Toda alteração crítica continuará dependente de validação humana.
-
-────────────────────────
-
-📚 DOCUMENTOS RELACIONADOS
-
-SYSTEM_INDEX.md
+MAPA_DEPENDENCIAS_DOCUMENTAIS.md
 
 MATRIZ_HIERARQUIA_DOCUMENTAL.md
 
 CONSOLIDACAO_GOVERNANCA_ECOSSISTEMA.md
 
-GOVERNANCA_SISTEMA.md
+INDICADORES_ECOSSISTEMA_AGENTES.md
 
-PLANO_MESTRE.md
+📈 Finalidade
 
-AUDITORIA_COMPLETA_ESTRUTURAL.md
-
-VALIDACAO_COMPLETA_ECOSSISTEMA.md
+Garantir integridade documental, auditoria contínua, validação estrutural e governança integrada do ecossistema.
 
 ────────────────────────
-
-🧠 PRINCÍPIO FINAL
-
-"Compreender as dependências entre documentos permite que o conhecimento evolua de forma organizada, consistente e sustentável."
