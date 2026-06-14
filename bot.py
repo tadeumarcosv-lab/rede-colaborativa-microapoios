@@ -1,7 +1,7 @@
 from flask import Flask, request
 import requests
 import os
-
+from config_nucleo import *
 app = Flask(__name__)
 
 TOKEN = os.getenv("TOKEN")
