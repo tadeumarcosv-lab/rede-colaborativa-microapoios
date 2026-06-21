@@ -4,7 +4,7 @@ from agente_comunicacao import AgenteComunicacao
 from agente_pesquisa_avancada import AgentePesquisaAvancada
 from agente_memoria_estrategica import AgenteMemoriaEstrategica
 from agente_gestao_conhecimento import AgenteGestaoConhecimento
-
+from config_nucleo import *
 
 class IntegracaoCompleta:
 
