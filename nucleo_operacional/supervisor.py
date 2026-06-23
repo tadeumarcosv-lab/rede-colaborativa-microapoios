@@ -1,7 +1,19 @@
 from painel_agentes import status_agente
 
+HISTORICO_OCORRENCIAS = []
+
 
 class Supervisor:
+
+    def registrar_ocorrencia(self, mensagem):
+
+        HISTORICO_OCORRENCIAS.append(
+            mensagem
+        )
+
+    def obter_historico(self):
+
+        return HISTORICO_OCORRENCIAS
 
     def verificar_agente(self, nome_agente):
 
@@ -16,9 +28,13 @@ class Supervisor:
 
         if self.verificar_agente(agente):
 
-            return f"Agente {agente} disponível"
+            return f"Agente {agente} disponivel"
 
-        return f"Agente {agente} indisponível"
+        self.registrar_ocorrencia(
+            f"Agente {agente} indisponivel"
+        )
+
+        return f"Agente {agente} indisponivel"
 
 
 if __name__ == "__main__":
@@ -29,4 +45,8 @@ if __name__ == "__main__":
         supervisor.analisar_solicitacao(
             "pesquisa_avancada"
         )
-      )
+    )
+
+    print(
+        supervisor.obter_historico()
+    )
