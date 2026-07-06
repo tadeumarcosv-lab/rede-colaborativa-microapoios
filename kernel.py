@@ -1,8 +1,7 @@
 """
 KERNEL DA REDE COLABORATIVA DE MICROAPOIOS
-Autor: Tadeu Marcos Viana
 
-Versão Inicial do Kernel
+Autor: Tadeu Marcos Viana
 
 Responsabilidade:
 Inicializar toda a Rede.
@@ -11,7 +10,9 @@ Inicializar toda a Rede.
 import os
 from datetime import datetime
 
-VERSAO = "1.0"
+import gerenciador_inicializacao
+
+VERSAO = "1.1"
 
 DOCUMENTOS_PRINCIPAIS = [
     "CONSTITUICAO_DA_REDE.md",
@@ -29,6 +30,7 @@ def registrar(mensagem):
 
 
 def verificar_documentos():
+
     registrar("Verificando documentos principais...")
 
     faltando = []
@@ -59,10 +61,15 @@ def iniciar():
         registrar("Todos os documentos principais foram encontrados.")
         registrar("Kernel inicializado com sucesso.")
 
+        registrar("Transferindo controle ao Gerenciador de Inicialização...")
+
+        gerenciador = gerenciador_inicializacao.GerenciadorInicializacao()
+        gerenciador.iniciar()
+
     else:
 
         registrar("Existem documentos ausentes.")
-        registrar("Inicialização incompleta.")
+        registrar("Inicialização interrompida.")
 
 
 if __name__ == "__main__":
