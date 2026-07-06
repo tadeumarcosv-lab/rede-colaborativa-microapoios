@@ -1,9 +1,14 @@
 """
-GERENCIADOR DE INICIALIZAÇÃO DA REDE
+GERENCIADOR DE INICIALIZAÇÃO
+DA REDE COLABORATIVA DE MICROAPOIOS
+
+Autor: Tadeu Marcos Viana
+
 Responsável por executar toda a sequência oficial de inicialização.
 """
 
-import bootstrap
+import supervisor
+from integracao_completa import IntegracaoCompleta
 
 
 class GerenciadorInicializacao:
@@ -14,7 +19,21 @@ class GerenciadorInicializacao:
         print("GERENCIADOR DE INICIALIZAÇÃO")
         print("========================================")
 
-        bootstrap.bootstrap()
+        print("Supervisor inicializado.")
+
+        supervisor_rede = supervisor.Supervisor()
+
+        print("Supervisor ativo.")
+
+        print("Iniciando integração operacional da Rede...")
+
+        sistema = IntegracaoCompleta()
+
+        resultado = sistema.executar(
+            "Inicialização Oficial da Rede"
+        )
+
+        print(resultado)
 
         print("========================================")
         print("REDE INICIALIZADA COM SUCESSO")
@@ -24,4 +43,5 @@ class GerenciadorInicializacao:
 if __name__ == "__main__":
 
     gerenciador = GerenciadorInicializacao()
+
     gerenciador.iniciar()
