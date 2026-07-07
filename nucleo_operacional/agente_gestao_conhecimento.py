@@ -1,42 +1,57 @@
 """
-AGENTE DE GESTAO DO CONHECIMENTO
+AGENTE DE GESTÃO DO CONHECIMENTO
 Rede Colaborativa de Microapoios
 
-Responsável por organizar,
-catalogar e estruturar conhecimentos.
+Responsável por organizar, consolidar e disponibilizar
+o conhecimento produzido pela Rede.
 """
+
 
 class AgenteGestaoConhecimento:
 
     def __init__(self):
-        self.nome = "Agente de Gestao do Conhecimento"
+
+        self.nome = "Agente de Gestao Conhecimento"
         self.codigo = "AGENTE-0006"
         self.status = "ativo"
-        self.base_conhecimento = {}
+        self.base_conhecimento = []
 
-    def registrar_conhecimento(self, chave, conteudo):
+    def adicionar_conhecimento(self, informacao):
 
-        self.base_conhecimento[chave] = conteudo
+        self.base_conhecimento.append(informacao)
 
-        return {
-            "agente": self.nome,
-            "acao": "conhecimento_registrado",
-            "chave": chave
-        }
+        return "Conhecimento registrado."
 
-    def consultar_conhecimento(self, chave):
+    def consultar_conhecimento(self):
 
-        return self.base_conhecimento.get(
-            chave,
-            "Conhecimento nao encontrado"
-        )
+        return self.base_conhecimento
 
     def status_operacional(self):
 
         return {
+
             "agente": self.nome,
+
             "status": self.status,
-            "registros": len(self.base_conhecimento)
+
+            "itens": len(self.base_conhecimento)
+
+        }
+
+    def executar(self, entrada):
+
+        self.adicionar_conhecimento(entrada)
+
+        return {
+
+            "agente": self.nome,
+
+            "entrada": entrada,
+
+            "conhecimento": self.consultar_conhecimento(),
+
+            "status": self.status
+
         }
 
 
@@ -44,17 +59,12 @@ if __name__ == "__main__":
 
     conhecimento = AgenteGestaoConhecimento()
 
-    conhecimento.registrar_conhecimento(
-        "missao",
-        "Fortalecer a Rede Colaborativa de Microapoios"
-    )
-
     print(
-        conhecimento.consultar_conhecimento(
-            "missao"
+
+        conhecimento.executar(
+
+            "Teste de gestão do conhecimento"
+
         )
-    )
 
-    print(
-        conhecimento.status_operacional()
-      )
+    )
