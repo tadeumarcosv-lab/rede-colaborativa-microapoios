@@ -1,14 +1,16 @@
 """
-AGENTE DE MEMORIA ESTRATEGICA
+AGENTE DE MEMÓRIA ESTRATÉGICA
 Rede Colaborativa de Microapoios
 
-Responsável por armazenar contexto,
-histórico e conhecimentos relevantes.
+Responsável por registrar, recuperar e organizar
+informações estratégicas da Rede.
 """
+
 
 class AgenteMemoriaEstrategica:
 
     def __init__(self):
+
         self.nome = "Agente de Memoria Estrategica"
         self.codigo = "AGENTE-0005"
         self.status = "ativo"
@@ -18,22 +20,38 @@ class AgenteMemoriaEstrategica:
 
         self.memoria.append(informacao)
 
-        return {
-            "agente": self.nome,
-            "acao": "registro_realizado",
-            "informacao": informacao
-        }
+        return "Informação registrada."
 
-    def recuperar_memoria(self):
+    def consultar(self):
 
         return self.memoria
 
     def status_operacional(self):
 
         return {
+
             "agente": self.nome,
+
             "status": self.status,
+
             "registros": len(self.memoria)
+
+        }
+
+    def executar(self, entrada):
+
+        self.registrar(entrada)
+
+        return {
+
+            "agente": self.nome,
+
+            "entrada": entrada,
+
+            "memoria": self.consultar(),
+
+            "status": self.status
+
         }
 
 
@@ -41,14 +59,12 @@ if __name__ == "__main__":
 
     memoria = AgenteMemoriaEstrategica()
 
-    memoria.registrar(
-        "Primeiro registro do ecossistema"
-    )
-
     print(
-        memoria.recuperar_memoria()
-    )
 
-    print(
-        memoria.status_operacional()
-      )
+        memoria.executar(
+
+            "Teste de memória estratégica"
+
+        )
+
+    )
