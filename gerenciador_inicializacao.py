@@ -7,8 +7,8 @@ Autor: Tadeu Marcos Viana
 Responsável por executar toda a sequência oficial de inicialização.
 """
 
-import supervisor
-from integracao_completa import IntegracaoCompleta
+from nucleo_operacional.supervisor import Supervisor
+from nucleo_operacional.integracao_completa import IntegracaoCompleta
 
 
 class GerenciadorInicializacao:
@@ -21,7 +21,7 @@ class GerenciadorInicializacao:
 
         print("Supervisor inicializado.")
 
-        supervisor_rede = supervisor.Supervisor()
+        supervisor_rede = Supervisor()
 
         print("Supervisor ativo.")
 
