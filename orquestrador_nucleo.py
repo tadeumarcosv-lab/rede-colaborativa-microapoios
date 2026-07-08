@@ -1,13 +1,48 @@
-from agente_comunicacao import processar_comunicacao
-from agente_coordenacao import coordenar_tarefa
-from agente_central import processar_solicitacao
+"""
+ORQUESTRADOR DO NÚCLEO
+Rede Colaborativa de Microapoios
 
-def executar_nucleo(mensagem):
+Responsável por coordenar os principais agentes
+operacionais da Rede utilizando a arquitetura
+baseada em classes.
+"""
 
-    comunicacao = processar_comunicacao(mensagem)
+from agente_comunicacao import AgenteComunicacao
+from agente_coordenacao import AgenteCoordenacao
+from agente_central import AgenteCentral
 
-    coordenacao = coordenar_tarefa(comunicacao)
 
-    resposta = processar_solicitacao(coordenacao)
+class OrquestradorNucleo:
 
-    return resposta
+    def __init__(self):
+
+        self.comunicacao = AgenteComunicacao()
+        self.coordenacao = AgenteCoordenacao()
+        self.central = AgenteCentral()
+
+    def executar(self, mensagem):
+
+        etapa1 = self.comunicacao.executar(
+            mensagem
+        )
+
+        etapa2 = self.coordenacao.executar(
+            etapa1
+        )
+
+        etapa3 = self.central.executar(
+            etapa2
+        )
+
+        return etapa3
+
+
+if __name__ == "__main__":
+
+    orquestrador = OrquestradorNucleo()
+
+    resultado = orquestrador.executar(
+        "Teste do Orquestrador do Núcleo"
+    )
+
+    print(resultado)
