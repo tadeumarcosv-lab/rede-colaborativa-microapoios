@@ -10,6 +10,8 @@ Coordena o ciclo mínimo de funcionamento da Rede.
 from datetime import datetime
 
 from sistema_executor_da_rede import SistemaExecutorDaRede
+from motor_de_aprendizado import MotorDeAprendizado
+from sistema_de_memoria_persistente import SistemaDeMemoriaPersistente
 
 
 class OrquestradorCentralDaRede:
@@ -17,6 +19,8 @@ class OrquestradorCentralDaRede:
     def __init__(self):
 
         self.executor = SistemaExecutorDaRede()
+        self.aprendizado = MotorDeAprendizado()
+        self.memoria = SistemaDeMemoriaPersistente()
 
     def registrar(self, mensagem):
 
@@ -29,6 +33,13 @@ class OrquestradorCentralDaRede:
         self.registrar("Orquestrador Central iniciado.")
 
         self.executor.executar()
+
+        self.aprendizado.executar()
+
+        self.memoria.adicionar(
+            "Orquestrador",
+            "Ciclo mínimo executado com sucesso."
+        )
 
         self.registrar("Ciclo principal da Rede concluído.")
 
