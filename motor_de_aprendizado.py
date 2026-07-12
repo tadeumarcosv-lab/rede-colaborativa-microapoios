@@ -9,6 +9,7 @@ from datetime import datetime
 
 from sistema_de_memoria_persistente import SistemaDeMemoriaPersistente
 from sistema_de_auditoria_da_rede import SistemaDeAuditoriaDaRede
+from sistema_de_monitoramento_da_rede import SistemaDeMonitoramentoDaRede
 
 
 class MotorDeAprendizado:
@@ -19,6 +20,7 @@ class MotorDeAprendizado:
 
         self.memoria = SistemaDeMemoriaPersistente()
         self.auditoria = SistemaDeAuditoriaDaRede()
+        self.monitoramento = SistemaDeMonitoramentoDaRede()
 
         self.fontes = [
             "Registro Central de Eventos",
@@ -88,6 +90,10 @@ class MotorDeAprendizado:
         )
 
         self.registrar("Evento registrado na Auditoria.")
+
+        self.monitoramento.verificar_componentes()
+
+        self.registrar("Monitoramento executado.")
 
         self.registrar("Ciclo de aprendizado concluído.")
 
