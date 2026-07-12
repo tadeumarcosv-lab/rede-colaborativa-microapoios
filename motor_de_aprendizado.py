@@ -3,12 +3,11 @@ MOTOR DE APRENDIZADO DA REDE COLABORATIVA DE MICROAPOIOS
 
 Autor:
 Tadeu Marcos Viana
-
-Implementação executável baseada no documento
-MOTOR_DE_APRENDIZADO.md
 """
 
 from datetime import datetime
+
+from sistema_de_memoria_persistente import SistemaDeMemoriaPersistente
 
 
 class MotorDeAprendizado:
@@ -16,6 +15,8 @@ class MotorDeAprendizado:
     def __init__(self):
 
         self.status = "ATIVO"
+
+        self.memoria = SistemaDeMemoriaPersistente()
 
         self.fontes = [
             "Registro Central de Eventos",
@@ -45,7 +46,12 @@ class MotorDeAprendizado:
 
     def atualizar_memoria(self):
 
-        self.registrar("Atualizando memória persistente.")
+        self.memoria.adicionar(
+            "Aprendizado",
+            "Ciclo de aprendizado executado."
+        )
+
+        self.registrar("Memória persistente atualizada.")
 
     def gerar_conhecimento(self):
 
