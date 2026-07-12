@@ -11,8 +11,9 @@ import os
 from datetime import datetime
 
 import gerenciador_inicializacao
+from orquestrador_central_da_rede import OrquestradorCentralDaRede
 
-VERSAO = "1.1"
+VERSAO = "1.2"
 
 DOCUMENTOS_PRINCIPAIS = [
     "CONSTITUICAO_DA_REDE.md",
@@ -25,7 +26,9 @@ DOCUMENTOS_PRINCIPAIS = [
 
 
 def registrar(mensagem):
+
     horario = datetime.now().strftime("%d/%m/%Y %H:%M:%S")
+
     print(f"[{horario}] {mensagem}")
 
 
@@ -38,10 +41,13 @@ def verificar_documentos():
     for documento in DOCUMENTOS_PRINCIPAIS:
 
         if os.path.exists(documento):
+
             registrar(f"OK -> {documento}")
 
         else:
+
             registrar(f"FALTANDO -> {documento}")
+
             faltando.append(documento)
 
     return faltando
@@ -50,27 +56,36 @@ def verificar_documentos():
 def iniciar():
 
     registrar("====================================")
+
     registrar("INICIALIZANDO KERNEL DA REDE")
+
     registrar(f"VERSÃO {VERSAO}")
+
     registrar("====================================")
 
     faltando = verificar_documentos()
 
     if len(faltando) == 0:
 
-        registrar("Todos os documentos principais foram encontrados.")
-        registrar("Kernel inicializado com sucesso.")
-
-        registrar("Transferindo controle ao Gerenciador de Inicialização...")
+        registrar("Todos os documentos principais encontrados.")
 
         gerenciador = gerenciador_inicializacao.GerenciadorInicializacao()
+
         gerenciador.iniciar()
+
+        registrar("Transferindo controle ao Orquestrador Central...")
+
+        orquestrador = OrquestradorCentralDaRede()
+
+        orquestrador.executar()
 
     else:
 
         registrar("Existem documentos ausentes.")
+
         registrar("Inicialização interrompida.")
 
 
 if __name__ == "__main__":
+
     iniciar()
