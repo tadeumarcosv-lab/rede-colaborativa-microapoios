@@ -1,4 +1,11 @@
-from painel_agentes import status_agente
+"""
+SUPERVISOR DA REDE COLABORATIVA DE MICROAPOIOS
+
+Autor:
+Tadeu Marcos Viana
+"""
+
+from nucleo_operacional.painel_agentes import status_agente
 
 HISTORICO_OCORRENCIAS = []
 
