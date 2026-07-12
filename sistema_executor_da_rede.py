@@ -10,6 +10,8 @@ SISTEMA_EXECUTOR_DA_REDE.md
 
 from datetime import datetime
 
+from motor_de_aprendizado import MotorDeAprendizado
+
 
 class SistemaExecutorDaRede:
 
@@ -18,6 +20,8 @@ class SistemaExecutorDaRede:
         self.status = "ATIVO"
 
         self.filas = []
+
+        self.aprendizado = MotorDeAprendizado()
 
     def registrar(self, mensagem):
 
@@ -62,6 +66,9 @@ class SistemaExecutorDaRede:
         self.executar_filas()
 
         self.finalizar_execucao()
+
+        # Inicia automaticamente o aprendizado ao final da execução
+        self.aprendizado.executar()
 
 
 if __name__ == "__main__":
