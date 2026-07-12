@@ -6,6 +6,9 @@ from agente_memoria_estrategica import AgenteMemoriaEstrategica
 from agente_gestao_conhecimento import AgenteGestaoConhecimento
 from config_nucleo import *
 
+from motor_de_aprendizado import MotorDeAprendizado
+
+
 class IntegracaoCompleta:
 
     def __init__(self):
@@ -30,6 +33,10 @@ class IntegracaoCompleta:
         etapa5 = self.memoria.executar(etapa4)
 
         etapa6 = self.conhecimento.executar(etapa5)
+
+        # Primeiro componente autônomo integrado
+        aprendizado = MotorDeAprendizado()
+        aprendizado.executar()
 
         return etapa6
 
