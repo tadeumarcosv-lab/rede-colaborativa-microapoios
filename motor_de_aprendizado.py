@@ -8,6 +8,7 @@ Tadeu Marcos Viana
 from datetime import datetime
 
 from sistema_de_memoria_persistente import SistemaDeMemoriaPersistente
+from sistema_de_auditoria_da_rede import SistemaDeAuditoriaDaRede
 
 
 class MotorDeAprendizado:
@@ -17,6 +18,7 @@ class MotorDeAprendizado:
         self.status = "ATIVO"
 
         self.memoria = SistemaDeMemoriaPersistente()
+        self.auditoria = SistemaDeAuditoriaDaRede()
 
         self.fontes = [
             "Registro Central de Eventos",
@@ -80,6 +82,12 @@ class MotorDeAprendizado:
         self.gerar_conhecimento()
 
         self.atualizar_memoria()
+
+        self.auditoria.registrar_evento(
+            "Ciclo de aprendizado executado."
+        )
+
+        self.registrar("Evento registrado na Auditoria.")
 
         self.registrar("Ciclo de aprendizado concluído.")
 
