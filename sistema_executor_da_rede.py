@@ -3,8 +3,6 @@ SISTEMA EXECUTOR DA REDE COLABORATIVA DE MICROAPOIOS
 
 Autor:
 Tadeu Marcos Viana
-
-Responsável por manter o ciclo operacional da Rede.
 """
 
 from datetime import datetime
@@ -21,6 +19,8 @@ class SistemaExecutorDaRede:
 
         self.ativo = True
 
+        self.ciclo = 0
+
     def registrar(self, mensagem):
 
         horario = datetime.now().strftime("%d/%m/%Y %H:%M:%S")
@@ -29,19 +29,23 @@ class SistemaExecutorDaRede:
 
     def executar_ciclo(self):
 
-        self.registrar("Executando ciclo operacional.")
+        self.ciclo += 1
+
+        self.registrar(f"Iniciando ciclo {self.ciclo}")
 
         self.aprendizado.executar()
 
-        self.registrar("Ciclo operacional concluído.")
+        self.registrar(f"Finalizando ciclo {self.ciclo}")
 
     def executar(self):
 
         self.registrar("Sistema Executor iniciado.")
 
-        self.executar_ciclo()
+        while self.ativo:
 
-        self.registrar("Sistema Executor finalizado.")
+            self.executar_ciclo()
+
+            time.sleep(5)
 
 
 if __name__ == "__main__":
