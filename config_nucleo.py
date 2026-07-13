@@ -1,13 +1,47 @@
-NUCLEO_OPERACIONAL_ATIVO = False
+from nucleo_operacional.agente_central import AgenteCentral
+from nucleo_operacional.agente_coordenacao import AgenteCoordenacao
+from nucleo_operacional.agente_comunicacao import AgenteComunicacao
+from nucleo_operacional.agente_pesquisa_avancada import AgentePesquisaAvancada
+from nucleo_operacional.agente_memoria_estrategica import AgenteMemoriaEstrategica
+from nucleo_operacional.agente_gestao_conhecimento import AgenteGestaoConhecimento
 
-AGENTE_CENTRAL_ATIVO = True
+from config_nucleo import *
 
-AGENTE_COORDENACAO_ATIVO = True
 
-AGENTE_COMUNICACAO_ATIVO = True
+class IntegracaoCompleta:
 
-AGENTE_PESQUISA_AVANCADA_ATIVO = True
+    def __init__(self):
 
-AGENTE_MEMORIA_ESTRATEGICA_ATIVO = True
+        self.central = AgenteCentral()
+        self.coordenacao = AgenteCoordenacao()
+        self.comunicacao = AgenteComunicacao()
+        self.pesquisa = AgentePesquisaAvancada()
+        self.memoria = AgenteMemoriaEstrategica()
+        self.conhecimento = AgenteGestaoConhecimento()
 
-AGENTE_GESTAO_CONHECIMENTO_ATIVO = True
+    def executar(self, solicitacao):
+
+        etapa1 = self.comunicacao.executar(solicitacao)
+
+        etapa2 = self.coordenacao.executar(etapa1)
+
+        etapa3 = self.central.executar(etapa2)
+
+        etapa4 = self.pesquisa.executar(etapa3)
+
+        etapa5 = self.memoria.executar(etapa4)
+
+        etapa6 = self.conhecimento.executar(etapa5)
+
+        return etapa6
+
+
+if __name__ == "__main__":
+
+    sistema = IntegracaoCompleta()
+
+    resultado = sistema.executar(
+        "Teste de integração completa"
+    )
+
+    print(resultado)
