@@ -4,11 +4,11 @@ SISTEMA EXECUTOR DA REDE COLABORATIVA DE MICROAPOIOS
 Autor:
 Tadeu Marcos Viana
 
-Implementação executável baseada no documento
-SISTEMA_EXECUTOR_DA_REDE.md
+Responsável por manter o ciclo operacional da Rede.
 """
 
 from datetime import datetime
+import time
 
 from motor_de_aprendizado import MotorDeAprendizado
 
@@ -17,11 +17,9 @@ class SistemaExecutorDaRede:
 
     def __init__(self):
 
-        self.status = "ATIVO"
-
-        self.filas = []
-
         self.aprendizado = MotorDeAprendizado()
+
+        self.ativo = True
 
     def registrar(self, mensagem):
 
@@ -29,46 +27,21 @@ class SistemaExecutorDaRede:
 
         print(f"[EXECUTOR] [{horario}] {mensagem}")
 
-    def receber_tarefa(self, tarefa):
+    def executar_ciclo(self):
 
-        self.filas.append(tarefa)
+        self.registrar("Executando ciclo operacional.")
 
-        self.registrar(f"Tarefa adicionada: {tarefa}")
+        self.aprendizado.executar()
 
-    def executar_filas(self):
-
-        self.registrar("Executando filas.")
-
-        while self.filas:
-
-            tarefa = self.filas.pop(0)
-
-            self.registrar(f"Executando: {tarefa}")
-
-    def finalizar_execucao(self):
-
-        self.registrar("Execução concluída.")
+        self.registrar("Ciclo operacional concluído.")
 
     def executar(self):
 
         self.registrar("Sistema Executor iniciado.")
 
-        self.receber_tarefa("Inicialização da Rede")
+        self.executar_ciclo()
 
-        self.receber_tarefa("Verificação de Integridade")
-
-        self.receber_tarefa("Planejamento")
-
-        self.receber_tarefa("Construção")
-
-        self.receber_tarefa("Aprendizado")
-
-        self.executar_filas()
-
-        self.finalizar_execucao()
-
-        # Inicia automaticamente o aprendizado ao final da execução
-        self.aprendizado.executar()
+        self.registrar("Sistema Executor finalizado.")
 
 
 if __name__ == "__main__":
