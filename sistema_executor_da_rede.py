@@ -10,6 +10,7 @@ import os
 import time
 
 from motor_de_aprendizado import MotorDeAprendizado
+from registro_central_eventos import RegistroCentralEventos
 
 
 class SistemaExecutorDaRede:
@@ -17,6 +18,8 @@ class SistemaExecutorDaRede:
     def __init__(self):
 
         self.aprendizado = MotorDeAprendizado()
+
+        self.registro = RegistroCentralEventos()
 
         self.ativo = True
 
@@ -34,7 +37,39 @@ class SistemaExecutorDaRede:
 
         self.registrar(f"Iniciando ciclo {self.ciclo}")
 
+        self.registro.registrar(
+
+            origem="Sistema Executor",
+
+            destino="Motor de Aprendizado",
+
+            responsavel="Sistema",
+
+            descricao=f"Início do ciclo {self.ciclo}",
+
+            resultado="EXECUTANDO",
+
+            importancia="NORMAL"
+
+        )
+
         self.aprendizado.executar()
+
+        self.registro.registrar(
+
+            origem="Motor de Aprendizado",
+
+            destino="Sistema Executor",
+
+            responsavel="Sistema",
+
+            descricao=f"Fim do ciclo {self.ciclo}",
+
+            resultado="OK",
+
+            importancia="NORMAL"
+
+        )
 
         self.registrar(f"Finalizando ciclo {self.ciclo}")
 
