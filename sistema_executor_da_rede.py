@@ -6,6 +6,7 @@ Tadeu Marcos Viana
 """
 
 from datetime import datetime
+import os
 import time
 
 from motor_de_aprendizado import MotorDeAprendizado
@@ -41,11 +42,27 @@ class SistemaExecutorDaRede:
 
         self.registrar("Sistema Executor iniciado.")
 
-        while self.ativo:
+        modo_teste = os.getenv("GITHUB_ACTIONS") == "true"
 
-            self.executar_ciclo()
+        if modo_teste:
 
-            time.sleep(5)
+            self.registrar("Modo TESTE detectado.")
+
+            for _ in range(3):
+
+                self.executar_ciclo()
+
+            self.registrar("Teste concluído.")
+
+        else:
+
+            self.registrar("Modo CONTÍNUO iniciado.")
+
+            while self.ativo:
+
+                self.executar_ciclo()
+
+                time.sleep(5)
 
 
 if __name__ == "__main__":
