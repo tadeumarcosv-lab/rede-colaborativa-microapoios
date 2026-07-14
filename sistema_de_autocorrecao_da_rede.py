@@ -76,37 +76,79 @@ class SistemaDeAutocorrecaoDaRede:
             f"Iniciando autocorreção de {componente}"
         )
 
-        self.falhas_corrigidas.append(componente)
+        try:
 
-        self.memoria.adicionar_historico(
-            f"Autocorreção executada em {componente}"
-        )
+            registro = {
 
-        self.registro.registrar(
+                "componente": componente,
 
-            origem="Sistema de Autocorreção",
+                "data": datetime.now().strftime("%d/%m/%Y"),
 
-            destino=componente,
+                "hora": datetime.now().strftime("%H:%M:%S")
 
-            responsavel="Sistema",
+            }
 
-            descricao="Autocorreção executada.",
+            self.falhas_corrigidas.append(registro)
 
-            resultado="CORRIGIDO",
+            self.memoria.adicionar_historico(
+                f"Autocorreção executada em {componente}"
+            )
 
-            importancia="ALTA"
+            self.registro.registrar(
 
-        )
+                origem="Sistema de Autocorreção",
 
-        self.registrar(
-            f"{componente} corrigido."
-        )
+                destino=componente,
+
+                responsavel="Sistema",
+
+                descricao="Autocorreção executada.",
+
+                resultado="CORRIGIDO",
+
+                importancia="ALTA"
+
+            )
+
+            self.registrar(
+                f"{componente} corrigido."
+            )
+
+        except Exception as erro:
+
+            self.registrar(
+                f"Erro durante autocorreção: {erro}"
+            )
+
+            self.registro.registrar(
+
+                origem="Sistema de Autocorreção",
+
+                destino=componente,
+
+                responsavel="Sistema",
+
+                descricao=f"Erro durante autocorreção: {erro}",
+
+                resultado="ERRO",
+
+                importancia="CRÍTICA"
+
+            )
 
     def verificar_rede(self):
 
         self.registrar(
             "Verificando integridade geral da Rede."
         )
+
+    def quantidade_falhas(self):
+
+        return len(self.falhas_detectadas)
+
+    def quantidade_correcoes(self):
+
+        return len(self.falhas_corrigidas)
 
     def executar(self):
 
@@ -140,3 +182,9 @@ if __name__ == "__main__":
     )
 
     sistema.corrigir_falha("Kernel")
+
+    print()
+
+    print("Falhas detectadas:", sistema.quantidade_falhas())
+
+    print("Correções realizadas:", sistema.quantidade_correcoes())
