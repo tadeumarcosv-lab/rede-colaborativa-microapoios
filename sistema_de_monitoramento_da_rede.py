@@ -1,67 +1,14 @@
-"""
-SISTEMA DE MONITORAMENTO DA REDE COLABORATIVA DE MICROAPOIOS
+    def verificar_componentes(self):
+        """
+        Verifica os componentes atualmente registrados.
 
-Autor:
-Tadeu Marcos Viana
+        Retorna uma lista com os componentes monitorados.
+        Esta interface é utilizada pelo Motor de Aprendizado.
+        """
 
-Responsabilidade:
+        print("[MONITORAMENTO] Verificando componentes da Rede...")
 
-- Monitorar continuamente os principais componentes da Rede.
-- Registrar o estado operacional.
-- Informar componentes indisponíveis.
-- Preparar a integração com Auditoria, Recuperação e Autocorreção.
+        if hasattr(self, "componentes"):
+            return self.componentes
 
-"""
-
-from datetime import datetime
-
-
-class SistemaDeMonitoramentoDaRede:
-
-    def __init__(self):
-
-        self.componentes = []
-
-    def adicionar_componente(self, nome, objeto):
-
-        self.componentes.append((nome, objeto))
-
-    def registrar(self, mensagem):
-
-        horario = datetime.now().strftime("%d/%m/%Y %H:%M:%S")
-
-        print(f"[MONITORAMENTO] [{horario}] {mensagem}")
-
-    def verificar(self):
-
-        self.registrar("Iniciando monitoramento da Rede.")
-
-        if not self.componentes:
-
-            self.registrar("Nenhum componente registrado para monitoramento.")
-            return
-
-        for nome, componente in self.componentes:
-
-            try:
-
-                status = "ATIVO" if componente is not None else "INATIVO"
-
-                self.registrar(f"{nome}: {status}")
-
-            except Exception as erro:
-
-                self.registrar(f"{nome}: ERRO -> {erro}")
-
-        self.registrar("Monitoramento concluído.")
-
-    def executar(self):
-
-        self.verificar()
-
-
-if __name__ == "__main__":
-
-    monitoramento = SistemaDeMonitoramentoDaRede()
-
-    monitoramento.executar()
+        return []
