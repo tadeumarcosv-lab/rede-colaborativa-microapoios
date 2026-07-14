@@ -11,12 +11,16 @@ REGISTRO_CENTRAL_DE_EVENTOS.md
 
 from datetime import datetime
 
+from gerenciador_memoria import GerenciadorMemoria
+
 
 class RegistroCentralEventos:
 
     def __init__(self):
 
         self.eventos = []
+
+        self.memoria = GerenciadorMemoria()
 
     def registrar(
         self,
@@ -50,11 +54,18 @@ class RegistroCentralEventos:
 
         self.eventos.append(evento)
 
+        self.memoria.adicionar_historico(evento)
+
         print(
+
             f"[EVENTO] "
+
             f"{evento['data']} "
+
             f"{evento['hora']} | "
+
             f"{descricao}"
+
         )
 
     def consultar_eventos(self):
