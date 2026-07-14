@@ -4,9 +4,6 @@ DA REDE COLABORATIVA DE MICROAPOIOS
 
 Autor:
 Tadeu Marcos Viana
-
-Implementação executável baseada no documento
-REGISTRO_CENTRAL_DE_EVENTOS.md
 """
 
 from datetime import datetime
@@ -57,15 +54,10 @@ class RegistroCentralEventos:
         self.memoria.adicionar_historico(evento)
 
         print(
-
             f"[EVENTO] "
-
             f"{evento['data']} "
-
             f"{evento['hora']} | "
-
             f"{descricao}"
-
         )
 
     def consultar_eventos(self):
