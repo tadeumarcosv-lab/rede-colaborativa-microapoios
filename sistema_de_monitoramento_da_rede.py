@@ -4,8 +4,13 @@ SISTEMA DE MONITORAMENTO DA REDE COLABORATIVA DE MICROAPOIOS
 Autor:
 Tadeu Marcos Viana
 
-Implementação executável baseada no documento
-SISTEMA_DE_MONITORAMENTO_DA_REDE.md
+Responsabilidade:
+
+- Monitorar continuamente os principais componentes da Rede.
+- Registrar o estado operacional.
+- Informar componentes indisponíveis.
+- Preparar a integração com Auditoria, Recuperação e Autocorreção.
+
 """
 
 from datetime import datetime
@@ -15,19 +20,11 @@ class SistemaDeMonitoramentoDaRede:
 
     def __init__(self):
 
-        self.status = "ATIVO"
+        self.componentes = []
 
-        self.componentes = [
-            "Bootstrap",
-            "Kernel",
-            "Gerenciador de Inicialização",
-            "Supervisor Geral",
-            "Orquestrador Central",
-            "Diretor Autônomo",
-            "Motores Inteligentes",
-            "Sistema Executor",
-            "Memória Persistente"
-        ]
+    def adicionar_componente(self, nome, objeto):
+
+        self.componentes.append((nome, objeto))
 
     def registrar(self, mensagem):
 
@@ -35,39 +32,32 @@ class SistemaDeMonitoramentoDaRede:
 
         print(f"[MONITORAMENTO] [{horario}] {mensagem}")
 
-    def verificar_componentes(self):
+    def verificar(self):
 
-        self.registrar("Verificando componentes ativos.")
+        self.registrar("Iniciando monitoramento da Rede.")
 
-        for componente in self.componentes:
+        if not self.componentes:
 
-            self.registrar(f"ATIVO -> {componente}")
+            self.registrar("Nenhum componente registrado para monitoramento.")
+            return
 
-    def verificar_falhas(self):
+        for nome, componente in self.componentes:
 
-        self.registrar("Verificando falhas operacionais.")
+            try:
 
-    def verificar_desempenho(self):
+                status = "ATIVO" if componente is not None else "INATIVO"
 
-        self.registrar("Verificando desempenho da Rede.")
+                self.registrar(f"{nome}: {status}")
 
-    def registrar_estado(self):
+            except Exception as erro:
 
-        self.registrar("Registrando estado operacional.")
+                self.registrar(f"{nome}: ERRO -> {erro}")
+
+        self.registrar("Monitoramento concluído.")
 
     def executar(self):
 
-        self.registrar("Sistema de Monitoramento iniciado.")
-
-        self.verificar_componentes()
-
-        self.verificar_falhas()
-
-        self.verificar_desempenho()
-
-        self.registrar_estado()
-
-        self.registrar("Monitoramento concluído.")
+        self.verificar()
 
 
 if __name__ == "__main__":
