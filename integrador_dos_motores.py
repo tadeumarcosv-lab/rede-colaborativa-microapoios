@@ -1,11 +1,10 @@
 """
-INTEGRADOR DOS MOTORES
-DA REDE COLABORATIVA DE MICROAPOIOS
+INTEGRADOR DOS MOTORES DA REDE COLABORATIVA DE MICROAPOIOS
 
 Autor:
 Tadeu Marcos Viana
 
-Integra os Motores Inteligentes da Rede.
+Implementação executável baseada na arquitetura oficial da Rede.
 """
 
 from datetime import datetime
@@ -15,63 +14,81 @@ class IntegradorDosMotores:
 
     def __init__(self):
 
+        self.status = "ATIVO"
+
         self.motores = [
-
-            "Motor de Planejamento",
-
             "Motor de Construção",
-
             "Motor de Verificação",
-
             "Motor de Aprendizado"
-
         ]
 
     def registrar(self, mensagem):
 
         horario = datetime.now().strftime("%d/%m/%Y %H:%M:%S")
 
-        print(f"[MOTORES] [{horario}] {mensagem}")
+        print(f"[INTEGRADOR] [{horario}] {mensagem}")
 
-    def verificar(self):
+    def adicionar_motor(self, motor):
 
-        self.registrar("Verificando motores.")
+        if motor not in self.motores:
+
+            self.motores.append(motor)
+
+            self.registrar(f"Novo motor integrado: {motor}")
+
+    def listar_motores(self):
+
+        self.registrar("Motores atualmente integrados:")
 
         for motor in self.motores:
 
-            self.registrar(f"OK -> {motor}")
+            self.registrar(f"ATIVO -> {motor}")
 
-    def integrar(self):
+        return self.motores
 
-        self.registrar("Integrando motores.")
+    def integrar_construcao(self):
 
-        for motor in self.motores:
+        self.registrar("Integrando Motor de Construção.")
 
-            self.registrar(f"Motor integrado: {motor}")
+        return True
 
-    def validar(self):
+    def integrar_verificacao(self):
 
-        self.registrar("Validando integração dos motores.")
+        self.registrar("Integrando Motor de Verificação.")
 
-    def finalizar(self):
+        return True
 
-        self.registrar("Integração dos motores concluída.")
+    def integrar_aprendizado(self):
+
+        self.registrar("Integrando Motor de Aprendizado.")
+
+        return True
+
+    def sincronizar_motores(self):
+
+        self.registrar("Sincronizando todos os motores.")
+
+        return True
 
     def executar(self):
 
         self.registrar("Integrador dos Motores iniciado.")
 
-        self.verificar()
+        self.listar_motores()
 
-        self.integrar()
+        self.integrar_construcao()
 
-        self.validar()
+        self.integrar_verificacao()
 
-        self.finalizar()
+        self.integrar_aprendizado()
+
+        self.sincronizar_motores()
+
+        self.registrar("Integração dos motores concluída.")
 
 
 if __name__ == "__main__":
 
-    sistema = IntegradorDosMotores()
+    integrador = IntegradorDosMotores()
 
-    sistema.executar()
+    integrador.executar()
