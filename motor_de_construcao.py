@@ -34,6 +34,38 @@ class MotorDeConstrucao:
 
         print(f"[CONSTRUCAO] [{horario}] {mensagem}")
 
+    def adicionar_etapa(self, etapa):
+        """
+        Adiciona uma nova etapa ao fluxo de construção.
+        """
+
+        if etapa not in self.etapas:
+            self.etapas.append(etapa)
+            self.registrar(f"Nova etapa adicionada: {etapa}")
+
+    def remover_etapa(self, etapa):
+        """
+        Remove uma etapa existente.
+        """
+
+        if etapa in self.etapas:
+            self.etapas.remove(etapa)
+            self.registrar(f"Etapa removida: {etapa}")
+
+    def obter_etapas(self):
+        """
+        Retorna todas as etapas cadastradas.
+        """
+
+        return self.etapas
+
+    def obter_status(self):
+        """
+        Retorna o status atual do Motor de Construção.
+        """
+
+        return self.status
+
     def receber_plano(self):
 
         self.registrar("Recebendo plano de construção.")
