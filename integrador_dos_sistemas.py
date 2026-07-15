@@ -1,11 +1,10 @@
 """
-INTEGRADOR DOS SISTEMAS
-DA REDE COLABORATIVA DE MICROAPOIOS
+INTEGRADOR DOS SISTEMAS DA REDE COLABORATIVA DE MICROAPOIOS
 
 Autor:
 Tadeu Marcos Viana
 
-Integra todos os Sistemas da Rede.
+Implementação executável baseada na arquitetura oficial da Rede.
 """
 
 from datetime import datetime
@@ -15,20 +14,14 @@ class IntegradorDosSistemas:
 
     def __init__(self):
 
+        self.status = "ATIVO"
+
         self.sistemas = [
-
             "Sistema Executor",
-
-            "Sistema de Memória Persistente",
-
             "Sistema de Monitoramento",
-
-            "Sistema de Auditoria",
-
-            "Sistema de Recuperação",
-
-            "Sistema de Filas Inteligentes"
-
+            "Sistema de Autocorreção",
+            "Gerenciador de Memória",
+            "Registro Central de Eventos"
         ]
 
     def registrar(self, mensagem):
@@ -37,45 +30,83 @@ class IntegradorDosSistemas:
 
         print(f"[SISTEMAS] [{horario}] {mensagem}")
 
-    def verificar(self):
+    def adicionar_sistema(self, sistema):
 
-        self.registrar("Verificando sistemas.")
+        if sistema not in self.sistemas:
+
+            self.sistemas.append(sistema)
+
+            self.registrar(f"Novo sistema integrado: {sistema}")
+
+    def listar_sistemas(self):
+
+        self.registrar("Sistemas atualmente integrados:")
 
         for sistema in self.sistemas:
 
-            self.registrar(f"OK -> {sistema}")
+            self.registrar(f"ATIVO -> {sistema}")
 
-    def integrar(self):
+        return self.sistemas
 
-        self.registrar("Integrando sistemas.")
+    def integrar_executor(self):
 
-        for sistema in self.sistemas:
+        self.registrar("Integrando Sistema Executor.")
 
-            self.registrar(f"Sistema integrado: {sistema}")
+        return True
 
-    def validar(self):
+    def integrar_monitoramento(self):
 
-        self.registrar("Validando integração dos sistemas.")
+        self.registrar("Integrando Sistema de Monitoramento.")
 
-    def finalizar(self):
+        return True
 
-        self.registrar("Integração dos sistemas concluída.")
+    def integrar_autocorrecao(self):
+
+        self.registrar("Integrando Sistema de Autocorreção.")
+
+        return True
+
+    def integrar_memoria(self):
+
+        self.registrar("Integrando Gerenciador de Memória.")
+
+        return True
+
+    def integrar_eventos(self):
+
+        self.registrar("Integrando Registro Central de Eventos.")
+
+        return True
+
+    def sincronizar_sistemas(self):
+
+        self.registrar("Sincronizando todos os sistemas.")
+
+        return True
 
     def executar(self):
 
         self.registrar("Integrador dos Sistemas iniciado.")
 
-        self.verificar()
+        self.listar_sistemas()
 
-        self.integrar()
+        self.integrar_executor()
 
-        self.validar()
+        self.integrar_monitoramento()
 
-        self.finalizar()
+        self.integrar_autocorrecao()
+
+        self.integrar_memoria()
+
+        self.integrar_eventos()
+
+        self.sincronizar_sistemas()
+
+        self.registrar("Integração dos sistemas concluída.")
 
 
 if __name__ == "__main__":
 
-    sistema = IntegradorDosSistemas()
+    integrador = IntegradorDosSistemas()
 
-    sistema.executar()
+    integrador.executar()
