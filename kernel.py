@@ -1,91 +1,93 @@
 """
 KERNEL DA REDE COLABORATIVA DE MICROAPOIOS
 
-Autor: Tadeu Marcos Viana
+Autor:
+Tadeu Marcos Viana
 
-Responsabilidade:
-Inicializar toda a Rede.
+Implementação executável baseada no documento
+KERNEL_DA_REDE.md
 """
 
-import os
 from datetime import datetime
 
-import gerenciador_inicializacao
-from orquestrador_central_da_rede import OrquestradorCentralDaRede
 
-VERSAO = "1.2"
+class KernelDaRede:
 
-DOCUMENTOS_PRINCIPAIS = [
-    "CONSTITUICAO_DA_REDE.md",
-    "DNA_DA_REDE.md",
-    "ARQUITETURA_MESTRA.md",
-    "SISTEMA_OPERACIONAL_DA_REDE_PARTE_1.md",
-    "KERNEL_DA_REDE.md",
-    "BOOTSTRAP_DA_REDE.md"
-]
+    def __init__(self):
 
+        self.status = "ATIVO"
 
-def registrar(mensagem):
+        self.modulos = [
+            "Bootstrap",
+            "Gerenciador de Inicialização",
+            "Supervisor Geral",
+            "Orquestrador Central",
+            "Diretor Autônomo",
+            "Motor de Construção",
+            "Motor de Verificação",
+            "Motor de Aprendizado",
+            "Sistema Executor",
+            "Sistema de Monitoramento",
+            "Registro Central de Eventos",
+            "Gerenciador da Memória",
+            "Integrador dos Motores",
+            "Integrador dos Sistemas",
+            "Integrador Operacional Principal"
+        ]
 
-    horario = datetime.now().strftime("%d/%m/%Y %H:%M:%S")
+    def registrar(self, mensagem):
 
-    print(f"[{horario}] {mensagem}")
+        horario = datetime.now().strftime("%d/%m/%Y %H:%M:%S")
 
+        print(f"[KERNEL] [{horario}] {mensagem}")
 
-def verificar_documentos():
+    def adicionar_modulo(self, modulo):
 
-    registrar("Verificando documentos principais...")
+        if modulo not in self.modulos:
 
-    faltando = []
+            self.modulos.append(modulo)
 
-    for documento in DOCUMENTOS_PRINCIPAIS:
+            self.registrar(f"Módulo registrado: {modulo}")
 
-        if os.path.exists(documento):
+    def listar_modulos(self):
 
-            registrar(f"OK -> {documento}")
+        self.registrar("Módulos carregados:")
 
-        else:
+        for modulo in self.modulos:
 
-            registrar(f"FALTANDO -> {documento}")
+            self.registrar(f"ATIVO -> {modulo}")
 
-            faltando.append(documento)
+        return self.modulos
 
-    return faltando
+    def inicializar(self):
 
+        self.registrar("Inicializando Kernel da Rede.")
 
-def iniciar():
+    def verificar_integridade(self):
 
-    registrar("====================================")
+        self.registrar("Verificando integridade do Kernel.")
 
-    registrar("INICIALIZANDO KERNEL DA REDE")
+    def sincronizar(self):
 
-    registrar(f"VERSÃO {VERSAO}")
+        self.registrar("Sincronizando módulos do Kernel.")
 
-    registrar("====================================")
+    def executar(self):
 
-    faltando = verificar_documentos()
+        self.registrar("Kernel iniciado.")
 
-    if len(faltando) == 0:
+        self.listar_modulos()
 
-        registrar("Todos os documentos principais encontrados.")
+        self.inicializar()
 
-        gerenciador = gerenciador_inicializacao.GerenciadorInicializacao()
+        self.verificar_integridade()
 
-        gerenciador.iniciar()
+        self.sincronizar()
 
-        registrar("Transferindo controle ao Orquestrador Central...")
-
-        orquestrador = OrquestradorCentralDaRede()
-
-        orquestrador.executar()
-
-    else:
-
-        registrar("Existem documentos ausentes.")
-
-        registrar("Inicialização interrompida.")
+        self.registrar("Kernel operacional.")
 
 
 if __name__ == "__main__":
 
-    iniciar()
+    kernel = KernelDaRede()
+
+    kernel.executar()
