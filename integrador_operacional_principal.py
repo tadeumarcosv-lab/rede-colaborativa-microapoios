@@ -1,11 +1,10 @@
 """
-INTEGRADOR OPERACIONAL PRINCIPAL
-DA REDE COLABORATIVA DE MICROAPOIOS
+INTEGRADOR OPERACIONAL PRINCIPAL DA REDE COLABORATIVA DE MICROAPOIOS
 
 Autor:
 Tadeu Marcos Viana
 
-Responsável por iniciar todos os Integradores da Rede.
+Implementação executável baseada na arquitetura oficial da Rede.
 """
 
 from datetime import datetime
@@ -15,77 +14,99 @@ class IntegradorOperacionalPrincipal:
 
     def __init__(self):
 
+        self.status = "ATIVO"
+
         self.integradores = [
-
-            "Integrador da Rede",
-
-            "Orquestrador de Inicialização",
-
             "Integrador dos Motores",
-
             "Integrador dos Sistemas",
-
-            "Integrador dos Agentes",
-
             "Integrador da Memória",
-
-            "Integrador de Comunicação",
-
-            "Integrador de Decisões",
-
-            "Integrador do Aprendizado",
-
-            "Integrador de Autocorreção",
-
-            "Integrador de Autoconstrução"
-
+            "Integrador da Rede",
+            "Integrador dos Agentes"
         ]
 
     def registrar(self, mensagem):
 
         horario = datetime.now().strftime("%d/%m/%Y %H:%M:%S")
 
-        print(f"[INTEGRADOR-PRINCIPAL] [{horario}] {mensagem}")
+        print(f"[OPERACIONAL] [{horario}] {mensagem}")
 
-    def verificar(self):
+    def adicionar_integrador(self, integrador):
 
-        self.registrar("Verificando Integradores.")
+        if integrador not in self.integradores:
+
+            self.integradores.append(integrador)
+
+            self.registrar(f"Novo integrador registrado: {integrador}")
+
+    def listar_integradores(self):
+
+        self.registrar("Integradores atualmente registrados:")
 
         for integrador in self.integradores:
 
-            self.registrar(f"OK -> {integrador}")
+            self.registrar(f"ATIVO -> {integrador}")
 
-    def integrar(self):
+        return self.integradores
 
-        self.registrar("Inicializando integração operacional.")
+    def integrar_motores(self):
 
-        for integrador in self.integradores:
+        self.registrar("Integrando os Motores da Rede.")
 
-            self.registrar(f"Iniciado: {integrador}")
+        return True
 
-    def validar(self):
+    def integrar_sistemas(self):
 
-        self.registrar("Validando integração geral.")
+        self.registrar("Integrando os Sistemas da Rede.")
 
-    def finalizar(self):
+        return True
 
-        self.registrar("Integração operacional concluída.")
+    def integrar_memoria(self):
+
+        self.registrar("Integrando a Memória da Rede.")
+
+        return True
+
+    def integrar_rede(self):
+
+        self.registrar("Integrando os componentes da Rede.")
+
+        return True
+
+    def integrar_agentes(self):
+
+        self.registrar("Integrando os Agentes da Rede.")
+
+        return True
+
+    def sincronizar_operacao(self):
+
+        self.registrar("Sincronizando toda a operação da Rede.")
+
+        return True
 
     def executar(self):
 
         self.registrar("Integrador Operacional Principal iniciado.")
 
-        self.verificar()
+        self.listar_integradores()
 
-        self.integrar()
+        self.integrar_motores()
 
-        self.validar()
+        self.integrar_sistemas()
 
-        self.finalizar()
+        self.integrar_memoria()
+
+        self.integrar_rede()
+
+        self.integrar_agentes()
+
+        self.sincronizar_operacao()
+
+        self.registrar("Integração operacional concluída.")
 
 
 if __name__ == "__main__":
 
-    sistema = IntegradorOperacionalPrincipal()
+    integrador = IntegradorOperacionalPrincipal()
 
-    sistema.executar()
+    integrador.executar()
