@@ -34,29 +34,13 @@ class MotorDeVerificacao:
 
         print(f"[VERIFICACAO] [{horario}] {mensagem}")
 
-    def verificar_integridade(self):
+    def adicionar_verificacao(self, verificacao):
 
-        self.registrar("Verificando integridade estrutural.")
+        if verificacao not in self.verificacoes:
 
-    def verificar_dependencias(self):
+            self.verificacoes.append(verificacao)
 
-        self.registrar("Verificando dependências.")
-
-    def verificar_protocolos(self):
-
-        self.registrar("Verificando protocolos oficiais.")
-
-    def verificar_constituicao(self):
-
-        self.registrar("Verificando compatibilidade com a Constituição.")
-
-    def verificar_dna(self):
-
-        self.registrar("Verificando compatibilidade com o DNA da Rede.")
-
-    def verificar_arquitetura(self):
-
-        self.registrar("Verificando Arquitetura Mestra.")
+            self.registrar(f"Nova verificação registrada: {verificacao}")
 
     def listar_verificacoes(self):
 
@@ -65,6 +49,44 @@ class MotorDeVerificacao:
         for item in self.verificacoes:
 
             self.registrar(f"OK -> {item}")
+
+        return self.verificacoes
+
+    def verificar_integridade(self):
+
+        self.registrar("Verificando integridade estrutural.")
+
+        return True
+
+    def verificar_dependencias(self):
+
+        self.registrar("Verificando dependências.")
+
+        return True
+
+    def verificar_protocolos(self):
+
+        self.registrar("Verificando protocolos oficiais.")
+
+        return True
+
+    def verificar_constituicao(self):
+
+        self.registrar("Verificando compatibilidade com a Constituição.")
+
+        return True
+
+    def verificar_dna(self):
+
+        self.registrar("Verificando compatibilidade com o DNA da Rede.")
+
+        return True
+
+    def verificar_arquitetura(self):
+
+        self.registrar("Verificando Arquitetura Mestra.")
+
+        return True
 
     def executar(self):
 
