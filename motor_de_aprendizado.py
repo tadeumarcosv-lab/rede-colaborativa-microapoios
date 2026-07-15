@@ -3,13 +3,12 @@ MOTOR DE APRENDIZADO DA REDE COLABORATIVA DE MICROAPOIOS
 
 Autor:
 Tadeu Marcos Viana
+
+Implementação executável baseada no documento
+MOTOR_DE_APRENDIZADO.md
 """
 
 from datetime import datetime
-
-from sistema_de_memoria_persistente import SistemaDeMemoriaPersistente
-from sistema_de_auditoria_da_rede import SistemaDeAuditoriaDaRede
-from sistema_de_monitoramento_da_rede import SistemaDeMonitoramentoDaRede
 
 
 class MotorDeAprendizado:
@@ -18,16 +17,15 @@ class MotorDeAprendizado:
 
         self.status = "ATIVO"
 
-        self.memoria = SistemaDeMemoriaPersistente()
-        self.auditoria = SistemaDeAuditoriaDaRede()
-        self.monitoramento = SistemaDeMonitoramentoDaRede()
-
-        self.fontes = [
-            "Registro Central de Eventos",
-            "Sistema de Auditoria",
-            "Sistema de Monitoramento",
-            "Sistema Executor",
-            "Memória Persistente"
+        self.conhecimentos = [
+            "Constituição da Rede",
+            "DNA da Rede",
+            "Arquitetura Mestra",
+            "Protocolos Oficiais",
+            "Memória Persistente",
+            "Monitoramento",
+            "Verificação",
+            "Construção"
         ]
 
     def registrar(self, mensagem):
@@ -36,66 +34,63 @@ class MotorDeAprendizado:
 
         print(f"[APRENDIZADO] [{horario}] {mensagem}")
 
-    def coletar_eventos(self):
+    def adicionar_conhecimento(self, conhecimento):
 
-        self.registrar("Coletando eventos da Rede.")
+        if conhecimento not in self.conhecimentos:
 
-    def analisar_resultados(self):
+            self.conhecimentos.append(conhecimento)
 
-        self.registrar("Analisando resultados operacionais.")
+            self.registrar(f"Novo conhecimento registrado: {conhecimento}")
 
-    def identificar_melhorias(self):
+    def listar_conhecimentos(self):
 
-        self.registrar("Identificando oportunidades de melhoria.")
+        self.registrar("Base atual de conhecimentos:")
+
+        for conhecimento in self.conhecimentos:
+
+            self.registrar(f"OK -> {conhecimento}")
+
+        return self.conhecimentos
+
+    def aprender_monitoramento(self):
+
+        self.registrar("Aprendendo com o Sistema de Monitoramento.")
+
+        return True
+
+    def aprender_verificacao(self):
+
+        self.registrar("Aprendendo com o Motor de Verificação.")
+
+        return True
+
+    def aprender_construcao(self):
+
+        self.registrar("Aprendendo com o Motor de Construção.")
+
+        return True
 
     def atualizar_memoria(self):
 
-        self.memoria.adicionar(
-            "Aprendizado",
-            "Ciclo de aprendizado executado."
-        )
+        self.registrar("Atualizando Memória Persistente.")
 
-        self.registrar("Memória persistente atualizada.")
-
-    def gerar_conhecimento(self):
-
-        self.registrar("Gerando novo conhecimento.")
-
-    def listar_fontes(self):
-
-        self.registrar("Consultando fontes de aprendizado:")
-
-        for fonte in self.fontes:
-
-            self.registrar(f"OK -> {fonte}")
+        return True
 
     def executar(self):
 
         self.registrar("Motor de Aprendizado iniciado.")
 
-        self.listar_fontes()
+        self.listar_conhecimentos()
 
-        self.coletar_eventos()
+        self.aprender_monitoramento()
 
-        self.analisar_resultados()
+        self.aprender_verificacao()
 
-        self.identificar_melhorias()
-
-        self.gerar_conhecimento()
+        self.aprender_construcao()
 
         self.atualizar_memoria()
 
-        self.auditoria.registrar_evento(
-            "Ciclo de aprendizado executado."
-        )
-
-        self.registrar("Evento registrado na Auditoria.")
-
-        self.monitoramento.verificar_componentes()
-
-        self.registrar("Monitoramento executado.")
-
-        self.registrar("Ciclo de aprendizado concluído.")
+        self.registrar("Aprendizado concluído.")
 
 
 if __name__ == "__main__":
