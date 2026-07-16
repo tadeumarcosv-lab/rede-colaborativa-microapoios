@@ -4,7 +4,7 @@ BOOTSTRAP DA REDE COLABORATIVA DE MICROAPOIOS
 Responsável por iniciar oficialmente toda a Rede.
 """
 
-import kernel
+from kernel import KernelDaRede
 
 
 def bootstrap():
@@ -14,7 +14,9 @@ def bootstrap():
     print("Iniciando sequência oficial...")
     print("========================================")
 
-    kernel.iniciar()
+    kernel = KernelDaRede()
+
+    kernel.executar()
 
     print("========================================")
     print("Bootstrap concluído.")
