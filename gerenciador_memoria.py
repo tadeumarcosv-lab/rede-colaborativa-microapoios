@@ -95,6 +95,60 @@ class GerenciadorMemoria:
 
         self.salvar(memoria)
 
+    def obter_estatisticas(self):
+        """
+        Retorna as estatísticas atuais da memória.
+        """
+
+        memoria = self.carregar()
+
+        return memoria["estatisticas"]
+
+    def obter_historico(self):
+        """
+        Retorna todo o histórico registrado.
+        """
+
+        memoria = self.carregar()
+
+        return memoria["historico"]
+
+    def obter_aprendizados(self):
+        """
+        Retorna todos os aprendizados registrados.
+        """
+
+        memoria = self.carregar()
+
+        return memoria["aprendizados"]
+
+    def obter_decisoes(self):
+        """
+        Retorna todas as decisões registradas.
+        """
+
+        memoria = self.carregar()
+
+        return memoria["decisoes"]
+
+    def obter_conhecimento(self):
+        """
+        Retorna toda a base de conhecimento registrada.
+        """
+
+        memoria = self.carregar()
+
+        return memoria["conhecimento"]
+
+    def obter_contexto(self):
+        """
+        Retorna todo o contexto operacional registrado.
+        """
+
+        memoria = self.carregar()
+
+        return memoria["contexto"]
+
 
 if __name__ == "__main__":
 
