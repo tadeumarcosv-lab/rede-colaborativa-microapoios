@@ -31,6 +31,48 @@ class SistemaExecutorDaRede:
 
         print(f"[EXECUTOR] [{horario}] {mensagem}")
 
+    def obter_status(self):
+        """
+        Retorna o estado atual do Sistema Executor.
+        """
+
+        return {
+
+            "ativo": self.ativo,
+
+            "ciclo_atual": self.ciclo
+
+        }
+
+    def iniciar(self):
+        """
+        Ativa o Sistema Executor.
+        """
+
+        self.ativo = True
+
+        self.registrar("Sistema Executor ativado.")
+
+    def parar(self):
+        """
+        Encerra o ciclo contínuo.
+        """
+
+        self.ativo = False
+
+        self.registrar("Sistema Executor encerrado.")
+
+    def reiniciar(self):
+        """
+        Reinicia o Sistema Executor.
+        """
+
+        self.registrar("Reiniciando Sistema Executor.")
+
+        self.ativo = True
+
+        self.ciclo = 0
+
     def executar_ciclo(self):
 
         self.ciclo += 1
