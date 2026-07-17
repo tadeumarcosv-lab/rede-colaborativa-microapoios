@@ -42,6 +42,17 @@ class MotorDeAprendizado:
 
             self.registrar(f"Novo conhecimento registrado: {conhecimento}")
 
+    def remover_conhecimento(self, conhecimento):
+        """
+        Remove um conhecimento da base.
+        """
+
+        if conhecimento in self.conhecimentos:
+
+            self.conhecimentos.remove(conhecimento)
+
+            self.registrar(f"Conhecimento removido: {conhecimento}")
+
     def listar_conhecimentos(self):
 
         self.registrar("Base atual de conhecimentos:")
@@ -51,6 +62,29 @@ class MotorDeAprendizado:
             self.registrar(f"OK -> {conhecimento}")
 
         return self.conhecimentos
+
+    def quantidade_conhecimentos(self):
+        """
+        Retorna a quantidade de conhecimentos registrados.
+        """
+
+        return len(self.conhecimentos)
+
+    def obter_status(self):
+        """
+        Retorna o status atual do Motor de Aprendizado.
+        """
+
+        return self.status
+
+    def alterar_status(self, novo_status):
+        """
+        Altera o status operacional.
+        """
+
+        self.status = novo_status
+
+        self.registrar(f"Status alterado para: {novo_status}")
 
     def aprender_monitoramento(self):
 
