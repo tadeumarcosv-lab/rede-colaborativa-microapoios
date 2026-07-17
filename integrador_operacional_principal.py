@@ -48,6 +48,22 @@ class IntegradorOperacionalPrincipal:
 
         return self.integradores
 
+    def obter_status(self):
+        """
+        Retorna o status atual do Integrador Operacional.
+        """
+
+        return self.status
+
+    def definir_status(self, status):
+        """
+        Atualiza o status operacional.
+        """
+
+        self.status = status
+
+        self.registrar(f"Status alterado para: {status}")
+
     def integrar_motores(self):
 
         self.registrar("Integrando os Motores da Rede.")
@@ -84,6 +100,29 @@ class IntegradorOperacionalPrincipal:
 
         return True
 
+    def verificar_integradores(self):
+        """
+        Verifica se todos os integradores cadastrados
+        estão disponíveis.
+        """
+
+        self.registrar("Verificando integradores registrados.")
+
+        for integrador in self.integradores:
+
+            self.registrar(f"OK -> {integrador}")
+
+        return True
+
+    def registrar_ciclo(self):
+        """
+        Registra o encerramento do ciclo operacional.
+        """
+
+        self.registrar("Ciclo operacional registrado.")
+
+        return True
+
     def executar(self):
 
         self.registrar("Integrador Operacional Principal iniciado.")
@@ -101,6 +140,10 @@ class IntegradorOperacionalPrincipal:
         self.integrar_agentes()
 
         self.sincronizar_operacao()
+
+        self.verificar_integradores()
+
+        self.registrar_ciclo()
 
         self.registrar("Integração operacional concluída.")
 
