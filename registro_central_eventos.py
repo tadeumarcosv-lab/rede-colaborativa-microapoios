@@ -68,9 +68,63 @@ class RegistroCentralEventos:
 
         return len(self.eventos)
 
+    def obter_ultimo_evento(self):
+        """
+        Retorna o último evento registrado.
+        """
+
+        if self.eventos:
+
+            return self.eventos[-1]
+
+        return None
+
+    def consultar_por_importancia(self, importancia):
+        """
+        Retorna todos os eventos de uma determinada importância.
+        """
+
+        return [
+
+            evento
+
+            for evento in self.eventos
+
+            if evento["importancia"] == importancia
+
+        ]
+
+    def consultar_por_responsavel(self, responsavel):
+        """
+        Retorna todos os eventos registrados por um responsável.
+        """
+
+        return [
+
+            evento
+
+            for evento in self.eventos
+
+            if evento["responsavel"] == responsavel
+
+        ]
+
     def limpar(self):
 
         self.eventos = []
+
+    def obter_status(self):
+        """
+        Retorna o estado atual do Registro Central de Eventos.
+        """
+
+        return {
+
+            "eventos_registrados": len(self.eventos),
+
+            "memoria_integrada": True
+
+        }
 
 
 if __name__ == "__main__":
