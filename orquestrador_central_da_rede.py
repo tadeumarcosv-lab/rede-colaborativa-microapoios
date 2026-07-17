@@ -43,6 +43,17 @@ class OrquestradorCentralDaRede:
 
             self.registrar(f"Componente integrado: {componente}")
 
+    def remover_componente(self, componente):
+        """
+        Remove um componente do Orquestrador.
+        """
+
+        if componente in self.componentes:
+
+            self.componentes.remove(componente)
+
+            self.registrar(f"Componente removido: {componente}")
+
     def listar_componentes(self):
 
         self.registrar("Componentes coordenados:")
@@ -52,6 +63,29 @@ class OrquestradorCentralDaRede:
             self.registrar(f"ATIVO -> {componente}")
 
         return self.componentes
+
+    def quantidade_componentes(self):
+        """
+        Retorna a quantidade de componentes coordenados.
+        """
+
+        return len(self.componentes)
+
+    def obter_status(self):
+        """
+        Retorna o status atual do Orquestrador.
+        """
+
+        return self.status
+
+    def alterar_status(self, novo_status):
+        """
+        Altera o status operacional.
+        """
+
+        self.status = novo_status
+
+        self.registrar(f"Status alterado para: {novo_status}")
 
     def sincronizar_componentes(self):
 
