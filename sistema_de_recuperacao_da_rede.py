@@ -31,6 +31,36 @@ class SistemaDeRecuperacaoDaRede:
 
         self.registrar(f"Falha detectada em: {componente}")
 
+    def listar_ocorrencias(self):
+        """
+        Retorna todas as ocorrências registradas.
+        """
+
+        return self.ocorrencias
+
+    def quantidade_ocorrencias(self):
+        """
+        Retorna a quantidade de ocorrências registradas.
+        """
+
+        return len(self.ocorrencias)
+
+    def obter_status(self):
+        """
+        Retorna o status atual do Sistema de Recuperação.
+        """
+
+        return self.status
+
+    def alterar_status(self, novo_status):
+        """
+        Altera o status operacional do Sistema de Recuperação.
+        """
+
+        self.status = novo_status
+
+        self.registrar(f"Status alterado para: {novo_status}")
+
     def analisar_falha(self):
 
         self.registrar("Analisando falha.")
