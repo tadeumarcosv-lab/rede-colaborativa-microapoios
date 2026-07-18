@@ -14,6 +14,8 @@ class IntegradorDaRede:
 
     def __init__(self):
 
+        self.status = "ATIVO"
+
         self.componentes = [
 
             "Bootstrap",
@@ -56,6 +58,40 @@ class IntegradorDaRede:
 
         print(f"[INTEGRADOR] [{horario}] {mensagem}")
 
+    def adicionar_componente(self, componente):
+
+        if componente not in self.componentes:
+
+            self.componentes.append(componente)
+
+            self.registrar(f"Novo componente integrado: {componente}")
+
+    def remover_componente(self, componente):
+
+        if componente in self.componentes:
+
+            self.componentes.remove(componente)
+
+            self.registrar(f"Componente removido: {componente}")
+
+    def listar_componentes(self):
+
+        self.registrar("Componentes atualmente integrados:")
+
+        for componente in self.componentes:
+
+            self.registrar(f"ATIVO -> {componente}")
+
+        return self.componentes
+
+    def quantidade_componentes(self):
+
+        return len(self.componentes)
+
+    def obter_status(self):
+
+        return self.status
+
     def verificar_componentes(self):
 
         self.registrar("Verificando componentes.")
@@ -63,6 +99,8 @@ class IntegradorDaRede:
         for componente in self.componentes:
 
             self.registrar(f"OK -> {componente}")
+
+        return True
 
     def integrar(self):
 
@@ -72,9 +110,25 @@ class IntegradorDaRede:
 
             self.registrar(f"Integrando {componente}")
 
+        return True
+
     def validar(self):
 
         self.registrar("Validando integração.")
+
+        return True
+
+    def sincronizar(self):
+
+        self.registrar("Sincronizando todos os componentes da Rede.")
+
+        return True
+
+    def verificar_integridade(self):
+
+        self.registrar("Verificando integridade da integração.")
+
+        return True
 
     def finalizar(self):
 
@@ -82,13 +136,19 @@ class IntegradorDaRede:
 
     def executar(self):
 
-        self.registrar("Integrador iniciado.")
+        self.registrar("Integrador da Rede iniciado.")
+
+        self.listar_componentes()
 
         self.verificar_componentes()
 
         self.integrar()
 
         self.validar()
+
+        self.sincronizar()
+
+        self.verificar_integridade()
 
         self.finalizar()
 
