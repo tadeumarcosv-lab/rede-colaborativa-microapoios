@@ -18,9 +18,9 @@ class SistemaDeMemoriaPersistente:
 
     def __init__(self):
 
-        self.arquivo = "memoria_persistente.json"
-
         self.status = "ATIVO"
+
+        self.arquivo = "memoria_persistente.json"
 
         self.memoria = []
 
@@ -36,11 +36,19 @@ class SistemaDeMemoriaPersistente:
 
         if os.path.exists(self.arquivo):
 
-            with open(self.arquivo, "r", encoding="utf-8") as arquivo:
+            try:
 
-                self.memoria = json.load(arquivo)
+                with open(self.arquivo, "r", encoding="utf-8") as arquivo:
 
-            self.registrar("Memória carregada.")
+                    self.memoria = json.load(arquivo)
+
+                self.registrar("Memória carregada.")
+
+            except Exception:
+
+                self.memoria = []
+
+                self.registrar("Memória corrompida. Nova memória criada.")
 
         else:
 
@@ -52,7 +60,17 @@ class SistemaDeMemoriaPersistente:
 
         with open(self.arquivo, "w", encoding="utf-8") as arquivo:
 
-            json.dump(self.memoria, arquivo, indent=4, ensure_ascii=False)
+            json.dump(
+
+                self.memoria,
+
+                arquivo,
+
+                indent=4,
+
+                ensure_ascii=False
+
+            )
 
         self.registrar("Memória salva.")
 
@@ -76,11 +94,27 @@ class SistemaDeMemoriaPersistente:
 
     def listar(self):
 
-        self.registrar("Listando memória persistente.")
+        self.registrar("Conteúdo da memória:")
 
-        for registro in self.memoria:
+        if not self.memoria:
 
-            print(registro)
+            self.registrar("Nenhum registro encontrado.")
+
+        else:
+
+            for registro in self.memoria:
+
+                self.registrar(
+
+                    f"{registro['data']} | "
+
+                    f"{registro['tipo']} | "
+
+                    f"{registro['descricao']}"
+
+                )
+
+        return self.memoria
 
     def executar(self):
 
@@ -96,7 +130,7 @@ class SistemaDeMemoriaPersistente:
 
         self.listar()
 
-        self.registrar("Sistema finalizado.")
+        self.registrar("Sistema de Memória Persistente operacional.")
 
 
 if __name__ == "__main__":
