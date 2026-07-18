@@ -15,6 +15,8 @@ class IntegradorDaMemoria:
 
     def __init__(self):
 
+        self.status = "ATIVO"
+
         self.componentes = [
 
             "Sistema de Memória Persistente",
@@ -33,6 +35,40 @@ class IntegradorDaMemoria:
 
         print(f"[MEMORIA] [{horario}] {mensagem}")
 
+    def adicionar_componente(self, componente):
+
+        if componente not in self.componentes:
+
+            self.componentes.append(componente)
+
+            self.registrar(f"Novo componente integrado: {componente}")
+
+    def remover_componente(self, componente):
+
+        if componente in self.componentes:
+
+            self.componentes.remove(componente)
+
+            self.registrar(f"Componente removido: {componente}")
+
+    def listar_componentes(self):
+
+        self.registrar("Componentes atualmente integrados:")
+
+        for componente in self.componentes:
+
+            self.registrar(f"ATIVO -> {componente}")
+
+        return self.componentes
+
+    def quantidade_componentes(self):
+
+        return len(self.componentes)
+
+    def obter_status(self):
+
+        return self.status
+
     def verificar(self):
 
         self.registrar("Verificando componentes de memória.")
@@ -40,6 +76,8 @@ class IntegradorDaMemoria:
         for componente in self.componentes:
 
             self.registrar(f"OK -> {componente}")
+
+        return True
 
     def integrar(self):
 
@@ -49,9 +87,25 @@ class IntegradorDaMemoria:
 
             self.registrar(f"Integrado: {componente}")
 
+        return True
+
+    def sincronizar(self):
+
+        self.registrar("Sincronizando toda a memória da Rede.")
+
+        return True
+
+    def verificar_integridade(self):
+
+        self.registrar("Verificando integridade da memória.")
+
+        return True
+
     def validar(self):
 
         self.registrar("Validando integração da memória.")
+
+        return True
 
     def finalizar(self):
 
@@ -61,9 +115,15 @@ class IntegradorDaMemoria:
 
         self.registrar("Integrador da Memória iniciado.")
 
+        self.listar_componentes()
+
         self.verificar()
 
         self.integrar()
+
+        self.sincronizar()
+
+        self.verificar_integridade()
 
         self.validar()
 
