@@ -30,26 +30,43 @@ class SistemaDeAuditoriaDaRede:
         horario = datetime.now().strftime("%d/%m/%Y %H:%M:%S")
 
         self.eventos.append({
-
             "data": horario,
-
             "evento": evento
-
         })
 
         self.registrar(f"Evento registrado: {evento}")
+
+    def listar_eventos(self):
+
+        self.registrar("Eventos registrados:")
+
+        if not self.eventos:
+
+            self.registrar("Nenhum evento registrado.")
+
+        else:
+
+            for evento in self.eventos:
+
+                self.registrar(
+                    f"{evento['data']} -> {evento['evento']}"
+                )
+
+        return self.eventos
 
     def verificar_integridade(self):
 
         self.registrar("Verificando integridade da Rede.")
 
+        return True
+
     def gerar_relatorio(self):
 
         self.registrar("Gerando relatório de auditoria.")
 
-        for evento in self.eventos:
+        self.listar_eventos()
 
-            print(evento)
+        return True
 
     def finalizar(self):
 
