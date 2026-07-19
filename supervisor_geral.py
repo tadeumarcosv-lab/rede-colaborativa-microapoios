@@ -35,32 +35,31 @@ class SupervisorGeral:
             "Integrador Operacional Principal"
         ]
 
+        self.historico = []
+
+        self.ciclos = 0
+
     def registrar(self, mensagem):
 
         horario = datetime.now().strftime("%d/%m/%Y %H:%M:%S")
 
-        print(f"[SUPERVISOR] [{horario}] {mensagem}")
+        registro = f"[SUPERVISOR] [{horario}] {mensagem}"
+
+        self.historico.append(registro)
+
+        print(registro)
 
     def obter_status(self):
-        """
-        Retorna o status atual do Supervisor Geral.
-        """
 
         return self.status
 
     def definir_status(self, status):
-        """
-        Atualiza o status operacional.
-        """
 
         self.status = status
 
         self.registrar(f"Status alterado para: {status}")
 
     def adicionar_componente(self, componente):
-        """
-        Adiciona um novo componente supervisionado.
-        """
 
         if componente not in self.componentes:
 
@@ -69,9 +68,6 @@ class SupervisorGeral:
             self.registrar(f"Novo componente supervisionado: {componente}")
 
     def listar_componentes(self):
-        """
-        Lista todos os componentes supervisionados.
-        """
 
         self.registrar("Componentes supervisionados:")
 
@@ -81,18 +77,23 @@ class SupervisorGeral:
 
         return self.componentes
 
+    def obter_historico(self):
+
+        return self.historico
+
     def verificar(self):
 
         self.registrar("Verificando funcionamento geral da Rede.")
+
+        return True
 
     def monitorar(self):
 
         self.registrar("Monitoramento contínuo iniciado.")
 
+        return True
+
     def verificar_componentes(self):
-        """
-        Verifica todos os componentes cadastrados.
-        """
 
         self.registrar("Verificando componentes supervisionados.")
 
@@ -103,11 +104,10 @@ class SupervisorGeral:
         return True
 
     def registrar_ciclo(self):
-        """
-        Registra o encerramento do ciclo de supervisão.
-        """
 
-        self.registrar("Ciclo de supervisão registrado.")
+        self.ciclos += 1
+
+        self.registrar(f"Ciclo de supervisão #{self.ciclos} registrado.")
 
         return True
 
