@@ -28,43 +28,49 @@ class MotorDeConstrucao:
             "Enviar para Verificação"
         ]
 
+        self.historico = []
+
+        self.componentes_construidos = []
+
     def registrar(self, mensagem):
 
         horario = datetime.now().strftime("%d/%m/%Y %H:%M:%S")
 
-        print(f"[CONSTRUCAO] [{horario}] {mensagem}")
+        registro = f"[CONSTRUCAO] [{horario}] {mensagem}"
+
+        self.historico.append(registro)
+
+        print(registro)
 
     def adicionar_etapa(self, etapa):
-        """
-        Adiciona uma nova etapa ao fluxo de construção.
-        """
 
         if etapa not in self.etapas:
+
             self.etapas.append(etapa)
+
             self.registrar(f"Nova etapa adicionada: {etapa}")
 
     def remover_etapa(self, etapa):
-        """
-        Remove uma etapa existente.
-        """
 
         if etapa in self.etapas:
+
             self.etapas.remove(etapa)
+
             self.registrar(f"Etapa removida: {etapa}")
 
     def obter_etapas(self):
-        """
-        Retorna todas as etapas cadastradas.
-        """
 
         return self.etapas
 
     def obter_status(self):
-        """
-        Retorna o status atual do Motor de Construção.
-        """
 
         return self.status
+
+    def alterar_status(self, novo_status):
+
+        self.status = novo_status
+
+        self.registrar(f"Status alterado para: {novo_status}")
 
     def receber_plano(self):
 
@@ -76,7 +82,11 @@ class MotorDeConstrucao:
 
     def construir(self):
 
-        self.registrar("Construindo componente.")
+        componente = "Componente_" + str(len(self.componentes_construidos) + 1)
+
+        self.componentes_construidos.append(componente)
+
+        self.registrar(f"Construindo {componente}.")
 
     def documentar(self):
 
@@ -94,6 +104,30 @@ class MotorDeConstrucao:
 
             self.registrar(f"OK -> {etapa}")
 
+    def listar_componentes(self):
+
+        self.registrar("Componentes construídos:")
+
+        if not self.componentes_construidos:
+
+            self.registrar("Nenhum componente registrado.")
+
+        else:
+
+            for componente in self.componentes_construidos:
+
+                self.registrar(f"OK -> {componente}")
+
+        return self.componentes_construidos
+
+    def quantidade_componentes(self):
+
+        return len(self.componentes_construidos)
+
+    def obter_historico(self):
+
+        return self.historico
+
     def executar(self):
 
         self.registrar("Motor de Construção iniciado.")
@@ -110,7 +144,11 @@ class MotorDeConstrucao:
 
         self.enviar_verificacao()
 
+        self.listar_componentes()
+
         self.registrar("Construção concluída.")
+
+        return True
 
 
 if __name__ == "__main__":
