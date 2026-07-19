@@ -19,6 +19,8 @@ class RegistroCentralEventos:
 
         self.memoria = GerenciadorMemoria()
 
+        self.status = "ATIVO"
+
     def registrar(
         self,
         origem,
@@ -69,9 +71,6 @@ class RegistroCentralEventos:
         return len(self.eventos)
 
     def obter_ultimo_evento(self):
-        """
-        Retorna o último evento registrado.
-        """
 
         if self.eventos:
 
@@ -80,9 +79,6 @@ class RegistroCentralEventos:
         return None
 
     def consultar_por_importancia(self, importancia):
-        """
-        Retorna todos os eventos de uma determinada importância.
-        """
 
         return [
 
@@ -95,9 +91,6 @@ class RegistroCentralEventos:
         ]
 
     def consultar_por_responsavel(self, responsavel):
-        """
-        Retorna todos os eventos registrados por um responsável.
-        """
 
         return [
 
@@ -109,22 +102,47 @@ class RegistroCentralEventos:
 
         ]
 
+    def listar_resumo(self):
+
+        print()
+
+        print("===== RESUMO DO REGISTRO =====")
+
+        print(f"Status: {self.status}")
+
+        print(f"Eventos registrados: {len(self.eventos)}")
+
+        if self.eventos:
+
+            ultimo = self.eventos[-1]
+
+            print(f"Último evento: {ultimo['descricao']}")
+
+        print("==============================")
+
+    def alterar_status(self, novo_status):
+
+        self.status = novo_status
+
     def limpar(self):
 
         self.eventos = []
 
     def obter_status(self):
-        """
-        Retorna o estado atual do Registro Central de Eventos.
-        """
 
         return {
+
+            "status": self.status,
 
             "eventos_registrados": len(self.eventos),
 
             "memoria_integrada": True
 
         }
+
+    def executar(self):
+
+        self.listar_resumo()
 
 
 if __name__ == "__main__":
@@ -146,6 +164,8 @@ if __name__ == "__main__":
         importancia="ALTA"
 
     )
+
+    registro.executar()
 
     print()
 
