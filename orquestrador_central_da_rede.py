@@ -29,11 +29,19 @@ class OrquestradorCentralDaRede:
             "Integrador Operacional Principal"
         ]
 
+        self.historico = []
+
+        self.ciclos = 0
+
     def registrar(self, mensagem):
 
         horario = datetime.now().strftime("%d/%m/%Y %H:%M:%S")
 
-        print(f"[ORQUESTRADOR] [{horario}] {mensagem}")
+        registro = f"[ORQUESTRADOR] [{horario}] {mensagem}"
+
+        self.historico.append(registro)
+
+        print(registro)
 
     def adicionar_componente(self, componente):
 
@@ -44,9 +52,6 @@ class OrquestradorCentralDaRede:
             self.registrar(f"Componente integrado: {componente}")
 
     def remover_componente(self, componente):
-        """
-        Remove um componente do Orquestrador.
-        """
 
         if componente in self.componentes:
 
@@ -65,35 +70,40 @@ class OrquestradorCentralDaRede:
         return self.componentes
 
     def quantidade_componentes(self):
-        """
-        Retorna a quantidade de componentes coordenados.
-        """
 
         return len(self.componentes)
 
     def obter_status(self):
-        """
-        Retorna o status atual do Orquestrador.
-        """
 
         return self.status
 
     def alterar_status(self, novo_status):
-        """
-        Altera o status operacional.
-        """
 
         self.status = novo_status
 
         self.registrar(f"Status alterado para: {novo_status}")
 
+    def obter_historico(self):
+
+        return self.historico
+
     def sincronizar_componentes(self):
 
         self.registrar("Sincronizando componentes da Rede.")
 
+        return True
+
     def verificar_estado(self):
 
         self.registrar("Verificando estado operacional.")
+
+        return True
+
+    def executar_ciclo(self):
+
+        self.ciclos += 1
+
+        self.registrar(f"Ciclo de coordenação #{self.ciclos}")
 
     def executar(self):
 
@@ -104,6 +114,8 @@ class OrquestradorCentralDaRede:
         self.sincronizar_componentes()
 
         self.verificar_estado()
+
+        self.executar_ciclo()
 
         self.registrar("Coordenação concluída.")
 
