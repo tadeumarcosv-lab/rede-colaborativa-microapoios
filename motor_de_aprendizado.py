@@ -28,6 +28,10 @@ class MotorDeAprendizado:
             "Construção"
         ]
 
+        self.historico_aprendizado = []
+
+        self.ultimo_aprendizado = None
+
     def registrar(self, mensagem):
 
         horario = datetime.now().strftime("%d/%m/%Y %H:%M:%S")
@@ -40,7 +44,9 @@ class MotorDeAprendizado:
 
             self.conhecimentos.append(conhecimento)
 
-            self.registrar(f"Novo conhecimento registrado: {conhecimento}")
+            self.registrar(
+                f"Novo conhecimento registrado: {conhecimento}"
+            )
 
     def remover_conhecimento(self, conhecimento):
         """
@@ -51,7 +57,9 @@ class MotorDeAprendizado:
 
             self.conhecimentos.remove(conhecimento)
 
-            self.registrar(f"Conhecimento removido: {conhecimento}")
+            self.registrar(
+                f"Conhecimento removido: {conhecimento}"
+            )
 
     def listar_conhecimentos(self):
 
@@ -84,35 +92,104 @@ class MotorDeAprendizado:
 
         self.status = novo_status
 
-        self.registrar(f"Status alterado para: {novo_status}")
+        self.registrar(
+            f"Status alterado para: {novo_status}"
+        )
+
+    def registrar_aprendizado(self, origem):
+
+        horario = datetime.now().strftime("%d/%m/%Y %H:%M:%S")
+
+        registro = {
+            "origem": origem,
+            "horario": horario
+        }
+
+        self.historico_aprendizado.append(registro)
+
+        self.ultimo_aprendizado = registro
+
+        self.registrar(
+            f"Aprendizado registrado: {origem}"
+        )
+
+    def listar_historico(self):
+
+        self.registrar(
+            "Histórico de aprendizados:"
+        )
+
+        for registro in self.historico_aprendizado:
+
+            self.registrar(
+                f"{registro['horario']} -> {registro['origem']}"
+            )
+
+        return self.historico_aprendizado
+
+    def obter_ultimo_aprendizado(self):
+
+        return self.ultimo_aprendizado
+
+    def limpar_historico(self):
+
+        self.historico_aprendizado.clear()
+
+        self.ultimo_aprendizado = None
+
+        self.registrar(
+            "Histórico de aprendizado limpo."
+        )
 
     def aprender_monitoramento(self):
 
-        self.registrar("Aprendendo com o Sistema de Monitoramento.")
+        self.registrar(
+            "Aprendendo com o Sistema de Monitoramento."
+        )
+
+        self.registrar_aprendizado(
+            "Sistema de Monitoramento"
+        )
 
         return True
 
     def aprender_verificacao(self):
 
-        self.registrar("Aprendendo com o Motor de Verificação.")
+        self.registrar(
+            "Aprendendo com o Motor de Verificação."
+        )
+
+        self.registrar_aprendizado(
+            "Motor de Verificação"
+        )
 
         return True
 
     def aprender_construcao(self):
 
-        self.registrar("Aprendendo com o Motor de Construção.")
+        self.registrar(
+            "Aprendendo com o Motor de Construção."
+        )
+
+        self.registrar_aprendizado(
+            "Motor de Construção"
+        )
 
         return True
 
     def atualizar_memoria(self):
 
-        self.registrar("Atualizando Memória Persistente.")
+        self.registrar(
+            "Atualizando Memória Persistente."
+        )
 
         return True
 
     def executar(self):
 
-        self.registrar("Motor de Aprendizado iniciado.")
+        self.registrar(
+            "Motor de Aprendizado iniciado."
+        )
 
         self.listar_conhecimentos()
 
@@ -124,7 +201,19 @@ class MotorDeAprendizado:
 
         self.atualizar_memoria()
 
-        self.registrar("Aprendizado concluído.")
+        self.registrar(
+            f"Total de conhecimentos: "
+            f"{self.quantidade_conhecimentos()}"
+        )
+
+        self.registrar(
+            f"Aprendizados registrados: "
+            f"{len(self.historico_aprendizado)}"
+        )
+
+        self.registrar(
+            "Aprendizado concluído."
+        )
 
 
 if __name__ == "__main__":
