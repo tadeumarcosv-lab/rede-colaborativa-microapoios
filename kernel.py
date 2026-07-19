@@ -35,11 +35,19 @@ class KernelDaRede:
             "Integrador Operacional Principal"
         ]
 
+        self.historico = []
+
+        self.ciclos = 0
+
     def registrar(self, mensagem):
 
         horario = datetime.now().strftime("%d/%m/%Y %H:%M:%S")
 
-        print(f"[KERNEL] [{horario}] {mensagem}")
+        registro = f"[KERNEL] [{horario}] {mensagem}"
+
+        self.historico.append(registro)
+
+        print(registro)
 
     def adicionar_modulo(self, modulo):
 
@@ -59,6 +67,24 @@ class KernelDaRede:
 
         return self.modulos
 
+    def quantidade_modulos(self):
+
+        return len(self.modulos)
+
+    def obter_status(self):
+
+        return self.status
+
+    def alterar_status(self, novo_status):
+
+        self.status = novo_status
+
+        self.registrar(f"Status alterado para: {novo_status}")
+
+    def obter_historico(self):
+
+        return self.historico
+
     def inicializar(self):
 
         self.registrar("Inicializando Kernel da Rede.")
@@ -67,9 +93,19 @@ class KernelDaRede:
 
         self.registrar("Verificando integridade do Kernel.")
 
+        return True
+
     def sincronizar(self):
 
         self.registrar("Sincronizando módulos do Kernel.")
+
+        return True
+
+    def executar_ciclo(self):
+
+        self.ciclos += 1
+
+        self.registrar(f"Ciclo operacional #{self.ciclos}")
 
     def executar(self):
 
@@ -82,6 +118,8 @@ class KernelDaRede:
         self.verificar_integridade()
 
         self.sincronizar()
+
+        self.executar_ciclo()
 
         self.registrar("Kernel operacional.")
 
