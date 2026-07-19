@@ -25,51 +25,55 @@ class SistemaExecutorDaRede:
 
         self.ciclo = 0
 
+        self.historico = []
+
+        self.status = "ATIVO"
+
     def registrar(self, mensagem):
 
         horario = datetime.now().strftime("%d/%m/%Y %H:%M:%S")
 
-        print(f"[EXECUTOR] [{horario}] {mensagem}")
+        registro = f"[EXECUTOR] [{horario}] {mensagem}"
+
+        self.historico.append(registro)
+
+        print(registro)
 
     def obter_status(self):
-        """
-        Retorna o estado atual do Sistema Executor.
-        """
 
         return {
-
+            "status": self.status,
             "ativo": self.ativo,
-
             "ciclo_atual": self.ciclo
-
         }
 
+    def obter_historico(self):
+
+        return self.historico
+
     def iniciar(self):
-        """
-        Ativa o Sistema Executor.
-        """
 
         self.ativo = True
+
+        self.status = "ATIVO"
 
         self.registrar("Sistema Executor ativado.")
 
     def parar(self):
-        """
-        Encerra o ciclo contínuo.
-        """
 
         self.ativo = False
+
+        self.status = "PARADO"
 
         self.registrar("Sistema Executor encerrado.")
 
     def reiniciar(self):
-        """
-        Reinicia o Sistema Executor.
-        """
 
         self.registrar("Reiniciando Sistema Executor.")
 
         self.ativo = True
+
+        self.status = "ATIVO"
 
         self.ciclo = 0
 
@@ -80,40 +84,28 @@ class SistemaExecutorDaRede:
         self.registrar(f"Iniciando ciclo {self.ciclo}")
 
         self.registro.registrar(
-
             origem="Sistema Executor",
-
             destino="Motor de Aprendizado",
-
             responsavel="Sistema",
-
             descricao=f"Início do ciclo {self.ciclo}",
-
             resultado="EXECUTANDO",
-
             importancia="NORMAL"
-
         )
 
         self.aprendizado.executar()
 
         self.registro.registrar(
-
             origem="Motor de Aprendizado",
-
             destino="Sistema Executor",
-
             responsavel="Sistema",
-
             descricao=f"Fim do ciclo {self.ciclo}",
-
             resultado="OK",
-
             importancia="NORMAL"
-
         )
 
         self.registrar(f"Finalizando ciclo {self.ciclo}")
+
+        return True
 
     def executar(self):
 
