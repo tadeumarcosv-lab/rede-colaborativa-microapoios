@@ -28,11 +28,17 @@ class MotorDeVerificacao:
             "Arquitetura Mestra"
         ]
 
+        self.historico = []
+
     def registrar(self, mensagem):
 
         horario = datetime.now().strftime("%d/%m/%Y %H:%M:%S")
 
-        print(f"[VERIFICACAO] [{horario}] {mensagem}")
+        registro = f"[VERIFICACAO] [{horario}] {mensagem}"
+
+        self.historico.append(registro)
+
+        print(registro)
 
     def adicionar_verificacao(self, verificacao):
 
@@ -40,7 +46,22 @@ class MotorDeVerificacao:
 
             self.verificacoes.append(verificacao)
 
-            self.registrar(f"Nova verificação registrada: {verificacao}")
+            self.registrar(
+                f"Nova verificação registrada: {verificacao}"
+            )
+
+    def remover_verificacao(self, verificacao):
+        """
+        Remove uma verificação cadastrada.
+        """
+
+        if verificacao in self.verificacoes:
+
+            self.verificacoes.remove(verificacao)
+
+            self.registrar(
+                f"Verificação removida: {verificacao}"
+            )
 
     def listar_verificacoes(self):
 
@@ -52,45 +73,91 @@ class MotorDeVerificacao:
 
         return self.verificacoes
 
+    def quantidade_verificacoes(self):
+        """
+        Retorna a quantidade de verificações cadastradas.
+        """
+
+        return len(self.verificacoes)
+
+    def obter_status(self):
+        """
+        Retorna o status atual do Motor.
+        """
+
+        return self.status
+
+    def alterar_status(self, novo_status):
+        """
+        Altera o status operacional.
+        """
+
+        self.status = novo_status
+
+        self.registrar(
+            f"Status alterado para: {novo_status}"
+        )
+
+    def listar_historico(self):
+        """
+        Retorna o histórico de registros.
+        """
+
+        return self.historico
+
     def verificar_integridade(self):
 
-        self.registrar("Verificando integridade estrutural.")
+        self.registrar(
+            "Verificando integridade estrutural."
+        )
 
         return True
 
     def verificar_dependencias(self):
 
-        self.registrar("Verificando dependências.")
+        self.registrar(
+            "Verificando dependências."
+        )
 
         return True
 
     def verificar_protocolos(self):
 
-        self.registrar("Verificando protocolos oficiais.")
+        self.registrar(
+            "Verificando protocolos oficiais."
+        )
 
         return True
 
     def verificar_constituicao(self):
 
-        self.registrar("Verificando compatibilidade com a Constituição.")
+        self.registrar(
+            "Verificando compatibilidade com a Constituição."
+        )
 
         return True
 
     def verificar_dna(self):
 
-        self.registrar("Verificando compatibilidade com o DNA da Rede.")
+        self.registrar(
+            "Verificando compatibilidade com o DNA da Rede."
+        )
 
         return True
 
     def verificar_arquitetura(self):
 
-        self.registrar("Verificando Arquitetura Mestra.")
+        self.registrar(
+            "Verificando Arquitetura Mestra."
+        )
 
         return True
 
     def executar(self):
 
-        self.registrar("Motor de Verificação iniciado.")
+        self.registrar(
+            "Motor de Verificação iniciado."
+        )
 
         self.listar_verificacoes()
 
@@ -106,7 +173,9 @@ class MotorDeVerificacao:
 
         self.verificar_arquitetura()
 
-        self.registrar("Verificação concluída.")
+        self.registrar(
+            "Verificação concluída."
+        )
 
 
 if __name__ == "__main__":
