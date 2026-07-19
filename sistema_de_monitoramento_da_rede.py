@@ -17,6 +17,10 @@ class SistemaDeMonitoramentoDaRede:
 
         self.status = "ATIVO"
 
+        self.ciclos = 0
+
+        self.historico = []
+
         self.componentes = [
             "Bootstrap",
             "Kernel",
@@ -33,7 +37,11 @@ class SistemaDeMonitoramentoDaRede:
 
         horario = datetime.now().strftime("%d/%m/%Y %H:%M:%S")
 
-        print(f"[MONITORAMENTO] [{horario}] {mensagem}")
+        registro = f"[MONITORAMENTO] [{horario}] {mensagem}"
+
+        self.historico.append(registro)
+
+        print(registro)
 
     def adicionar_componente(self, componente):
 
@@ -43,15 +51,9 @@ class SistemaDeMonitoramentoDaRede:
 
             self.registrar(f"Novo componente registrado: {componente}")
 
-    def verificar_componentes(self):
-        """
-        Verifica os componentes atualmente registrados.
+    def listar_componentes(self):
 
-        Retorna uma lista com os componentes monitorados.
-        Esta interface é utilizada pelo Motor de Aprendizado.
-        """
-
-        self.registrar("Verificando componentes da Rede...")
+        self.registrar("Componentes monitorados:")
 
         for componente in self.componentes:
 
@@ -59,19 +61,55 @@ class SistemaDeMonitoramentoDaRede:
 
         return self.componentes
 
+    def obter_status(self):
+
+        return self.status
+
+    def alterar_status(self, novo_status):
+
+        self.status = novo_status
+
+        self.registrar(f"Status alterado para: {novo_status}")
+
+    def obter_historico(self):
+
+        return self.historico
+
+    def verificar_componentes(self):
+
+        self.registrar("Verificando componentes da Rede.")
+
+        self.listar_componentes()
+
+        return True
+
     def verificar_falhas(self):
 
         self.registrar("Verificando falhas operacionais.")
+
+        return True
 
     def verificar_desempenho(self):
 
         self.registrar("Verificando desempenho da Rede.")
 
+        return True
+
     def registrar_estado(self):
 
         self.registrar("Registrando estado operacional.")
 
+        return True
+
+    def resumo_operacional(self):
+
+        self.registrar(
+            f"Ciclo {self.ciclos} | Componentes: {len(self.componentes)} | Status: {self.status}"
+        )
+
     def executar(self):
+
+        self.ciclos += 1
 
         self.registrar("Sistema de Monitoramento iniciado.")
 
@@ -82,6 +120,8 @@ class SistemaDeMonitoramentoDaRede:
         self.verificar_desempenho()
 
         self.registrar_estado()
+
+        self.resumo_operacional()
 
         self.registrar("Monitoramento concluído.")
 
