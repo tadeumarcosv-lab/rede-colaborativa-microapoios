@@ -16,6 +16,8 @@ class IntegradorDosSistemas:
 
         self.status = "ATIVO"
 
+        self.ciclo = 0
+
         self.sistemas = [
             "Sistema Executor",
             "Sistema de Monitoramento",
@@ -49,20 +51,18 @@ class IntegradorDosSistemas:
         return self.sistemas
 
     def obter_status(self):
-        """
-        Retorna o status atual do Integrador dos Sistemas.
-        """
 
         return self.status
 
     def definir_status(self, status):
-        """
-        Atualiza o status operacional.
-        """
 
         self.status = status
 
         self.registrar(f"Status alterado para: {status}")
+
+    def quantidade_sistemas(self):
+
+        return len(self.sistemas)
 
     def integrar_executor(self):
 
@@ -101,9 +101,6 @@ class IntegradorDosSistemas:
         return True
 
     def verificar_sistemas(self):
-        """
-        Verifica todos os sistemas atualmente integrados.
-        """
 
         self.registrar("Verificando sistemas integrados.")
 
@@ -114,13 +111,18 @@ class IntegradorDosSistemas:
         return True
 
     def registrar_ciclo(self):
-        """
-        Registra o encerramento do ciclo operacional.
-        """
 
-        self.registrar("Ciclo operacional registrado.")
+        self.ciclo += 1
+
+        self.registrar(f"Ciclo operacional {self.ciclo} registrado.")
 
         return True
+
+    def resumo(self):
+
+        self.registrar(
+            f"Resumo: {len(self.sistemas)} sistemas | Status: {self.status}"
+        )
 
     def executar(self):
 
@@ -143,6 +145,8 @@ class IntegradorDosSistemas:
         self.verificar_sistemas()
 
         self.registrar_ciclo()
+
+        self.resumo()
 
         self.registrar("Integração dos sistemas concluída.")
 
