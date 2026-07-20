@@ -20,6 +20,8 @@ class GerenciadorInicializacao:
 
         self.status = "PRONTO"
 
+        self.etapas_executadas = 0
+
         self.etapas = [
 
             "Inicializar Supervisor",
@@ -58,7 +60,21 @@ class GerenciadorInicializacao:
 
             self.registrar(f"Nova etapa registrada: {etapa}")
 
+    def obter_status(self):
+
+        return {
+
+            "status": self.status,
+
+            "etapas": len(self.etapas),
+
+            "executadas": self.etapas_executadas
+
+        }
+
     def iniciar(self):
+
+        inicio = datetime.now()
 
         self.status = "EXECUTANDO"
 
@@ -68,9 +84,13 @@ class GerenciadorInicializacao:
 
         supervisor = Supervisor()
 
+        self.etapas_executadas += 1
+
         self.registrar("Supervisor ativo.")
 
         sistema = IntegracaoCompleta()
+
+        self.etapas_executadas += 1
 
         resultado = sistema.executar(
             "Inicialização Oficial da Rede"
@@ -80,9 +100,21 @@ class GerenciadorInicializacao:
 
         self.status = "OPERACIONAL"
 
+        fim = datetime.now()
+
+        tempo = (fim - inicio).total_seconds()
+
         self.registrar("Rede inicializada com sucesso.")
 
         self.registrar(f"Status atual: {self.status}")
+
+        self.registrar(
+            f"Etapas executadas: {self.etapas_executadas}"
+        )
+
+        self.registrar(
+            f"Tempo de inicialização: {tempo:.2f} segundos"
+        )
 
 
 if __name__ == "__main__":
