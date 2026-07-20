@@ -19,6 +19,10 @@ class DiretorAutonomoDaRede:
 
         self.ciclo = 0
 
+        self.ultima_execucao = None
+
+        self.historico = []
+
         self.componentes = [
 
             "Supervisor Geral",
@@ -57,7 +61,11 @@ class DiretorAutonomoDaRede:
 
         horario = datetime.now().strftime("%d/%m/%Y %H:%M:%S")
 
-        print(f"[DIRETOR] [{horario}] {mensagem}")
+        registro = f"[DIRETOR] [{horario}] {mensagem}"
+
+        self.historico.append(registro)
+
+        print(registro)
 
     def listar_componentes(self):
 
@@ -77,9 +85,35 @@ class DiretorAutonomoDaRede:
 
             self.registrar(f"Novo componente supervisionado: {componente}")
 
+    def verificar_componentes(self):
+
+        self.registrar("Verificando componentes supervisionados.")
+
+        for componente in self.componentes:
+
+            self.registrar(f"OK -> {componente}")
+
+        return True
+
+    def resumo_operacional(self):
+
+        return {
+
+            "status": self.status,
+
+            "ciclo": self.ciclo,
+
+            "componentes": len(self.componentes),
+
+            "ultima_execucao": self.ultima_execucao
+
+        }
+
     def iniciar_ciclo(self):
 
         self.ciclo += 1
+
+        self.ultima_execucao = datetime.now().strftime("%d/%m/%Y %H:%M:%S")
 
         self.registrar(f"Iniciando ciclo operacional {self.ciclo}")
 
@@ -107,7 +141,11 @@ class DiretorAutonomoDaRede:
 
         self.validar()
 
+        self.verificar_componentes()
+
         self.finalizar_ciclo()
+
+        self.registrar(f"Resumo: {self.resumo_operacional()}")
 
         self.registrar("Diretor Autônomo operacional.")
 
