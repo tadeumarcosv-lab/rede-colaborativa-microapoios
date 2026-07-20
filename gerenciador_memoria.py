@@ -18,6 +18,8 @@ class GerenciadorMemoria:
 
     def __init__(self):
 
+        self.status = "ATIVO"
+
         if not os.path.exists(self.ARQUIVO):
 
             raise FileNotFoundError(
@@ -96,58 +98,70 @@ class GerenciadorMemoria:
         self.salvar(memoria)
 
     def obter_estatisticas(self):
-        """
-        Retorna as estatísticas atuais da memória.
-        """
 
         memoria = self.carregar()
 
         return memoria["estatisticas"]
 
     def obter_historico(self):
-        """
-        Retorna todo o histórico registrado.
-        """
 
         memoria = self.carregar()
 
         return memoria["historico"]
 
     def obter_aprendizados(self):
-        """
-        Retorna todos os aprendizados registrados.
-        """
 
         memoria = self.carregar()
 
         return memoria["aprendizados"]
 
     def obter_decisoes(self):
-        """
-        Retorna todas as decisões registradas.
-        """
 
         memoria = self.carregar()
 
         return memoria["decisoes"]
 
     def obter_conhecimento(self):
-        """
-        Retorna toda a base de conhecimento registrada.
-        """
 
         memoria = self.carregar()
 
         return memoria["conhecimento"]
 
     def obter_contexto(self):
-        """
-        Retorna todo o contexto operacional registrado.
-        """
 
         memoria = self.carregar()
 
         return memoria["contexto"]
+
+    def obter_status(self):
+
+        return self.status
+
+    def alterar_status(self, novo_status):
+
+        self.status = novo_status
+
+    def verificar_memoria(self):
+
+        return os.path.exists(self.ARQUIVO)
+
+    def resumo(self):
+
+        estatisticas = self.obter_estatisticas()
+
+        print()
+
+        print("===== MEMÓRIA =====")
+
+        print(f"Status: {self.status}")
+
+        print(f"Solicitações: {estatisticas['solicitacoes']}")
+
+        print("===================")
+
+    def executar(self):
+
+        self.resumo()
 
 
 if __name__ == "__main__":
@@ -157,5 +171,7 @@ if __name__ == "__main__":
     memoria.adicionar_historico(
         "Primeiro teste da memória."
     )
+
+    memoria.executar()
 
     print(memoria.carregar())
