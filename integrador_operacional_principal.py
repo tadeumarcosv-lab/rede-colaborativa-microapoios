@@ -16,6 +16,10 @@ class IntegradorOperacionalPrincipal:
 
         self.status = "ATIVO"
 
+        self.ciclos = 0
+
+        self.historico = []
+
         self.integradores = [
             "Integrador dos Motores",
             "Integrador dos Sistemas",
@@ -29,6 +33,10 @@ class IntegradorOperacionalPrincipal:
         horario = datetime.now().strftime("%d/%m/%Y %H:%M:%S")
 
         print(f"[OPERACIONAL] [{horario}] {mensagem}")
+
+        self.historico.append(
+            f"{horario} - {mensagem}"
+        )
 
     def adicionar_integrador(self, integrador):
 
@@ -49,16 +57,10 @@ class IntegradorOperacionalPrincipal:
         return self.integradores
 
     def obter_status(self):
-        """
-        Retorna o status atual do Integrador Operacional.
-        """
 
         return self.status
 
     def definir_status(self, status):
-        """
-        Atualiza o status operacional.
-        """
 
         self.status = status
 
@@ -101,10 +103,6 @@ class IntegradorOperacionalPrincipal:
         return True
 
     def verificar_integradores(self):
-        """
-        Verifica se todos os integradores cadastrados
-        estão disponíveis.
-        """
 
         self.registrar("Verificando integradores registrados.")
 
@@ -115,13 +113,21 @@ class IntegradorOperacionalPrincipal:
         return True
 
     def registrar_ciclo(self):
-        """
-        Registra o encerramento do ciclo operacional.
-        """
 
-        self.registrar("Ciclo operacional registrado.")
+        self.ciclos += 1
+
+        self.registrar(f"Ciclo operacional {self.ciclos} registrado.")
 
         return True
+
+    def resumo_operacional(self):
+
+        return {
+            "status": self.status,
+            "integradores": len(self.integradores),
+            "ciclos": self.ciclos,
+            "historico": len(self.historico)
+        }
 
     def executar(self):
 
@@ -144,6 +150,10 @@ class IntegradorOperacionalPrincipal:
         self.verificar_integradores()
 
         self.registrar_ciclo()
+
+        self.registrar(
+            f"Resumo: {self.resumo_operacional()}"
+        )
 
         self.registrar("Integração operacional concluída.")
 
