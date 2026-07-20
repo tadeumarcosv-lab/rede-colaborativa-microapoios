@@ -39,6 +39,8 @@ class SupervisorGeral:
 
         self.ciclos = 0
 
+        self.ultima_supervisao = None
+
     def registrar(self, mensagem):
 
         horario = datetime.now().strftime("%d/%m/%Y %H:%M:%S")
@@ -81,6 +83,20 @@ class SupervisorGeral:
 
         return self.historico
 
+    def resumo_operacional(self):
+
+        return {
+
+            "status": self.status,
+
+            "componentes": len(self.componentes),
+
+            "ciclos": self.ciclos,
+
+            "ultima_supervisao": self.ultima_supervisao
+
+        }
+
     def verificar(self):
 
         self.registrar("Verificando funcionamento geral da Rede.")
@@ -107,6 +123,8 @@ class SupervisorGeral:
 
         self.ciclos += 1
 
+        self.ultima_supervisao = datetime.now().strftime("%d/%m/%Y %H:%M:%S")
+
         self.registrar(f"Ciclo de supervisão #{self.ciclos} registrado.")
 
         return True
@@ -124,6 +142,8 @@ class SupervisorGeral:
         self.verificar_componentes()
 
         self.registrar_ciclo()
+
+        self.registrar(f"Resumo: {self.resumo_operacional()}")
 
         self.registrar("Supervisão concluída.")
 
