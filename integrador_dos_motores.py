@@ -16,6 +16,8 @@ class IntegradorDosMotores:
 
         self.status = "ATIVO"
 
+        self.ciclo = 0
+
         self.motores = [
             "Motor de Construção",
             "Motor de Verificação",
@@ -47,20 +49,18 @@ class IntegradorDosMotores:
         return self.motores
 
     def obter_status(self):
-        """
-        Retorna o status atual do Integrador dos Motores.
-        """
 
         return self.status
 
     def definir_status(self, status):
-        """
-        Atualiza o status operacional.
-        """
 
         self.status = status
 
         self.registrar(f"Status alterado para: {status}")
+
+    def quantidade_motores(self):
+
+        return len(self.motores)
 
     def integrar_construcao(self):
 
@@ -87,9 +87,6 @@ class IntegradorDosMotores:
         return True
 
     def verificar_motores(self):
-        """
-        Verifica todos os motores atualmente integrados.
-        """
 
         self.registrar("Verificando motores integrados.")
 
@@ -100,13 +97,18 @@ class IntegradorDosMotores:
         return True
 
     def registrar_ciclo(self):
-        """
-        Registra o encerramento do ciclo operacional.
-        """
 
-        self.registrar("Ciclo operacional registrado.")
+        self.ciclo += 1
+
+        self.registrar(f"Ciclo operacional {self.ciclo} registrado.")
 
         return True
+
+    def resumo(self):
+
+        self.registrar(
+            f"Resumo: {len(self.motores)} motores | Status: {self.status}"
+        )
 
     def executar(self):
 
@@ -125,6 +127,8 @@ class IntegradorDosMotores:
         self.verificar_motores()
 
         self.registrar_ciclo()
+
+        self.resumo()
 
         self.registrar("Integração dos motores concluída.")
 
