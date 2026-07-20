@@ -32,6 +32,10 @@ class MotorDeConstrucao:
 
         self.componentes_construidos = []
 
+        self.ultimo_componente = None
+
+        self.ultima_construcao = None
+
     def registrar(self, mensagem):
 
         horario = datetime.now().strftime("%d/%m/%Y %H:%M:%S")
@@ -86,6 +90,10 @@ class MotorDeConstrucao:
 
         self.componentes_construidos.append(componente)
 
+        self.ultimo_componente = componente
+
+        self.ultima_construcao = datetime.now().strftime("%d/%m/%Y %H:%M:%S")
+
         self.registrar(f"Construindo {componente}.")
 
     def documentar(self):
@@ -128,6 +136,26 @@ class MotorDeConstrucao:
 
         return self.historico
 
+    def verificar_pendencias(self):
+
+        self.registrar("Verificando pendências de construção.")
+
+        return False
+
+    def resumo_operacional(self):
+
+        return {
+
+            "status": self.status,
+
+            "componentes": len(self.componentes_construidos),
+
+            "ultimo_componente": self.ultimo_componente,
+
+            "ultima_construcao": self.ultima_construcao
+
+        }
+
     def executar(self):
 
         self.registrar("Motor de Construção iniciado.")
@@ -144,7 +172,11 @@ class MotorDeConstrucao:
 
         self.enviar_verificacao()
 
+        self.verificar_pendencias()
+
         self.listar_componentes()
+
+        self.registrar(f"Resumo: {self.resumo_operacional()}")
 
         self.registrar("Construção concluída.")
 
