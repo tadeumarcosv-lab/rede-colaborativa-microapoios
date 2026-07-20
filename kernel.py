@@ -39,6 +39,10 @@ class KernelDaRede:
 
         self.ciclos = 0
 
+        self.inicio = None
+
+        self.fim = None
+
     def registrar(self, mensagem):
 
         horario = datetime.now().strftime("%d/%m/%Y %H:%M:%S")
@@ -87,6 +91,8 @@ class KernelDaRede:
 
     def inicializar(self):
 
+        self.inicio = datetime.now()
+
         self.registrar("Inicializando Kernel da Rede.")
 
     def verificar_integridade(self):
@@ -107,6 +113,30 @@ class KernelDaRede:
 
         self.registrar(f"Ciclo operacional #{self.ciclos}")
 
+    def resumo_operacional(self):
+
+        self.registrar("Resumo Operacional")
+
+        self.registrar(f"Status: {self.status}")
+
+        self.registrar(f"Módulos ativos: {self.quantidade_modulos()}")
+
+        self.registrar(f"Ciclos executados: {self.ciclos}")
+
+        self.registrar(f"Eventos registrados: {len(self.historico)}")
+
+    def finalizar(self):
+
+        self.fim = datetime.now()
+
+        self.status = "OPERACIONAL"
+
+        tempo = self.fim - self.inicio
+
+        self.registrar(f"Tempo da inicialização: {tempo}")
+
+        self.registrar("Kernel pronto para controlar a Rede.")
+
     def executar(self):
 
         self.registrar("Kernel iniciado.")
@@ -120,6 +150,10 @@ class KernelDaRede:
         self.sincronizar()
 
         self.executar_ciclo()
+
+        self.resumo_operacional()
+
+        self.finalizar()
 
         self.registrar("Kernel operacional.")
 
