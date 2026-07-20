@@ -33,6 +33,8 @@ class OrquestradorCentralDaRede:
 
         self.ciclos = 0
 
+        self.ultima_sincronizacao = None
+
     def registrar(self, mensagem):
 
         horario = datetime.now().strftime("%d/%m/%Y %H:%M:%S")
@@ -87,7 +89,23 @@ class OrquestradorCentralDaRede:
 
         return self.historico
 
+    def resumo_operacional(self):
+
+        return {
+
+            "status": self.status,
+
+            "componentes": len(self.componentes),
+
+            "ciclos": self.ciclos,
+
+            "ultima_sincronizacao": self.ultima_sincronizacao
+
+        }
+
     def sincronizar_componentes(self):
+
+        self.ultima_sincronizacao = datetime.now().strftime("%d/%m/%Y %H:%M:%S")
 
         self.registrar("Sincronizando componentes da Rede.")
 
@@ -116,6 +134,8 @@ class OrquestradorCentralDaRede:
         self.verificar_estado()
 
         self.executar_ciclo()
+
+        self.registrar(f"Resumo: {self.resumo_operacional()}")
 
         self.registrar("Coordenação concluída.")
 
