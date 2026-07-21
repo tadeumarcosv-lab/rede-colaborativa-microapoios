@@ -30,6 +30,10 @@ class MotorDeVerificacao:
 
         self.historico = []
 
+        self.ultima_verificacao = None
+
+        self.total_verificacoes = 0
+
     def registrar(self, mensagem):
 
         horario = datetime.now().strftime("%d/%m/%Y %H:%M:%S")
@@ -51,9 +55,6 @@ class MotorDeVerificacao:
             )
 
     def remover_verificacao(self, verificacao):
-        """
-        Remove uma verificação cadastrada.
-        """
 
         if verificacao in self.verificacoes:
 
@@ -74,23 +75,14 @@ class MotorDeVerificacao:
         return self.verificacoes
 
     def quantidade_verificacoes(self):
-        """
-        Retorna a quantidade de verificações cadastradas.
-        """
 
         return len(self.verificacoes)
 
     def obter_status(self):
-        """
-        Retorna o status atual do Motor.
-        """
 
         return self.status
 
     def alterar_status(self, novo_status):
-        """
-        Altera o status operacional.
-        """
 
         self.status = novo_status
 
@@ -99,9 +91,6 @@ class MotorDeVerificacao:
         )
 
     def listar_historico(self):
-        """
-        Retorna o histórico de registros.
-        """
 
         return self.historico
 
@@ -153,6 +142,26 @@ class MotorDeVerificacao:
 
         return True
 
+    def registrar_execucao(self):
+
+        self.total_verificacoes += 1
+
+        self.ultima_verificacao = datetime.now().strftime("%d/%m/%Y %H:%M:%S")
+
+    def resumo_operacional(self):
+
+        return {
+
+            "status": self.status,
+
+            "total_verificacoes": self.total_verificacoes,
+
+            "ultima_verificacao": self.ultima_verificacao,
+
+            "itens": len(self.verificacoes)
+
+        }
+
     def executar(self):
 
         self.registrar(
@@ -172,6 +181,12 @@ class MotorDeVerificacao:
         self.verificar_dna()
 
         self.verificar_arquitetura()
+
+        self.registrar_execucao()
+
+        self.registrar(
+            f"Resumo: {self.resumo_operacional()}"
+        )
 
         self.registrar(
             "Verificação concluída."
