@@ -24,11 +24,21 @@ class IntegradorDosMotores:
             "Motor de Aprendizado"
         ]
 
+        self.historico_execucoes = []
+
+        self.resumo_operacional = {}
+
+        self.ultima_execucao = None
+
     def registrar(self, mensagem):
 
         horario = datetime.now().strftime("%d/%m/%Y %H:%M:%S")
 
-        print(f"[INTEGRADOR] [{horario}] {mensagem}")
+        registro = f"[INTEGRADOR] [{horario}] {mensagem}"
+
+        self.historico_execucoes.append(registro)
+
+        print(registro)
 
     def adicionar_motor(self, motor):
 
@@ -61,6 +71,24 @@ class IntegradorDosMotores:
     def quantidade_motores(self):
 
         return len(self.motores)
+
+    def obter_resumo_operacional(self):
+
+        return self.resumo_operacional
+
+    def obter_historico(self):
+
+        return self.historico_execucoes
+
+    def obter_ultima_execucao(self):
+
+        return self.ultima_execucao
+
+    def limpar_historico(self):
+
+        self.historico_execucoes.clear()
+
+        self.registrar("Histórico de execuções limpo.")
 
     def integrar_construcao(self):
 
@@ -129,6 +157,26 @@ class IntegradorDosMotores:
         self.registrar_ciclo()
 
         self.resumo()
+
+        self.ultima_execucao = datetime.now().strftime(
+            "%d/%m/%Y %H:%M:%S"
+        )
+
+        self.resumo_operacional = {
+
+            "status": self.status,
+
+            "ciclos": self.ciclo,
+
+            "motores_integrados": len(self.motores),
+
+            "ultima_execucao": self.ultima_execucao
+
+        }
+
+        self.registrar(
+            f"Resumo operacional: {self.resumo_operacional}"
+        )
 
         self.registrar("Integração dos motores concluída.")
 
