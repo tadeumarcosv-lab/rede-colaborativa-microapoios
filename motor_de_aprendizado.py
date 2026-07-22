@@ -32,6 +32,12 @@ class MotorDeAprendizado:
 
         self.ultimo_aprendizado = None
 
+        self.ciclos = 0
+
+        self.resumo_operacional = {}
+
+        self.ultima_execucao = None
+
     def registrar(self, mensagem):
 
         horario = datetime.now().strftime("%d/%m/%Y %H:%M:%S")
@@ -131,6 +137,10 @@ class MotorDeAprendizado:
 
         return self.ultimo_aprendizado
 
+    def obter_resumo_operacional(self):
+
+        return self.resumo_operacional
+
     def limpar_historico(self):
 
         self.historico_aprendizado.clear()
@@ -209,6 +219,32 @@ class MotorDeAprendizado:
         self.registrar(
             f"Aprendizados registrados: "
             f"{len(self.historico_aprendizado)}"
+        )
+
+        self.ciclos += 1
+
+        self.ultima_execucao = datetime.now().strftime(
+            "%d/%m/%Y %H:%M:%S"
+        )
+
+        self.resumo_operacional = {
+
+            "status": self.status,
+
+            "ciclos": self.ciclos,
+
+            "conhecimentos": self.quantidade_conhecimentos(),
+
+            "aprendizados": len(
+                self.historico_aprendizado
+            ),
+
+            "ultima_execucao": self.ultima_execucao
+
+        }
+
+        self.registrar(
+            f"Resumo operacional: {self.resumo_operacional}"
         )
 
         self.registrar(
