@@ -21,6 +21,16 @@ class RegistroCentralEventos:
 
         self.status = "ATIVO"
 
+        self.historico_execucoes = []
+
+        self.resumo_operacional = {}
+
+        self.ultima_execucao = None
+
+        self.total_registros = 0
+
+        self.ultimo_responsavel = None
+
     def registrar(
         self,
         origem,
@@ -54,6 +64,10 @@ class RegistroCentralEventos:
         self.eventos.append(evento)
 
         self.memoria.adicionar_historico(evento)
+
+        self.total_registros += 1
+
+        self.ultimo_responsavel = responsavel
 
         print(
             f"[EVENTO] "
@@ -140,7 +154,49 @@ class RegistroCentralEventos:
 
         }
 
+    def obter_resumo_operacional(self):
+
+        return self.resumo_operacional
+
+    def obter_ultima_execucao(self):
+
+        return self.ultima_execucao
+
+    def obter_total_registros(self):
+
+        return self.total_registros
+
+    def obter_ultimo_responsavel(self):
+
+        return self.ultimo_responsavel
+
+    def limpar_historico_execucoes(self):
+
+        self.historico_execucoes.clear()
+
     def executar(self):
+
+        self.ultima_execucao = datetime.now().strftime(
+            "%d/%m/%Y %H:%M:%S"
+        )
+
+        self.resumo_operacional = {
+
+            "status": self.status,
+
+            "eventos_registrados": len(self.eventos),
+
+            "total_registros": self.total_registros,
+
+            "ultimo_responsavel": self.ultimo_responsavel,
+
+            "ultima_execucao": self.ultima_execucao,
+
+            "memoria_integrada": True
+
+        }
+
+        self.historico_execucoes.append(self.resumo_operacional)
 
         self.listar_resumo()
 
