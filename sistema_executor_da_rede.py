@@ -29,6 +29,16 @@ class SistemaExecutorDaRede:
 
         self.status = "ATIVO"
 
+        self.resumo_operacional = {}
+
+        self.ultima_execucao = None
+
+        self.ultimo_ciclo_executado = None
+
+        self.total_execucoes = 0
+
+        self.total_reinicializacoes = 0
+
     def registrar(self, mensagem):
 
         horario = datetime.now().strftime("%d/%m/%Y %H:%M:%S")
@@ -50,6 +60,22 @@ class SistemaExecutorDaRede:
     def obter_historico(self):
 
         return self.historico
+
+    def obter_resumo_operacional(self):
+
+        return self.resumo_operacional
+
+    def obter_ultima_execucao(self):
+
+        return self.ultima_execucao
+
+    def obter_total_execucoes(self):
+
+        return self.total_execucoes
+
+    def obter_total_reinicializacoes(self):
+
+        return self.total_reinicializacoes
 
     def iniciar(self):
 
@@ -77,9 +103,15 @@ class SistemaExecutorDaRede:
 
         self.ciclo = 0
 
+        self.total_reinicializacoes += 1
+
     def executar_ciclo(self):
 
         self.ciclo += 1
+
+        self.total_execucoes += 1
+
+        self.ultimo_ciclo_executado = self.ciclo
 
         self.registrar(f"Iniciando ciclo {self.ciclo}")
 
@@ -132,6 +164,32 @@ class SistemaExecutorDaRede:
                 self.executar_ciclo()
 
                 time.sleep(5)
+
+        self.ultima_execucao = datetime.now().strftime(
+            "%d/%m/%Y %H:%M:%S"
+        )
+
+        self.resumo_operacional = {
+
+            "status": self.status,
+
+            "ativo": self.ativo,
+
+            "ciclo_atual": self.ciclo,
+
+            "total_execucoes": self.total_execucoes,
+
+            "reinicializacoes": self.total_reinicializacoes,
+
+            "ultimo_ciclo": self.ultimo_ciclo_executado,
+
+            "ultima_execucao": self.ultima_execucao
+
+        }
+
+        self.registrar(
+            f"Resumo operacional: {self.resumo_operacional}"
+        )
 
 
 if __name__ == "__main__":
