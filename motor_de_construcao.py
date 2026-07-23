@@ -36,6 +36,16 @@ class MotorDeConstrucao:
 
         self.ultima_construcao = None
 
+        self.historico_execucoes = []
+
+        self.resumo_operacional_dados = {}
+
+        self.ultima_execucao = None
+
+        self.total_construcoes = 0
+
+        self.ultima_etapa_executada = None
+
     def registrar(self, mensagem):
 
         horario = datetime.now().strftime("%d/%m/%Y %H:%M:%S")
@@ -78,9 +88,13 @@ class MotorDeConstrucao:
 
     def receber_plano(self):
 
+        self.ultima_etapa_executada = "Receber Plano"
+
         self.registrar("Recebendo plano de construção.")
 
     def consultar_documentacao(self):
+
+        self.ultima_etapa_executada = "Consultar Documentação"
 
         self.registrar("Consultando documentação oficial.")
 
@@ -94,13 +108,21 @@ class MotorDeConstrucao:
 
         self.ultima_construcao = datetime.now().strftime("%d/%m/%Y %H:%M:%S")
 
+        self.total_construcoes += 1
+
+        self.ultima_etapa_executada = "Construir"
+
         self.registrar(f"Construindo {componente}.")
 
     def documentar(self):
 
+        self.ultima_etapa_executada = "Documentar"
+
         self.registrar("Documentando componente criado.")
 
     def enviar_verificacao(self):
+
+        self.ultima_etapa_executada = "Enviar para Verificação"
 
         self.registrar("Enviando componente para o Motor de Verificação.")
 
@@ -156,6 +178,26 @@ class MotorDeConstrucao:
 
         }
 
+    def obter_resumo_operacional(self):
+
+        return self.resumo_operacional_dados
+
+    def obter_ultima_execucao(self):
+
+        return self.ultima_execucao
+
+    def obter_total_construcoes(self):
+
+        return self.total_construcoes
+
+    def obter_ultima_etapa_executada(self):
+
+        return self.ultima_etapa_executada
+
+    def limpar_historico_execucoes(self):
+
+        self.historico_execucoes.clear()
+
     def executar(self):
 
         self.registrar("Motor de Construção iniciado.")
@@ -177,6 +219,30 @@ class MotorDeConstrucao:
         self.listar_componentes()
 
         self.registrar(f"Resumo: {self.resumo_operacional()}")
+
+        self.ultima_execucao = datetime.now().strftime(
+            "%d/%m/%Y %H:%M:%S"
+        )
+
+        self.resumo_operacional_dados = {
+
+            "status": self.status,
+
+            "componentes": len(self.componentes_construidos),
+
+            "total_construcoes": self.total_construcoes,
+
+            "ultimo_componente": self.ultimo_componente,
+
+            "ultima_etapa": self.ultima_etapa_executada,
+
+            "ultima_construcao": self.ultima_construcao,
+
+            "ultima_execucao": self.ultima_execucao
+
+        }
+
+        self.historico_execucoes.append(self.resumo_operacional_dados)
 
         self.registrar("Construção concluída.")
 
