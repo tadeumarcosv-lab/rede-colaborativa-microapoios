@@ -34,6 +34,14 @@ class MotorDeVerificacao:
 
         self.total_verificacoes = 0
 
+        self.historico_execucoes = []
+
+        self.resumo_operacional_dados = {}
+
+        self.ultima_execucao = None
+
+        self.ultima_etapa_verificada = None
+
     def registrar(self, mensagem):
 
         horario = datetime.now().strftime("%d/%m/%Y %H:%M:%S")
@@ -96,6 +104,8 @@ class MotorDeVerificacao:
 
     def verificar_integridade(self):
 
+        self.ultima_etapa_verificada = "Integridade Estrutural"
+
         self.registrar(
             "Verificando integridade estrutural."
         )
@@ -103,6 +113,8 @@ class MotorDeVerificacao:
         return True
 
     def verificar_dependencias(self):
+
+        self.ultima_etapa_verificada = "Dependências"
 
         self.registrar(
             "Verificando dependências."
@@ -112,6 +124,8 @@ class MotorDeVerificacao:
 
     def verificar_protocolos(self):
 
+        self.ultima_etapa_verificada = "Protocolos"
+
         self.registrar(
             "Verificando protocolos oficiais."
         )
@@ -119,6 +133,8 @@ class MotorDeVerificacao:
         return True
 
     def verificar_constituicao(self):
+
+        self.ultima_etapa_verificada = "Constituição"
 
         self.registrar(
             "Verificando compatibilidade com a Constituição."
@@ -128,6 +144,8 @@ class MotorDeVerificacao:
 
     def verificar_dna(self):
 
+        self.ultima_etapa_verificada = "DNA da Rede"
+
         self.registrar(
             "Verificando compatibilidade com o DNA da Rede."
         )
@@ -135,6 +153,8 @@ class MotorDeVerificacao:
         return True
 
     def verificar_arquitetura(self):
+
+        self.ultima_etapa_verificada = "Arquitetura Mestra"
 
         self.registrar(
             "Verificando Arquitetura Mestra."
@@ -162,6 +182,22 @@ class MotorDeVerificacao:
 
         }
 
+    def obter_resumo_operacional(self):
+
+        return self.resumo_operacional_dados
+
+    def obter_ultima_execucao(self):
+
+        return self.ultima_execucao
+
+    def obter_ultima_etapa_verificada(self):
+
+        return self.ultima_etapa_verificada
+
+    def limpar_historico_execucoes(self):
+
+        self.historico_execucoes.clear()
+
     def executar(self):
 
         self.registrar(
@@ -187,6 +223,28 @@ class MotorDeVerificacao:
         self.registrar(
             f"Resumo: {self.resumo_operacional()}"
         )
+
+        self.ultima_execucao = datetime.now().strftime(
+            "%d/%m/%Y %H:%M:%S"
+        )
+
+        self.resumo_operacional_dados = {
+
+            "status": self.status,
+
+            "total_verificacoes": self.total_verificacoes,
+
+            "ultima_verificacao": self.ultima_verificacao,
+
+            "itens": len(self.verificacoes),
+
+            "ultima_etapa": self.ultima_etapa_verificada,
+
+            "ultima_execucao": self.ultima_execucao
+
+        }
+
+        self.historico_execucoes.append(self.resumo_operacional_dados)
 
         self.registrar(
             "Verificação concluída."
