@@ -9,6 +9,8 @@ MOTOR_DE_APRENDIZADO.md
 """
 
 from datetime import datetime
+from gerenciador_memoria import GerenciadorMemoria
+from registro_central_eventos import RegistroCentralEventos
 
 
 class MotorDeAprendizado:
@@ -38,11 +40,25 @@ class MotorDeAprendizado:
 
         self.ultima_execucao = None
 
+        self.historico_execucoes = []
+
+        self.total_operacoes = 0
+
+        self.ultima_atividade = None
+
+        self.memoria = GerenciadorMemoria()
+
+        self.registro_eventos = RegistroCentralEventos()
+
     def registrar(self, mensagem):
 
         horario = datetime.now().strftime("%d/%m/%Y %H:%M:%S")
 
-        print(f"[APRENDIZADO] [{horario}] {mensagem}")
+        registro = f"[APRENDIZADO] [{horario}] {mensagem}"
+
+        self.historico_execucoes.append(registro)
+
+        print(registro)
 
     def adicionar_conhecimento(self, conhecimento):
 
@@ -115,9 +131,26 @@ class MotorDeAprendizado:
 
         self.ultimo_aprendizado = registro
 
+        self.total_operacoes += 1
+
+        self.ultima_atividade = origem
+
+        self.memoria.adicionar_aprendizado(registro)
+
+        self.registro_eventos.registrar(
+            origem="Motor de Aprendizado",
+            destino="Rede",
+            responsavel="Motor de Aprendizado",
+            descricao=f"Aprendizado registrado: {origem}",
+            resultado="OK",
+            importancia="NORMAL"
+        )
+
         self.registrar(
             f"Aprendizado registrado: {origem}"
         )
+
+        self.atualizar_resumo_operacional()
 
     def listar_historico(self):
 
@@ -141,6 +174,18 @@ class MotorDeAprendizado:
 
         return self.resumo_operacional
 
+    def obter_historico_execucoes(self):
+
+        return self.historico_execucoes
+
+    def obter_total_operacoes(self):
+
+        return self.total_operacoes
+
+    def obter_ultima_atividade(self):
+
+        return self.ultima_atividade
+
     def limpar_historico(self):
 
         self.historico_aprendizado.clear()
@@ -150,6 +195,36 @@ class MotorDeAprendizado:
         self.registrar(
             "Histórico de aprendizado limpo."
         )
+
+    def limpar_historico_execucoes(self):
+
+        self.historico_execucoes.clear()
+
+        self.registrar(
+            "Histórico de execuções limpo."
+        )
+
+    def atualizar_resumo_operacional(self):
+
+        self.resumo_operacional = {
+
+            "status": self.status,
+
+            "ciclos": self.ciclos,
+
+            "conhecimentos": self.quantidade_conhecimentos(),
+
+            "aprendizados": len(
+                self.historico_aprendizado
+            ),
+
+            "total_operacoes": self.total_operacoes,
+
+            "ultima_atividade": self.ultima_atividade,
+
+            "ultima_execucao": self.ultima_execucao
+
+        }
 
     def aprender_monitoramento(self):
 
@@ -227,21 +302,7 @@ class MotorDeAprendizado:
             "%d/%m/%Y %H:%M:%S"
         )
 
-        self.resumo_operacional = {
-
-            "status": self.status,
-
-            "ciclos": self.ciclos,
-
-            "conhecimentos": self.quantidade_conhecimentos(),
-
-            "aprendizados": len(
-                self.historico_aprendizado
-            ),
-
-            "ultima_execucao": self.ultima_execucao
-
-        }
+        self.atualizar_resumo_operacional()
 
         self.registrar(
             f"Resumo operacional: {self.resumo_operacional}"
