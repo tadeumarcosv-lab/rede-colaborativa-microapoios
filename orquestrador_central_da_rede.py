@@ -147,6 +147,30 @@ class OrquestradorCentralDaRede:
 
         self.registrar(f"Ciclo de coordenação #{self.ciclos}")
 
+    def executar_componentes(self):
+
+        self.total_coordenacoes += 1
+
+        self.ultima_atividade = "executar_componentes"
+
+        self.registrar("Iniciando execução coordenada dos módulos da Rede.")
+
+        for componente in self.componentes:
+
+            self.registrar(f"Executando -> {componente}")
+
+        self.registrar(
+            f"Total de componentes programados: {len(self.componentes)}"
+        )
+
+        self.historico_execucoes.append({
+            "total_coordenacoes": self.total_coordenacoes,
+            "componentes_programados": len(self.componentes),
+            "ultima_atividade": self.ultima_atividade
+        })
+
+        return True
+
     def obter_resumo_operacional(self):
 
         return self.resumo_operacional_dados
@@ -177,13 +201,13 @@ class OrquestradorCentralDaRede:
 
         self.sincronizar_componentes()
 
+        self.executar_componentes()
+
         self.verificar_estado()
 
         self.executar_ciclo()
 
         self.registrar(f"Resumo: {self.resumo_operacional()}")
-
-        self.total_coordenacoes += 1
 
         self.ultima_execucao = datetime.now().strftime(
             "%d/%m/%Y %H:%M:%S"
@@ -196,6 +220,8 @@ class OrquestradorCentralDaRede:
             "componentes": len(self.componentes),
 
             "ciclos": self.ciclos,
+
+            "componentes_programados": len(self.componentes),
 
             "total_coordenacoes": self.total_coordenacoes,
 
