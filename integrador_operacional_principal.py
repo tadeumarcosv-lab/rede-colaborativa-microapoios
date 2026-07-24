@@ -16,45 +16,34 @@ class IntegradorOperacionalPrincipal:
 
         self.status = "ATIVO"
 
-        self.ciclos = 0
+        self.ciclo = 0
 
-        self.historico = []
+        self.historico_execucoes = []
+
+        self.resumo_operacional = {}
+
+        self.ultima_execucao = None
+
+        self.ultima_atividade = None
 
         self.integradores = [
             "Integrador dos Motores",
-            "Integrador dos Sistemas",
-            "Integrador da Memória",
-            "Integrador da Rede",
-            "Integrador dos Agentes"
+            "Integrador dos Sistemas"
         ]
+
+        self.integradores_disponiveis = []
+
+        self.integradores_executados = 0
 
     def registrar(self, mensagem):
 
         horario = datetime.now().strftime("%d/%m/%Y %H:%M:%S")
 
-        print(f"[OPERACIONAL] [{horario}] {mensagem}")
+        registro = f"[OPERACIONAL] [{horario}] {mensagem}"
 
-        self.historico.append(
-            f"{horario} - {mensagem}"
-        )
+        self.historico_execucoes.append(registro)
 
-    def adicionar_integrador(self, integrador):
-
-        if integrador not in self.integradores:
-
-            self.integradores.append(integrador)
-
-            self.registrar(f"Novo integrador registrado: {integrador}")
-
-    def listar_integradores(self):
-
-        self.registrar("Integradores atualmente registrados:")
-
-        for integrador in self.integradores:
-
-            self.registrar(f"ATIVO -> {integrador}")
-
-        return self.integradores
+        print(registro)
 
     def obter_status(self):
 
@@ -64,45 +53,67 @@ class IntegradorOperacionalPrincipal:
 
         self.status = status
 
+        self.ultima_atividade = "definir_status"
+
         self.registrar(f"Status alterado para: {status}")
 
-    def integrar_motores(self):
+    def listar_integradores(self):
 
-        self.registrar("Integrando os Motores da Rede.")
+        self.ultima_atividade = "listar_integradores"
 
-        return True
+        self.registrar("Integradores atualmente registrados:")
 
-    def integrar_sistemas(self):
+        for integrador in self.integradores:
 
-        self.registrar("Integrando os Sistemas da Rede.")
+            self.registrar(f"ATIVO -> {integrador}")
 
-        return True
+        return self.integradores
 
-    def integrar_memoria(self):
+    def quantidade_integradores(self):
 
-        self.registrar("Integrando a Memória da Rede.")
+        return len(self.integradores)
 
-        return True
+    def obter_historico(self):
 
-    def integrar_rede(self):
+        return self.historico_execucoes
 
-        self.registrar("Integrando os componentes da Rede.")
+    def obter_resumo_operacional(self):
 
-        return True
+        return self.resumo_operacional
 
-    def integrar_agentes(self):
+    def obter_ultima_execucao(self):
 
-        self.registrar("Integrando os Agentes da Rede.")
+        return self.ultima_execucao
 
-        return True
+    def obter_ultima_atividade(self):
+
+        return self.ultima_atividade
+
+    def obter_integradores_disponiveis(self):
+
+        return self.integradores_disponiveis
+
+    def obter_integradores_executados(self):
+
+        return self.integradores_executados
+
+    def limpar_historico(self):
+
+        self.historico_execucoes.clear()
+
+        self.registrar("Histórico de execuções limpo.")
 
     def sincronizar_operacao(self):
+
+        self.ultima_atividade = "sincronizar_operacao"
 
         self.registrar("Sincronizando toda a operação da Rede.")
 
         return True
 
-    def verificar_integradores(self):
+    def verificar_operacao(self):
+
+        self.ultima_atividade = "verificar_operacao"
 
         self.registrar("Verificando integradores registrados.")
 
@@ -114,20 +125,63 @@ class IntegradorOperacionalPrincipal:
 
     def registrar_ciclo(self):
 
-        self.ciclos += 1
+        self.ciclo += 1
 
-        self.registrar(f"Ciclo operacional {self.ciclos} registrado.")
+        self.ultima_atividade = "registrar_ciclo"
+
+        self.registrar(f"Ciclo operacional {self.ciclo} registrado.")
 
         return True
 
-    def resumo_operacional(self):
+    def resumo(self):
 
-        return {
-            "status": self.status,
-            "integradores": len(self.integradores),
-            "ciclos": self.ciclos,
-            "historico": len(self.historico)
-        }
+        self.ultima_atividade = "resumo"
+
+        self.registrar(
+            f"Resumo: {len(self.integradores)} integradores | Status: {self.status}"
+        )
+
+    def executar_integradores(self):
+
+        self.ultima_atividade = "executar_integradores"
+
+        self.registrar("Iniciando execução dos integradores disponíveis.")
+
+        self.integradores_disponiveis = []
+
+        self.integradores_executados = 0
+
+        # Integrador dos Motores
+        try:
+            from integrador_dos_motores import IntegradorDosMotores
+            integrador = IntegradorDosMotores()
+            integrador.executar()
+            self.integradores_disponiveis.append("Integrador dos Motores")
+            self.integradores_executados += 1
+            self.registrar("Executando Integrador dos Motores")
+        except ImportError:
+            self.registrar("Integrador dos Motores indisponível")
+
+        # Integrador dos Sistemas
+        try:
+            from integrador_dos_sistemas import IntegradorDosSistemas
+            integrador = IntegradorDosSistemas()
+            integrador.executar()
+            self.integradores_disponiveis.append("Integrador dos Sistemas")
+            self.integradores_executados += 1
+            self.registrar("Executando Integrador dos Sistemas")
+        except ImportError:
+            self.registrar("Integrador dos Sistemas indisponível")
+
+        self.registrar(
+            f"Integradores disponíveis: {len(self.integradores_disponiveis)}"
+        )
+
+        self.registrar(
+            f"Integradores executados: {self.integradores_executados}"
+        )
+
+        return True
 
     def executar(self):
 
@@ -135,24 +189,40 @@ class IntegradorOperacionalPrincipal:
 
         self.listar_integradores()
 
-        self.integrar_motores()
-
-        self.integrar_sistemas()
-
-        self.integrar_memoria()
-
-        self.integrar_rede()
-
-        self.integrar_agentes()
-
         self.sincronizar_operacao()
 
-        self.verificar_integradores()
+        self.executar_integradores()
+
+        self.verificar_operacao()
 
         self.registrar_ciclo()
 
+        self.resumo()
+
+        self.ultima_execucao = datetime.now().strftime(
+            "%d/%m/%Y %H:%M:%S"
+        )
+
+        self.resumo_operacional = {
+
+            "status": self.status,
+
+            "ciclos": self.ciclo,
+
+            "integradores": len(self.integradores),
+
+            "integradores_disponiveis": len(self.integradores_disponiveis),
+
+            "integradores_executados": self.integradores_executados,
+
+            "ultima_atividade": self.ultima_atividade,
+
+            "ultima_execucao": self.ultima_execucao
+
+        }
+
         self.registrar(
-            f"Resumo: {self.resumo_operacional()}"
+            f"Resumo operacional: {self.resumo_operacional}"
         )
 
         self.registrar("Integração operacional concluída.")
