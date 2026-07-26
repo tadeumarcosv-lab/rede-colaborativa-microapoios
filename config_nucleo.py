@@ -1,47 +1,159 @@
-from nucleo_operacional.agente_central import AgenteCentral
-from nucleo_operacional.agente_coordenacao import AgenteCoordenacao
-from nucleo_operacional.agente_comunicacao import AgenteComunicacao
-from nucleo_operacional.agente_pesquisa_avancada import AgentePesquisaAvancada
-from nucleo_operacional.agente_memoria_estrategica import AgenteMemoriaEstrategica
-from nucleo_operacional.agente_gestao_conhecimento import AgenteGestaoConhecimento
+"""
+CONFIGURAÇÕES DO NÚCLEO OPERACIONAL
+Rede Colaborativa de Microapoios
+Autor: Tadeu Marcos Viana
 
-from config_nucleo import *
+Versão expandida com suporte a histórico de alterações,
+controle de versão e operações.
+"""
+
+from datetime import datetime
 
 
-class IntegracaoCompleta:
+class ConfigNucleo:
 
     def __init__(self):
 
-        self.central = AgenteCentral()
-        self.coordenacao = AgenteCoordenacao()
-        self.comunicacao = AgenteComunicacao()
-        self.pesquisa = AgentePesquisaAvancada()
-        self.memoria = AgenteMemoriaEstrategica()
-        self.conhecimento = AgenteGestaoConhecimento()
+        self.versoes = []
 
-    def executar(self, solicitacao):
+        self.historico_alteracoes = []
 
-        etapa1 = self.comunicacao.executar(solicitacao)
+        self.ultima_alteracao = None
 
-        etapa2 = self.coordenacao.executar(etapa1)
+        self.total_alteracoes = 0
 
-        etapa3 = self.central.executar(etapa2)
+        self.status = "ATIVO"
 
-        etapa4 = self.pesquisa.executar(etapa3)
+        self.carregar_configuracoes()
 
-        etapa5 = self.memoria.executar(etapa4)
+    def carregar_configuracoes(self):
 
-        etapa6 = self.conhecimento.executar(etapa5)
+        self.configuracoes = {
 
-        return etapa6
+            "NUCLEO_OPERACIONAL_ATIVO": False,
+
+            "AGENTE_CENTRAL_ATIVO": False,
+
+            "AGENTE_COORDENACAO_ATIVO": False,
+
+            "AGENTE_COMUNICACAO_ATIVO": False,
+
+            "AGENTE_PESQUISA_AVANCADA_ATIVO": False,
+
+            "AGENTE_MEMORIA_ESTRATEGICA_ATIVO": False,
+
+            "AGENTE_GESTAO_CONHECIMENTO_ATIVO": False
+
+        }
+
+        self.versao_atual = "1.0"
+
+        self.registrar_alteracao("Configurações iniciais carregadas.")
+
+    def obter_configuracao(self, chave):
+
+        return self.configuracoes.get(chave, None)
+
+    def definir_configuracao(self, chave, valor):
+
+        if chave in self.configuracoes:
+
+            self.configuracoes[chave] = valor
+
+            self.total_alteracoes += 1
+
+            self.ultima_alteracao = datetime.now().strftime(
+                "%d/%m/%Y %H:%M:%S"
+            )
+
+            self.registrar_alteracao(
+                f"{chave} alterado para {valor}"
+            )
+
+            return True
+
+        return False
+
+    def registrar_alteracao(self, descricao):
+
+        horario = datetime.now().strftime("%d/%m/%Y %H:%M:%S")
+
+        registro = {
+            "horario": horario,
+            "descricao": descricao,
+            "versao": self.versao_atual
+        }
+
+        self.historico_alteracoes.append(registro)
+
+    def obter_historico(self):
+
+        return self.historico_alteracoes
+
+    def obter_status(self):
+
+        return self.status
+
+    def definir_status(self, novo_status):
+
+        self.status = novo_status
+
+        self.registrar_alteracao(
+            f"Status alterado para {novo_status}"
+        )
+
+    def obter_versoes(self):
+
+        return self.versoes
+
+    def obter_ultima_alteracao(self):
+
+        return self.ultima_alteracao
+
+    def obter_total_alteracoes(self):
+
+        return self.total_alteracoes
+
+    def obter_resumo_operacional(self):
+
+        return {
+
+            "status": self.status,
+
+            "versoes": len(self.versoes),
+
+            "versao_atual": self.versao_atual,
+
+            "total_alteracoes": self.total_alteracoes,
+
+            "ultima_alteracao": self.ultima_alteracao,
+
+            "configuracoes": len(self.configuracoes)
+
+        }
+
+    def limpar_historico(self):
+
+        self.historico_alteracoes.clear()
+
+        self.registrar_alteracao("Histórico limpo.")
+
+    def executar(self):
+
+        print("========================================")
+        print("CONFIGURAÇÕES DO NÚCLEO OPERACIONAL")
+        print(f"Status: {self.status}")
+        print(f"Versão atual: {self.versao_atual}")
+        print(f"Total de alterações: {self.total_alteracoes}")
+        print("========================================")
+
+        for chave, valor in self.configuracoes.items():
+            print(f"{chave}: {valor}")
+
+        print("========================================")
 
 
 if __name__ == "__main__":
 
-    sistema = IntegracaoCompleta()
-
-    resultado = sistema.executar(
-        "Teste de integração completa"
-    )
-
-    print(resultado)
+    config = ConfigNucleo()
+    config.executar()
