@@ -8,6 +8,7 @@ Implementação executável baseada na arquitetura oficial da Rede.
 """
 
 from datetime import datetime
+import time
 
 
 class IntegradorDosSistemas:
@@ -37,6 +38,18 @@ class IntegradorDosSistemas:
         self.sistemas_disponiveis = []
 
         self.sistemas_executados = 0
+
+        self.sistemas_com_sucesso = 0
+
+        self.sistemas_com_falha = 0
+
+        self.inicio_execucao = None
+
+        self.fim_execucao = None
+
+        self.tempo_total = None
+
+        self.resultado_geral = None
 
     def registrar(self, mensagem):
 
@@ -110,11 +123,52 @@ class IntegradorDosSistemas:
 
         return self.sistemas_executados
 
+    def obter_sistemas_com_sucesso(self):
+
+        return self.sistemas_com_sucesso
+
+    def obter_sistemas_com_falha(self):
+
+        return self.sistemas_com_falha
+
+    def obter_tempo_total(self):
+
+        return self.tempo_total
+
+    def obter_resultado_geral(self):
+
+        return self.resultado_geral
+
     def limpar_historico(self):
 
         self.historico_execucoes.clear()
 
         self.registrar("Histórico de execuções limpo.")
+
+    def registrar_evento(self, descricao, resultado="OK", importancia="NORMAL"):
+
+        try:
+            from registro_central_eventos import RegistroCentralEventos
+            registro = RegistroCentralEventos()
+            registro.registrar(
+                origem="Integrador dos Sistemas",
+                destino="Rede",
+                responsavel="Sistema",
+                descricao=descricao,
+                resultado=resultado,
+                importancia=importancia
+            )
+        except Exception as e:
+            self.registrar(f"Erro ao registrar evento: {e}")
+
+    def registrar_memoria(self, descricao):
+
+        try:
+            from gerenciador_memoria import GerenciadorMemoria
+            memoria = GerenciadorMemoria()
+            memoria.adicionar_historico(descricao)
+        except Exception as e:
+            self.registrar(f"Erro ao registrar na memória: {e}")
 
     def integrar_executor(self):
 
@@ -204,6 +258,18 @@ class IntegradorDosSistemas:
 
         self.sistemas_executados = 0
 
+        self.sistemas_com_sucesso = 0
+
+        self.sistemas_com_falha = 0
+
+        self.inicio_execucao = datetime.now()
+
+        self.registrar_evento(
+            "Execução dos sistemas iniciada.",
+            resultado="EXECUTANDO",
+            importancia="NORMAL"
+        )
+
         # Sistema Executor
         try:
             from sistema_executor_da_rede import SistemaExecutorDaRede
@@ -211,9 +277,24 @@ class IntegradorDosSistemas:
             sistema.executar()
             self.sistemas_disponiveis.append("Sistema Executor")
             self.sistemas_executados += 1
+            self.sistemas_com_sucesso += 1
             self.registrar("Executando Sistema Executor")
-        except ImportError:
-            self.registrar("Sistema Executor indisponível")
+            self.registrar_evento(
+                "Sistema Executor executado com sucesso.",
+                resultado="OK",
+                importancia="NORMAL"
+            )
+        except Exception as e:
+            self.sistemas_com_falha += 1
+            self.registrar(f"Erro ao executar Sistema Executor: {e}")
+            self.registrar_evento(
+                f"Falha no Sistema Executor: {e}",
+                resultado="FALHA",
+                importancia="ALTA"
+            )
+            self.registrar_memoria(
+                f"Falha no Sistema Executor: {e}"
+            )
 
         # Sistema de Monitoramento
         try:
@@ -222,9 +303,24 @@ class IntegradorDosSistemas:
             sistema.executar()
             self.sistemas_disponiveis.append("Sistema de Monitoramento")
             self.sistemas_executados += 1
+            self.sistemas_com_sucesso += 1
             self.registrar("Executando Sistema de Monitoramento")
-        except ImportError:
-            self.registrar("Sistema de Monitoramento indisponível")
+            self.registrar_evento(
+                "Sistema de Monitoramento executado com sucesso.",
+                resultado="OK",
+                importancia="NORMAL"
+            )
+        except Exception as e:
+            self.sistemas_com_falha += 1
+            self.registrar(f"Erro ao executar Sistema de Monitoramento: {e}")
+            self.registrar_evento(
+                f"Falha no Sistema de Monitoramento: {e}",
+                resultado="FALHA",
+                importancia="ALTA"
+            )
+            self.registrar_memoria(
+                f"Falha no Sistema de Monitoramento: {e}"
+            )
 
         # Sistema de Recuperação
         try:
@@ -233,9 +329,24 @@ class IntegradorDosSistemas:
             sistema.executar()
             self.sistemas_disponiveis.append("Sistema de Recuperação")
             self.sistemas_executados += 1
+            self.sistemas_com_sucesso += 1
             self.registrar("Executando Sistema de Recuperação")
-        except ImportError:
-            self.registrar("Sistema de Recuperação indisponível")
+            self.registrar_evento(
+                "Sistema de Recuperação executado com sucesso.",
+                resultado="OK",
+                importancia="NORMAL"
+            )
+        except Exception as e:
+            self.sistemas_com_falha += 1
+            self.registrar(f"Erro ao executar Sistema de Recuperação: {e}")
+            self.registrar_evento(
+                f"Falha no Sistema de Recuperação: {e}",
+                resultado="FALHA",
+                importancia="ALTA"
+            )
+            self.registrar_memoria(
+                f"Falha no Sistema de Recuperação: {e}"
+            )
 
         # Gerenciador da Memória
         try:
@@ -244,9 +355,24 @@ class IntegradorDosSistemas:
             sistema.executar()
             self.sistemas_disponiveis.append("Gerenciador da Memória")
             self.sistemas_executados += 1
+            self.sistemas_com_sucesso += 1
             self.registrar("Executando Gerenciador da Memória")
-        except ImportError:
-            self.registrar("Gerenciador da Memória indisponível")
+            self.registrar_evento(
+                "Gerenciador da Memória executado com sucesso.",
+                resultado="OK",
+                importancia="NORMAL"
+            )
+        except Exception as e:
+            self.sistemas_com_falha += 1
+            self.registrar(f"Erro ao executar Gerenciador da Memória: {e}")
+            self.registrar_evento(
+                f"Falha no Gerenciador da Memória: {e}",
+                resultado="FALHA",
+                importancia="ALTA"
+            )
+            self.registrar_memoria(
+                f"Falha no Gerenciador da Memória: {e}"
+            )
 
         # Registro Central de Eventos
         try:
@@ -255,9 +381,28 @@ class IntegradorDosSistemas:
             sistema.executar()
             self.sistemas_disponiveis.append("Registro Central de Eventos")
             self.sistemas_executados += 1
+            self.sistemas_com_sucesso += 1
             self.registrar("Executando Registro Central de Eventos")
-        except ImportError:
-            self.registrar("Registro Central de Eventos indisponível")
+            self.registrar_evento(
+                "Registro Central de Eventos executado com sucesso.",
+                resultado="OK",
+                importancia="NORMAL"
+            )
+        except Exception as e:
+            self.sistemas_com_falha += 1
+            self.registrar(f"Erro ao executar Registro Central de Eventos: {e}")
+            self.registrar_evento(
+                f"Falha no Registro Central de Eventos: {e}",
+                resultado="FALHA",
+                importancia="ALTA"
+            )
+            self.registrar_memoria(
+                f"Falha no Registro Central de Eventos: {e}"
+            )
+
+        self.fim_execucao = datetime.now()
+
+        self.tempo_total = (self.fim_execucao - self.inicio_execucao).total_seconds()
 
         self.registrar(
             f"Sistemas disponíveis: {len(self.sistemas_disponiveis)}"
@@ -267,11 +412,58 @@ class IntegradorDosSistemas:
             f"Sistemas executados: {self.sistemas_executados}"
         )
 
+        self.registrar(
+            f"Sistemas com sucesso: {self.sistemas_com_sucesso}"
+        )
+
+        self.registrar(
+            f"Sistemas com falha: {self.sistemas_com_falha}"
+        )
+
+        self.registrar(
+            f"Tempo total: {round(self.tempo_total, 2)} segundos"
+        )
+
+        if self.sistemas_com_falha > 0 and self.sistemas_executados > 0:
+            self.resultado_geral = "PARCIAL"
+            self.registrar_evento(
+                f"Execução dos sistemas concluída com {self.sistemas_com_falha} falha(s).",
+                resultado="PARCIAL",
+                importancia="MEDIA"
+            )
+        elif self.sistemas_com_falha > 0 and self.sistemas_executados == 0:
+            self.resultado_geral = "FALHA_CRITICA"
+            self.registrar_evento(
+                "Nenhum sistema foi executado com sucesso.",
+                resultado="FALHA_CRITICA",
+                importancia="CRITICA"
+            )
+            self.registrar_memoria(
+                "Nenhum sistema foi executado com sucesso."
+            )
+        else:
+            self.resultado_geral = "SUCESSO"
+            self.registrar_evento(
+                "Execução dos sistemas concluída com sucesso.",
+                resultado="OK",
+                importancia="NORMAL"
+            )
+
+        self.registrar_memoria(
+            f"Execução dos sistemas concluída. Resultado: {self.resultado_geral}."
+        )
+
         return True
 
     def executar(self):
 
         self.registrar("Integrador dos Sistemas iniciado.")
+
+        self.registrar_evento(
+            "Integrador dos Sistemas iniciado.",
+            resultado="EXECUTANDO",
+            importancia="NORMAL"
+        )
 
         self.listar_sistemas()
 
@@ -311,6 +503,14 @@ class IntegradorDosSistemas:
 
             "sistemas_executados": self.sistemas_executados,
 
+            "sistemas_com_sucesso": self.sistemas_com_sucesso,
+
+            "sistemas_com_falha": self.sistemas_com_falha,
+
+            "resultado_geral": self.resultado_geral,
+
+            "tempo_total_segundos": round(self.tempo_total, 2) if self.tempo_total else 0,
+
             "ultima_atividade": self.ultima_atividade,
 
             "ultima_execucao": self.ultima_execucao
@@ -321,7 +521,22 @@ class IntegradorDosSistemas:
             f"Resumo operacional: {self.resumo_operacional}"
         )
 
+        self.registrar_evento(
+            f"Integração dos sistemas concluída. Ciclo {self.ciclo}. "
+            f"Resultado: {self.resultado_geral}. "
+            f"Tempo: {round(self.tempo_total, 2)}s.",
+            resultado=self.resultado_geral,
+            importancia="NORMAL"
+        )
+
+        self.registrar_memoria(
+            f"Integração dos sistemas concluída. Ciclo {self.ciclo}. "
+            f"Resultado: {self.resultado_geral}."
+        )
+
         self.registrar("Integração dos sistemas concluída.")
+
+        return self.resultado_geral == "SUCESSO"
 
 
 if __name__ == "__main__":
