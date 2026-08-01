@@ -50,6 +50,14 @@ class GerenciadorInicializacao:
 
         self.resultado_geral = None
 
+        self.operacao_continua = False
+
+        self.intervalo_monitoramento = 10
+
+        self.ciclos_monitoramento = 0
+
+        self.ultimo_monitoramento = None
+
     def registrar(self, mensagem):
 
         horario = datetime.now().strftime("%d/%m/%Y %H:%M:%S")
@@ -134,6 +142,76 @@ class GerenciadorInicializacao:
     def obter_etapas_falha(self):
 
         return self.etapas_falha
+
+    def iniciar_operacao_continua(self):
+
+        self.operacao_continua = True
+
+        self.registrar("Operação contínua ativada.")
+
+        self.registrar_evento(
+            "Gerenciador de Inicialização entrou em operação contínua.",
+            resultado="OK",
+            importancia="NORMAL"
+        )
+
+        self.registrar_memoria(
+            "Gerenciador de Inicialização entrou em operação contínua."
+        )
+
+    def executar_monitoramento(self):
+
+        self.ciclos_monitoramento += 1
+
+        self.ultimo_monitoramento = datetime.now().strftime("%d/%m/%Y %H:%M:%S")
+
+        self.registrar(
+            f"Ciclo de monitoramento #{self.ciclos_monitoramento} executado."
+        )
+
+        self.registrar_evento(
+            f"Ciclo de monitoramento #{self.ciclos_monitoramento} executado.",
+            resultado="OK",
+            importancia="NORMAL"
+        )
+
+        self.registrar_memoria(
+            f"Ciclo de monitoramento #{self.ciclos_monitoramento} executado."
+        )
+
+    def parar_operacao_continua(self):
+
+        self.operacao_continua = False
+
+        self.registrar("Operação contínua desativada.")
+
+        self.registrar_evento(
+            "Gerenciador de Inicialização encerrou operação contínua.",
+            resultado="OK",
+            importancia="NORMAL"
+        )
+
+        self.registrar_memoria(
+            "Gerenciador de Inicialização encerrou operação contínua."
+        )
+
+    def obter_estado_operacao(self):
+
+        return {
+
+            "status": self.status,
+
+            "operacao_continua": self.operacao_continua,
+
+            "ciclos_monitoramento": self.ciclos_monitoramento,
+
+            "ultimo_monitoramento": self.ultimo_monitoramento,
+
+            "resultado_geral": self.resultado_geral,
+
+            "tempo_total": self.tempo_total
+
+        }
 
     def iniciar(self):
 
@@ -278,6 +356,8 @@ class GerenciadorInicializacao:
             f"Gerenciador de Inicialização concluído. "
             f"Resultado: {self.resultado_geral}."
         )
+
+        self.iniciar_operacao_continua()
 
         return self.resultado_geral == "SUCESSO"
 
