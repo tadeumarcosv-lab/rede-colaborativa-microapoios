@@ -45,6 +45,14 @@ class OrquestradorCentralDaRede:
 
         self.ultima_atividade = None
 
+        self.operacao_continua = False
+
+        self.intervalo_orquestracao = 10
+
+        self.ciclos_continuos = 0
+
+        self.ultima_orquestracao_continua = None
+
     def registrar(self, mensagem):
 
         horario = datetime.now().strftime("%d/%m/%Y %H:%M:%S")
@@ -193,6 +201,111 @@ class OrquestradorCentralDaRede:
 
         self.registrar("Histórico de execuções limpo.")
 
+    def registrar_evento(self, descricao, resultado="OK", importancia="NORMAL"):
+
+        try:
+            from registro_central_eventos import RegistroCentralEventos
+            registro = RegistroCentralEventos()
+            registro.registrar(
+                origem="Orquestrador Central",
+                destino="Rede",
+                responsavel="Sistema",
+                descricao=descricao,
+                resultado=resultado,
+                importancia=importancia
+            )
+        except Exception as e:
+            self.registrar(f"Erro ao registrar evento: {e}")
+
+    def registrar_memoria(self, descricao):
+
+        try:
+            from gerenciador_memoria import GerenciadorMemoria
+            memoria = GerenciadorMemoria()
+            memoria.adicionar_historico(descricao)
+        except Exception as e:
+            self.registrar(f"Erro ao registrar na memória: {e}")
+
+    def iniciar_operacao_continua(self):
+
+        self.operacao_continua = True
+
+        self.registrar("Orquestrador Central entrou em operação contínua.")
+
+        self.registrar_evento(
+            "Orquestrador Central entrou em operação contínua.",
+            resultado="OK",
+            importancia="NORMAL"
+        )
+
+        self.registrar_memoria(
+            "Orquestrador Central entrou em operação contínua."
+        )
+
+    def executar_orquestracao_continua(self):
+
+        self.ciclos_continuos += 1
+
+        self.ultima_orquestracao_continua = datetime.now().strftime(
+            "%d/%m/%Y %H:%M:%S"
+        )
+
+        self.sincronizar_componentes()
+
+        self.executar_componentes()
+
+        self.verificar_estado()
+
+        self.executar_ciclo()
+
+        self.registrar(
+            f"Ciclo contínuo de orquestração #{self.ciclos_continuos} executado."
+        )
+
+        self.registrar_evento(
+            f"Ciclo contínuo de orquestração #{self.ciclos_continuos} executado.",
+            resultado="OK",
+            importancia="NORMAL"
+        )
+
+        self.registrar_memoria(
+            f"Ciclo contínuo de orquestração #{self.ciclos_continuos} executado."
+        )
+
+    def parar_operacao_continua(self):
+
+        self.operacao_continua = False
+
+        self.registrar("Orquestrador Central encerrou operação contínua.")
+
+        self.registrar_evento(
+            "Orquestrador Central encerrou operação contínua.",
+            resultado="OK",
+            importancia="NORMAL"
+        )
+
+        self.registrar_memoria(
+            "Orquestrador Central encerrou operação contínua."
+        )
+
+    def obter_estado_operacao(self):
+
+        return {
+
+            "status": self.status,
+
+            "operacao_continua": self.operacao_continua,
+
+            "ciclos_continuos": self.ciclos_continuos,
+
+            "ultima_orquestracao_continua": self.ultima_orquestracao_continua,
+
+            "ultima_execucao": self.ultima_execucao,
+
+            "total_coordenacoes": self.total_coordenacoes
+
+        }
+
     def executar(self):
 
         self.registrar("Orquestrador Central iniciado.")
@@ -240,6 +353,8 @@ class OrquestradorCentralDaRede:
         )
 
         self.registrar("Coordenação concluída.")
+
+        self.iniciar_operacao_continua()
 
 
 if __name__ == "__main__":
