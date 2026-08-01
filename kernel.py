@@ -318,6 +318,28 @@ class KernelDaRede:
 
         self.registrar("Kernel operacional.")
 
+        import time
+
+        self.registrar(
+            "Entrando em operação contínua."
+        )
+
+        while self.status == "OPERACIONAL":
+
+            try:
+
+                time.sleep(5)
+
+                self.executar_ciclo()
+
+            except Exception as e:
+
+                self.registrar(
+                    f"Erro no ciclo permanente: {e}"
+                )
+
+                time.sleep(10)
+
         return self.resultado_geral == "SUCESSO"
 
 
