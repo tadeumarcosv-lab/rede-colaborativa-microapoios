@@ -51,6 +51,14 @@ class SupervisorGeral:
 
         self.ultima_atividade = None
 
+        self.operacao_continua = False
+
+        self.intervalo_supervisao = 10
+
+        self.ciclos_continuos = 0
+
+        self.ultima_supervisao_continua = None
+
     def registrar(self, mensagem):
 
         horario = datetime.now().strftime("%d/%m/%Y %H:%M:%S")
@@ -175,6 +183,111 @@ class SupervisorGeral:
 
         self.registrar("Histórico de execuções limpo.")
 
+    def registrar_evento(self, descricao, resultado="OK", importancia="NORMAL"):
+
+        try:
+            from registro_central_eventos import RegistroCentralEventos
+            registro = RegistroCentralEventos()
+            registro.registrar(
+                origem="Supervisor Geral",
+                destino="Rede",
+                responsavel="Sistema",
+                descricao=descricao,
+                resultado=resultado,
+                importancia=importancia
+            )
+        except Exception as e:
+            self.registrar(f"Erro ao registrar evento: {e}")
+
+    def registrar_memoria(self, descricao):
+
+        try:
+            from gerenciador_memoria import GerenciadorMemoria
+            memoria = GerenciadorMemoria()
+            memoria.adicionar_historico(descricao)
+        except Exception as e:
+            self.registrar(f"Erro ao registrar na memória: {e}")
+
+    def iniciar_operacao_continua(self):
+
+        self.operacao_continua = True
+
+        self.registrar("Supervisor Geral entrou em operação contínua.")
+
+        self.registrar_evento(
+            "Supervisor Geral entrou em operação contínua.",
+            resultado="OK",
+            importancia="NORMAL"
+        )
+
+        self.registrar_memoria(
+            "Supervisor Geral entrou em operação contínua."
+        )
+
+    def executar_supervisao_continua(self):
+
+        self.ciclos_continuos += 1
+
+        self.ultima_supervisao_continua = datetime.now().strftime(
+            "%d/%m/%Y %H:%M:%S"
+        )
+
+        self.verificar()
+
+        self.monitorar()
+
+        self.verificar_componentes()
+
+        self.registrar_ciclo()
+
+        self.registrar(
+            f"Ciclo contínuo de supervisão #{self.ciclos_continuos} executado."
+        )
+
+        self.registrar_evento(
+            f"Ciclo contínuo de supervisão #{self.ciclos_continuos} executado.",
+            resultado="OK",
+            importancia="NORMAL"
+        )
+
+        self.registrar_memoria(
+            f"Ciclo contínuo de supervisão #{self.ciclos_continuos} executado."
+        )
+
+    def parar_operacao_continua(self):
+
+        self.operacao_continua = False
+
+        self.registrar("Supervisor Geral encerrou operação contínua.")
+
+        self.registrar_evento(
+            "Supervisor Geral encerrou operação contínua.",
+            resultado="OK",
+            importancia="NORMAL"
+        )
+
+        self.registrar_memoria(
+            "Supervisor Geral encerrou operação contínua."
+        )
+
+    def obter_estado_operacao(self):
+
+        return {
+
+            "status": self.status,
+
+            "operacao_continua": self.operacao_continua,
+
+            "ciclos_continuos": self.ciclos_continuos,
+
+            "ultima_supervisao_continua": self.ultima_supervisao_continua,
+
+            "ultima_execucao": self.ultima_execucao,
+
+            "total_supervisoes": self.total_supervisoes
+
+        }
+
     def executar(self):
 
         self.registrar("Supervisor Geral iniciado.")
@@ -222,6 +335,8 @@ class SupervisorGeral:
         )
 
         self.registrar("Supervisão concluída.")
+
+        self.iniciar_operacao_continua()
 
 
 if __name__ == "__main__":
