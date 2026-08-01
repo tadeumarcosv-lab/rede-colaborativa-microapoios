@@ -19,10 +19,6 @@ class DiretorAutonomoDaRede:
 
         self.ciclo = 0
 
-        self.ultima_execucao = None
-
-        self.historico = []
-
         self.componentes = [
 
             "Supervisor Geral",
@@ -57,15 +53,21 @@ class DiretorAutonomoDaRede:
 
         ]
 
+        self.operacao_continua = False
+
+        self.intervalo_direcao = 10
+
+        self.ciclos_continuos = 0
+
+        self.ultima_direcao_continua = None
+
+        self.ultima_execucao = None
+
     def registrar(self, mensagem):
 
         horario = datetime.now().strftime("%d/%m/%Y %H:%M:%S")
 
-        registro = f"[DIRETOR] [{horario}] {mensagem}"
-
-        self.historico.append(registro)
-
-        print(registro)
+        print(f"[DIRETOR] [{horario}] {mensagem}")
 
     def listar_componentes(self):
 
@@ -77,14 +79,6 @@ class DiretorAutonomoDaRede:
 
         return self.componentes
 
-    def adicionar_componente(self, componente):
-
-        if componente not in self.componentes:
-
-            self.componentes.append(componente)
-
-            self.registrar(f"Novo componente supervisionado: {componente}")
-
     def verificar_componentes(self):
 
         self.registrar("Verificando componentes supervisionados.")
@@ -95,25 +89,17 @@ class DiretorAutonomoDaRede:
 
         return True
 
-    def resumo_operacional(self):
+    def adicionar_componente(self, componente):
 
-        return {
+        if componente not in self.componentes:
 
-            "status": self.status,
+            self.componentes.append(componente)
 
-            "ciclo": self.ciclo,
-
-            "componentes": len(self.componentes),
-
-            "ultima_execucao": self.ultima_execucao
-
-        }
+            self.registrar(f"Novo componente supervisionado: {componente}")
 
     def iniciar_ciclo(self):
 
         self.ciclo += 1
-
-        self.ultima_execucao = datetime.now().strftime("%d/%m/%Y %H:%M:%S")
 
         self.registrar(f"Iniciando ciclo operacional {self.ciclo}")
 
@@ -129,6 +115,113 @@ class DiretorAutonomoDaRede:
 
         self.registrar(f"Ciclo {self.ciclo} concluído.")
 
+    def registrar_evento(self, descricao, resultado="OK", importancia="NORMAL"):
+
+        try:
+            from registro_central_eventos import RegistroCentralEventos
+            registro = RegistroCentralEventos()
+            registro.registrar(
+                origem="Diretor Autônomo",
+                destino="Rede",
+                responsavel="Sistema",
+                descricao=descricao,
+                resultado=resultado,
+                importancia=importancia
+            )
+        except Exception as e:
+            self.registrar(f"Erro ao registrar evento: {e}")
+
+    def registrar_memoria(self, descricao):
+
+        try:
+            from gerenciador_memoria import GerenciadorMemoria
+            memoria = GerenciadorMemoria()
+            memoria.adicionar_historico(descricao)
+        except Exception as e:
+            self.registrar(f"Erro ao registrar na memória: {e}")
+
+    def iniciar_operacao_continua(self):
+
+        self.operacao_continua = True
+
+        self.registrar("Diretor Autônomo entrou em operação contínua.")
+
+        self.registrar_evento(
+            "Diretor Autônomo entrou em operação contínua.",
+            resultado="OK",
+            importancia="NORMAL"
+        )
+
+        self.registrar_memoria(
+            "Diretor Autônomo entrou em operação contínua."
+        )
+
+    def executar_direcao_continua(self):
+
+        self.ciclos_continuos += 1
+
+        self.ultima_direcao_continua = datetime.now().strftime(
+            "%d/%m/%Y %H:%M:%S"
+        )
+
+        self.iniciar_ciclo()
+
+        self.coordenar()
+
+        self.validar()
+
+        self.verificar_componentes()
+
+        self.finalizar_ciclo()
+
+        self.registrar(
+            f"Ciclo contínuo de direção #{self.ciclos_continuos} executado."
+        )
+
+        self.registrar_evento(
+            f"Ciclo contínuo de direção #{self.ciclos_continuos} executado.",
+            resultado="OK",
+            importancia="NORMAL"
+        )
+
+        self.registrar_memoria(
+            f"Ciclo contínuo de direção #{self.ciclos_continuos} executado."
+        )
+
+    def parar_operacao_continua(self):
+
+        self.operacao_continua = False
+
+        self.registrar("Diretor Autônomo encerrou operação contínua.")
+
+        self.registrar_evento(
+            "Diretor Autônomo encerrou operação contínua.",
+            resultado="OK",
+            importancia="NORMAL"
+        )
+
+        self.registrar_memoria(
+            "Diretor Autônomo encerrou operação contínua."
+        )
+
+    def obter_estado_operacao(self):
+
+        return {
+
+            "status": self.status,
+
+            "operacao_continua": self.operacao_continua,
+
+            "ciclos_continuos": self.ciclos_continuos,
+
+            "ultima_direcao_continua": self.ultima_direcao_continua,
+
+            "ultima_execucao": self.ultima_execucao,
+
+            "ciclo": self.ciclo
+
+        }
+
     def executar(self):
 
         self.registrar("Diretor Autônomo iniciado.")
@@ -141,13 +234,15 @@ class DiretorAutonomoDaRede:
 
         self.validar()
 
-        self.verificar_componentes()
-
         self.finalizar_ciclo()
 
-        self.registrar(f"Resumo: {self.resumo_operacional()}")
+        self.ultima_execucao = datetime.now().strftime(
+            "%d/%m/%Y %H:%M:%S"
+        )
 
         self.registrar("Diretor Autônomo operacional.")
+
+        self.iniciar_operacao_continua()
 
 
 if __name__ == "__main__":
