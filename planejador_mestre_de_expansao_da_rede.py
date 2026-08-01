@@ -62,6 +62,14 @@ class PlanejadorMestreDeExpansaoDaRede:
 
         self.total_validacoes = 0
 
+        self.operacao_continua = False
+
+        self.intervalo_planejamento = 10
+
+        self.ciclos_continuos = 0
+
+        self.ultimo_planejamento = None
+
     def registrar(self, mensagem):
 
         horario = datetime.now().strftime("%d/%m/%Y %H:%M:%S")
@@ -154,6 +162,111 @@ class PlanejadorMestreDeExpansaoDaRede:
 
         self.registrar("Histórico de execuções limpo.")
 
+    def registrar_evento(self, descricao, resultado="OK", importancia="NORMAL"):
+
+        try:
+            from registro_central_eventos import RegistroCentralEventos
+            registro = RegistroCentralEventos()
+            registro.registrar(
+                origem="Planejador Mestre",
+                destino="Rede",
+                responsavel="Sistema",
+                descricao=descricao,
+                resultado=resultado,
+                importancia=importancia
+            )
+        except Exception as e:
+            self.registrar(f"Erro ao registrar evento: {e}")
+
+    def registrar_memoria(self, descricao):
+
+        try:
+            from gerenciador_memoria import GerenciadorMemoria
+            memoria = GerenciadorMemoria()
+            memoria.adicionar_historico(descricao)
+        except Exception as e:
+            self.registrar(f"Erro ao registrar na memória: {e}")
+
+    def iniciar_operacao_continua(self):
+
+        self.operacao_continua = True
+
+        self.registrar(
+            "Planejador Mestre entrou em operação contínua."
+        )
+
+        self.registrar_evento(
+            "Planejador Mestre entrou em operação contínua.",
+            resultado="OK",
+            importancia="NORMAL"
+        )
+
+        self.registrar_memoria(
+            "Planejador Mestre entrou em operação contínua."
+        )
+
+    def executar_planejamento_continuo(self):
+
+        self.ciclos_continuos += 1
+
+        self.ultimo_planejamento = datetime.now().strftime(
+            "%d/%m/%Y %H:%M:%S"
+        )
+
+        self.analisar()
+
+        self.validar()
+
+        self.registrar(
+            f"Ciclo contínuo de planejamento #{self.ciclos_continuos} executado."
+        )
+
+        self.registrar_evento(
+            f"Ciclo contínuo de planejamento #{self.ciclos_continuos} executado.",
+            resultado="OK",
+            importancia="NORMAL"
+        )
+
+        self.registrar_memoria(
+            f"Ciclo contínuo de planejamento #{self.ciclos_continuos} executado."
+        )
+
+    def parar_operacao_continua(self):
+
+        self.operacao_continua = False
+
+        self.registrar(
+            "Planejador Mestre encerrou operação contínua."
+        )
+
+        self.registrar_evento(
+            "Planejador Mestre encerrou operação contínua.",
+            resultado="OK",
+            importancia="NORMAL"
+        )
+
+        self.registrar_memoria(
+            "Planejador Mestre encerrou operação contínua."
+        )
+
+    def obter_estado_operacao(self):
+
+        return {
+
+            "status": self.status,
+
+            "operacao_continua": self.operacao_continua,
+
+            "ciclos_continuos": self.ciclos_continuos,
+
+            "ultimo_planejamento": self.ultimo_planejamento,
+
+            "ultima_execucao": self.ultima_execucao,
+
+            "planos_gerados": self.planos_gerados
+
+        }
+
     def executar(self):
 
         self.registrar("Planejador Mestre iniciado.")
@@ -193,6 +306,8 @@ class PlanejadorMestreDeExpansaoDaRede:
         )
 
         self.registrar("Planejador Mestre operacional.")
+
+        self.iniciar_operacao_continua()
 
 
 if __name__ == "__main__":
