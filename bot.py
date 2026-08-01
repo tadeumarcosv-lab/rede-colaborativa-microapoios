@@ -1,7 +1,7 @@
 from flask import Flask, request
 import requests
 import os
-from config_nucleo import *
+
 app = Flask(__name__)
 
 TOKEN = os.getenv("TOKEN")
@@ -191,6 +191,22 @@ Escolha um assunto, digitando um dos números abaixo:
 
 ══════════════════
 """
+
+# ============================================
+# INICIALIZAÇÃO DA REDE AUTÔNOMA
+# ============================================
+
+try:
+    from bootstrap import bootstrap
+    bootstrap()
+    print("[BOT] Rede Autônoma iniciada com sucesso.")
+except Exception as e:
+    print(f"[BOT] Erro ao iniciar Rede Autônoma: {e}")
+
+# ============================================
+# FIM DA INICIALIZAÇÃO DA REDE AUTÔNOMA
+# ============================================
+
 
 @app.route("/")
 def home():
