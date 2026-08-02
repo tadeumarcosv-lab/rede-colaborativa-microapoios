@@ -20,6 +20,7 @@ Responsabilidades:
 from datetime import datetime
 import time
 from typing import List, Dict, Any, Optional
+import uuid
 
 
 class BarramentoHibridoInteligenteDaRede:
@@ -82,6 +83,8 @@ class BarramentoHibridoInteligenteDaRede:
             "status": "ATIVO",
             "ativo": True,
             "prioridade": 1,
+            "heartbeat": None,
+            "ultima_verificacao": None,
             "funcoes": [
                 "Comunicação central",
                 "Registro de componentes",
@@ -97,6 +100,8 @@ class BarramentoHibridoInteligenteDaRede:
             "status": "ATIVO",
             "ativo": True,
             "prioridade": 2,
+            "heartbeat": None,
+            "ultima_verificacao": None,
             "funcoes": [
                 "Redundância do principal",
                 "Assumir em caso de falha",
@@ -111,6 +116,8 @@ class BarramentoHibridoInteligenteDaRede:
             "status": "PRONTO",
             "ativo": True,
             "prioridade": 3,
+            "heartbeat": None,
+            "ultima_verificacao": None,
             "funcoes": [
                 "Último recurso",
                 "Operação mínima",
@@ -129,6 +136,7 @@ class BarramentoHibridoInteligenteDaRede:
                 "nome": "Barramento de Memória",
                 "tipo": "ESPECIALIZADO",
                 "status": "ATIVO",
+                "heartbeat": None,
                 "funcao": "Centraliza memória persistente",
                 "integracao": "GerenciadorMemoria"
             },
@@ -138,6 +146,7 @@ class BarramentoHibridoInteligenteDaRede:
                 "nome": "Barramento de Eventos",
                 "tipo": "ESPECIALIZADO",
                 "status": "ATIVO",
+                "heartbeat": None,
                 "funcao": "Centraliza eventos da Rede",
                 "integracao": "RegistroCentralEventos"
             },
@@ -147,6 +156,7 @@ class BarramentoHibridoInteligenteDaRede:
                 "nome": "Barramento de Auditoria",
                 "tipo": "ESPECIALIZADO",
                 "status": "ATIVO",
+                "heartbeat": None,
                 "funcao": "Auditoria contínua",
                 "integracao": "SistemaDeAuditoria"
             },
@@ -156,6 +166,7 @@ class BarramentoHibridoInteligenteDaRede:
                 "nome": "Barramento de Aprendizado",
                 "tipo": "ESPECIALIZADO",
                 "status": "ATIVO",
+                "heartbeat": None,
                 "funcao": "Centraliza aprendizado contínuo",
                 "integracao": "MotorDeAprendizado"
             },
@@ -165,6 +176,7 @@ class BarramentoHibridoInteligenteDaRede:
                 "nome": "Barramento de Recuperação",
                 "tipo": "ESPECIALIZADO",
                 "status": "ATIVO",
+                "heartbeat": None,
                 "funcao": "Recuperação de falhas",
                 "integracao": "SistemaDeRecuperacao"
             },
@@ -174,6 +186,7 @@ class BarramentoHibridoInteligenteDaRede:
                 "nome": "Barramento de Expansão",
                 "tipo": "ESPECIALIZADO",
                 "status": "ATIVO",
+                "heartbeat": None,
                 "funcao": "Adição de novos módulos",
                 "integracao": "GeradorAutonomoDeComponentes"
             },
@@ -183,6 +196,7 @@ class BarramentoHibridoInteligenteDaRede:
                 "nome": "Barramento de Diagnóstico",
                 "tipo": "ESPECIALIZADO",
                 "status": "ATIVO",
+                "heartbeat": None,
                 "funcao": "Diagnóstico de falhas",
                 "integracao": "SistemaDeMonitoramento"
             },
@@ -192,6 +206,7 @@ class BarramentoHibridoInteligenteDaRede:
                 "nome": "Barramento de Sincronização",
                 "tipo": "ESPECIALIZADO",
                 "status": "ATIVO",
+                "heartbeat": None,
                 "funcao": "Sincronização entre módulos",
                 "integracao": "OrquestradorCentral"
             }
@@ -206,30 +221,35 @@ class BarramentoHibridoInteligenteDaRede:
                 "nome": "Barramento Local - Kernel",
                 "tipo": "LOCAL",
                 "status": "ATIVO",
+                "heartbeat": None,
                 "responsavel": "KernelDaRede"
             },
             "supervisor": {
                 "nome": "Barramento Local - Supervisor",
                 "tipo": "LOCAL",
                 "status": "ATIVO",
+                "heartbeat": None,
                 "responsavel": "SupervisorGeral"
             },
             "orquestrador": {
                 "nome": "Barramento Local - Orquestrador",
                 "tipo": "LOCAL",
                 "status": "ATIVO",
+                "heartbeat": None,
                 "responsavel": "OrquestradorCentralDaRede"
             },
             "diretor": {
                 "nome": "Barramento Local - Diretor",
                 "tipo": "LOCAL",
                 "status": "ATIVO",
+                "heartbeat": None,
                 "responsavel": "DiretorAutonomoDaRede"
             },
             "planejador": {
                 "nome": "Barramento Local - Planejador",
                 "tipo": "LOCAL",
                 "status": "ATIVO",
+                "heartbeat": None,
                 "responsavel": "PlanejadorMestreDeExpansaoDaRede"
             }
         }
@@ -272,49 +292,100 @@ class BarramentoHibridoInteligenteDaRede:
         self.total_recuperacoes_realizadas = 0
 
         # ============================================
-        # 7. PONTOS DE EXPANSÃO (STUBS)
+        # 7. SISTEMA DE MENSAGENS
         # ============================================
 
-        # 7.1 Fábrica de Barramentos (futuro)
+        self.mensagens = []
+        self.mensagens_enviadas = 0
+        self.mensagens_recebidas = 0
+        self.broadcasts_realizados = 0
+        self.trocas_automaticas = 0
+        self.heartbeats_realizados = 0
+        self.sincronizacoes_realizadas = 0
+
+        # ============================================
+        # 8. FILAS INTELIGENTES
+        # ============================================
+
+        self.fila_critica = []
+        self.fila_alta = []
+        self.fila_normal = []
+        self.fila_baixa = []
+        self.fila_manutencao = []
+        self.fila_sincronizacao = []
+        self.fila_recuperacao = []
+        self.fila_auditoria = []
+        self.fila_aprendizado = []
+        self.fila_expansao = []
+
+        # ============================================
+        # 9. MONITORAMENTO
+        # ============================================
+
+        self.monitoramento_intervalo = 10
+        self.ultimo_monitoramento = None
+        self.falhas_detectadas = []
+        self.barramentos_falhos = []
+
+        # ============================================
+        # 10. HEARTBEAT
+        # ============================================
+
+        self.heartbeat_intervalo = 5
+        self.ultimo_heartbeat = None
+
+        # ============================================
+        # 11. PONTOS DE EXPANSÃO (STUBS)
+        # ============================================
+
+        # 11.1 Fábrica de Barramentos (futuro)
         self.fabrica_barramentos_ativa = False
 
-        # 7.2 Arquitetura Fractal (futuro)
+        # 11.2 Arquitetura Fractal (futuro)
         self.arquitetura_fractal_ativa = False
         self.dna_estrutural = None
 
-        # 7.3 Autoevolução (futuro)
+        # 11.3 Autoevolução (futuro)
         self.autoevolucao_ativa = False
         self.sistema_autoevolucao = None
 
-        # 7.4 Descoberta automática (futuro)
+        # 11.4 Descoberta automática (futuro)
         self.descoberta_automatica_ativa = False
 
-        # 7.5 Balanceamento de carga (futuro)
+        # 11.5 Balanceamento de carga (futuro)
         self.balanceamento_carga_ativa = False
 
-        # 7.6 Heartbeat (futuro)
+        # 11.6 Heartbeat (futuro)
         self.heartbeat_intervalo = 10
         self.heartbeat_ultimo = None
 
-        # 7.7 Roteamento inteligente (futuro)
+        # 11.7 Roteamento inteligente (futuro)
         self.roteamento_inteligente_ativa = False
 
-        # 7.8 Filas inteligentes (futuro)
+        # 11.8 Filas inteligentes (futuro)
         self.filas_inteligentes_ativa = False
         self.filas = {}
 
-        # 7.9 Eleição automática (futuro)
+        # 11.9 Eleição automática (futuro)
         self.eleicao_automatica_ativa = False
         self.coordenador_atual = None
 
-        # 7.10 Recuperação automática (futuro)
+        # 11.10 Recuperação automática (futuro)
         self.recuperacao_automatica_ativa = False
 
-        # 7.11 Sistema de Autoevolução do Barramento (SAB) (futuro)
+        # 11.11 Sistema de Autoevolução do Barramento (SAB) (futuro)
         self.sab_ativa = False
         self.sab_ciclos = 0
         self.sab_ultima_analise = None
         self.sab_melhores_ideias = []
+
+        # 11.12 Sistema de Sugestões (futuro)
+        self.sistema_sugestoes_ativa = False
+        self.sugestoes = []
+
+        # 11.13 Sistema de Consenso (futuro)
+        self.sistema_consenso_ativa = False
+        self.consenso_pendente = []
 
     # ============================================
     # MÉTODOS DE REGISTRO
@@ -359,239 +430,155 @@ class BarramentoHibridoInteligenteDaRede:
             self.registrar(f"Erro ao registrar na memória: {e}")
 
     # ============================================
-    # MÉTODOS DE CONEXÃO DE COMPONENTES
+    # 1. HEARTBEAT PERMANENTE
     # ============================================
 
-    def conectar_componente(self, nome: str, tipo: str, descricao: str = "") -> bool:
+    def atualizar_heartbeat(self) -> None:
         """
-        Conecta um componente ao barramento.
+        Atualiza o heartbeat do barramento.
         """
-        if nome in self.componentes_conectados:
-            self.registrar(f"Componente {nome} já está conectado.")
-            return False
+        self.ultimo_heartbeat = datetime.now().strftime("%d/%m/%Y %H:%M:%S")
+        self.heartbeats_realizados += 1
 
-        self.componentes_conectados.append(nome)
-        self.total_componentes_registrados += 1
+        # Atualiza heartbeat do barramento principal
+        self.barramento_principal["heartbeat"] = self.ultimo_heartbeat
+        self.barramento_principal["ultima_verificacao"] = self.ultimo_heartbeat
 
-        self.registrar(f"Componente {nome} conectado ao barramento.")
-        self.registrar_evento(
-            f"Componente {nome} conectado ao Barramento Híbrido Inteligente.",
-            resultado="OK",
-            importancia="NORMAL"
-        )
-        self.registrar_memoria(
-            f"Componente {nome} conectado ao Barramento Híbrido Inteligente."
-        )
+        # Atualiza heartbeat do barramento reserva
+        self.barramento_reserva["heartbeat"] = self.ultimo_heartbeat
+        self.barramento_reserva["ultima_verificacao"] = self.ultimo_heartbeat
 
-        return True
+        # Atualiza heartbeat do barramento emergencial
+        self.barramento_emergencial["heartbeat"] = self.ultimo_heartbeat
+        self.barramento_emergencial["ultima_verificacao"] = self.ultimo_heartbeat
 
-    def desconectar_componente(self, nome: str) -> bool:
-        """
-        Desconecta um componente do barramento.
-        """
-        if nome not in self.componentes_conectados:
-            self.registrar(f"Componente {nome} não está conectado.")
-            return False
-
-        self.componentes_conectados.remove(nome)
-
-        self.registrar(f"Componente {nome} desconectado do barramento.")
-        self.registrar_evento(
-            f"Componente {nome} desconectado do Barramento Híbrido Inteligente.",
-            resultado="OK",
-            importancia="NORMAL"
-        )
-        self.registrar_memoria(
-            f"Componente {nome} desconectado do Barramento Híbrido Inteligente."
-        )
-
-        return True
-
-    def listar_componentes(self) -> List[str]:
-        """
-        Lista todos os componentes conectados ao barramento.
-        """
-        self.registrar("Listando componentes conectados:")
-
-        if not self.componentes_conectados:
-            self.registrar("Nenhum componente conectado.")
-            return []
-
-        for componente in self.componentes_conectados:
-            self.registrar(f"CONECTADO -> {componente}")
-
-        return self.componentes_conectados
-
-    def verificar_componentes(self) -> bool:
-        """
-        Verifica a integridade dos componentes conectados.
-        """
-        self.registrar("Verificando componentes conectados.")
-
-        if not self.componentes_conectados:
-            self.registrar("Nenhum componente para verificar.")
-            return True
-
-        for componente in self.componentes_conectados:
-            self.registrar(f"OK -> {componente}")
-
-        return True
-
-    # ============================================
-    # MÉTODOS DE CONEXÃO POR CATEGORIA
-    # ============================================
-
-    def conectar_modulo(self, modulo: str) -> bool:
-        """Conecta um módulo ao barramento."""
-        if modulo in self.modulos_conectados:
-            return False
-        self.modulos_conectados.append(modulo)
-        self.registrar(f"Módulo {modulo} conectado.")
-        return True
-
-    def conectar_agente(self, agente: str) -> bool:
-        """Conecta um agente ao barramento."""
-        if agente in self.agentes_conectados:
-            return False
-        self.agentes_conectados.append(agente)
-        self.registrar(f"Agente {agente} conectado.")
-        return True
-
-    def conectar_motor(self, motor: str) -> bool:
-        """Conecta um motor ao barramento."""
-        if motor in self.motores_conectados:
-            return False
-        self.motores_conectados.append(motor)
-        self.registrar(f"Motor {motor} conectado.")
-        return True
-
-    def conectar_sistema(self, sistema: str) -> bool:
-        """Conecta um sistema ao barramento."""
-        if sistema in self.sistemas_conectados:
-            return False
-        self.sistemas_conectados.append(sistema)
-        self.registrar(f"Sistema {sistema} conectado.")
-        return True
-
-    # ============================================
-    # MÉTODOS DE BARRAMENTOS
-    # ============================================
-
-    def criar_barramento_temporario(self, nome: str, funcao: str = "Geral") -> Dict[str, Any]:
-        """
-        Cria um barramento temporário sob demanda.
-        """
-        barramento = {
-            "id": self.proximo_id_temporario,
-            "nome": nome,
-            "tipo": "TEMPORARIO",
-            "funcao": funcao,
-            "status": "ATIVO",
-            "criado_em": datetime.now().strftime("%d/%m/%Y %H:%M:%S")
-        }
-        self.barramentos_temporarios[self.proximo_id_temporario] = barramento
-        self.proximo_id_temporario += 1
-        self.total_barramentos_criados += 1
-
-        self.registrar(f"Barramento temporário criado: {nome} (ID: {barramento['id']})")
-        return barramento
-
-    def remover_barramento_temporario(self, barramento_id: int) -> bool:
-        """
-        Remove um barramento temporário.
-        """
-        if barramento_id not in self.barramentos_temporarios:
-            self.registrar(f"Barramento temporário {barramento_id} não encontrado.")
-            return False
-
-        nome = self.barramentos_temporarios[barramento_id]["nome"]
-        del self.barramentos_temporarios[barramento_id]
-        self.registrar(f"Barramento temporário removido: {nome}")
-        return True
-
-    def listar_barramentos_temporarios(self) -> List[Dict[str, Any]]:
-        """
-        Lista todos os barramentos temporários.
-        """
-        return list(self.barramentos_temporarios.values())
-
-    def sincronizar_barramentos(self) -> bool:
-        """
-        Sincroniza todos os barramentos da Rede.
-        """
-        self.registrar("Sincronizando barramentos...")
-
-        # Sincroniza barramento principal
-        self.barramento_principal["status"] = "SINCRONIZADO"
-
-        # Sincroniza barramento reserva
-        self.barramento_reserva["status"] = "SINCRONIZADO"
-
-        # Sincroniza barramento emergencial
-        self.barramento_emergencial["status"] = "PRONTO"
-
-        # Sincroniza barramentos especializados
+        # Atualiza heartbeat dos barramentos especializados
         for nome, barramento in self.barramentos_especializados.items():
-            barramento["status"] = "SINCRONIZADO"
+            barramento["heartbeat"] = self.ultimo_heartbeat
 
-        # Sincroniza barramentos locais
+        # Atualiza heartbeat dos barramentos locais
         for nome, barramento in self.barramentos_locais.items():
-            barramento["status"] = "SINCRONIZADO"
+            barramento["heartbeat"] = self.ultimo_heartbeat
 
-        self.registrar("Sincronização concluída.")
-        return True
-
-    def verificar_redundancia(self) -> Dict[str, Any]:
+    def verificar_heartbeat(self, tipo: str = "PRINCIPAL") -> bool:
         """
-        Verifica a redundância dos barramentos.
+        Verifica o heartbeat de um barramento específico.
         """
-        self.registrar("Verificando redundância dos barramentos...")
+        if tipo == "PRINCIPAL":
+            return self.barramento_principal["heartbeat"] is not None
+        elif tipo == "RESERVA":
+            return self.barramento_reserva["heartbeat"] is not None
+        elif tipo == "EMERGENCIAL":
+            return self.barramento_emergencial["heartbeat"] is not None
+        elif tipo == "ESPECIALIZADO":
+            for nome, barramento in self.barramentos_especializados.items():
+                if barramento["heartbeat"] is None:
+                    return False
+            return True
+        elif tipo == "LOCAL":
+            for nome, barramento in self.barramentos_locais.items():
+                if barramento["heartbeat"] is None:
+                    return False
+            return True
+        return False
 
-        total_barramentos = (
-            1 +  # Principal
-            1 +  # Reserva
-            1 +  # Emergencial
-            len(self.barramentos_especializados) +
-            len(self.barramentos_locais) +
-            len(self.barramentos_temporarios)
-        )
-
-        redundancia = {
-            "total_barramentos": total_barramentos,
-            "niveis_redundancia": 3,  # Principal, Reserva, Emergencial
-            "especializados": len(self.barramentos_especializados),
-            "locais": len(self.barramentos_locais),
-            "temporarios": len(self.barramentos_temporarios),
-            "status": "OK" if total_barramentos > 0 else "CRITICO"
+    def verificar_heartbeat_todos(self) -> Dict[str, Any]:
+        """
+        Verifica o heartbeat de todos os barramentos.
+        """
+        resultado = {
+            "principal": self.verificar_heartbeat("PRINCIPAL"),
+            "reserva": self.verificar_heartbeat("RESERVA"),
+            "emergencial": self.verificar_heartbeat("EMERGENCIAL"),
+            "especializados": self.verificar_heartbeat("ESPECIALIZADO"),
+            "locais": self.verificar_heartbeat("LOCAL"),
+            "timestamp": datetime.now().strftime("%d/%m/%Y %H:%M:%S")
         }
 
-        self.registrar(f"Redundância verificada: {redundancia}")
-        return redundancia
+        self.registrar(f"Verificação de heartbeat concluída: {resultado}")
+        return resultado
 
     # ============================================
-    # OPERAÇÃO CONTÍNUA
+    # 2. SISTEMA DE MENSAGENS
     # ============================================
 
-    def iniciar_operacao_continua(self) -> None:
+    def _gerar_id_mensagem(self) -> str:
         """
-        Ativa a operação contínua do barramento.
+        Gera um ID único para mensagens.
         """
-        self.operacao_continua = True
-        self.registrar("Barramento Híbrido Inteligente entrou em operação contínua.")
-        self.registrar_evento(
-            "Barramento Híbrido Inteligente entrou em operação contínua.",
-            resultado="OK",
-            importancia="NORMAL"
-        )
-        self.registrar_memoria(
-            "Barramento Híbrido Inteligente entrou em operação contínua."
-        )
+        return str(uuid.uuid4())[:8]
 
-    def executar_ciclo(self) -> None:
+    def enviar_mensagem(self, origem: str, destino: str, tipo: str,
+                        conteudo: Any, prioridade: str = "NORMAL") -> Dict[str, Any]:
         """
-        Executa um ciclo de operação do barramento.
+        Envia uma mensagem para um destino específico.
         """
-        self.ciclos += 1
-        self.ultima_atividade = "executar_ciclo"
+        mensagem = {
+            "id": self._gerar_id_mensagem(),
+            "origem": origem,
+            "destino": destino,
+            "tipo": tipo,
+            "conteudo": conteudo,
+            "prioridade": prioridade,
+            "horario": datetime.now().strftime("%d/%m/%Y %H:%M:%S"),
+            "status": "ENVIADA"
+        }
 
-        self.registrar(f"Ciclo de barramento
+        self.mensagens.append(mensagem)
+        self.mensagens_enviadas += 1
+
+        # Adiciona à fila apropriada
+        if prioridade == "CRITICA":
+            self.fila_critica.append(mensagem)
+        elif prioridade == "ALTA":
+            self.fila_alta.append(mensagem)
+        elif prioridade == "BAIXA":
+            self.fila_baixa.append(mensagem)
+        else:
+            self.fila_normal.append(mensagem)
+
+        self.registrar(f"Mensagem enviada: {mensagem['id']} -> {destino}")
+        return mensagem
+
+    def receber_mensagem(self, mensagem_id: str) -> Optional[Dict[str, Any]]:
+        """
+        Recebe uma mensagem pelo ID.
+        """
+        for mensagem in self.mensagens:
+            if mensagem["id"] == mensagem_id:
+                mensagem["status"] = "RECEBIDA"
+                self.mensagens_recebidas += 1
+                self.registrar(f"Mensagem recebida: {mensagem_id}")
+                return mensagem
+        return None
+
+    def broadcast(self, origem: str, tipo: str, conteudo: Any) -> List[Dict[str, Any]]:
+        """
+        Envia uma mensagem para todos os componentes conectados.
+        """
+        mensagens = []
+        for componente in self.componentes_conectados:
+            mensagem = self.enviar_mensagem(origem, componente, tipo, conteudo)
+            mensagens.append(mensagem)
+
+        self.broadcasts_realizados += 1
+        self.registrar(f"Broadcast enviado para {len(mensagens)} componentes.")
+        return mensagens
+
+    def encaminhar_mensagem(self, mensagem: Dict[str, Any], novo_destino: str) -> Dict[str, Any]:
+        """
+        Encaminha uma mensagem para um novo destino.
+        """
+        mensagem_encaminhada = {
+            "id": self._gerar_id_mensagem(),
+            "origem": mensagem["origem"],
+            "destino": novo_destino,
+            "tipo": mensagem["tipo"],
+            "conteudo": mensagem["conteudo"],
+            "prioridade": mensagem.get("prioridade", "NORMAL"),
+            "horario": datetime.now().strftime("%d/%m/%Y %H:%M:%S"),
+            "status": "ENCAMINHADA",
+            "mensagem_original": mensagem["id"]
+        }
+
+     
