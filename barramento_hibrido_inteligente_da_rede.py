@@ -21,6 +21,9 @@ from datetime import datetime
 import time
 from typing import List, Dict, Any, Optional
 import uuid
+import os
+import importlib
+import inspect
 
 
 class BarramentoHibridoInteligenteDaRede:
@@ -335,55 +338,122 @@ class BarramentoHibridoInteligenteDaRede:
         self.ultimo_heartbeat = None
 
         # ============================================
-        # 11. PONTOS DE EXPANSÃO (STUBS)
+        # 11. SISTEMA DE DESCOBERTA AUTOMÁTICA
         # ============================================
 
-        # 11.1 Fábrica de Barramentos (futuro)
+        # Atributos de controle da descoberta automática
+        self.descoberta_automatica_ativa = False
+        self.ultima_descoberta = None
+        self.total_descobertas_realizadas = 0
+        self.total_componentes_descobertos = 0
+        self.componentes_descobertos = []
+        self.componentes_ignorados = []
+
+        # Listas de componentes conhecidos para descoberta
+        self.componentes_conhecidos = {
+            "modulos": [
+                "kernel",
+                "gerenciador_inicializacao",
+                "supervisor_geral",
+                "orquestrador_central_da_rede",
+                "diretor_autonomo_da_rede",
+                "planejador_mestre_de_expansao_da_rede",
+                "gerador_autonomo_de_componentes_da_rede",
+                "motor_de_planejamento",
+                "motor_de_construcao",
+                "motor_de_verificacao",
+                "motor_de_aprendizado"
+            ],
+            "sistemas": [
+                "sistema_executor_da_rede",
+                "sistema_de_monitoramento_da_rede",
+                "sistema_de_recuperacao_da_rede",
+                "sistema_de_evolucao_autonoma",
+                "sistema_de_memoria_persistente",
+                "sistema_de_auditoria_da_rede"
+            ],
+            "integradores": [
+                "integrador_dos_motores",
+                "integrador_dos_sistemas",
+                "integrador_operacional_principal",
+                "integrador_da_memoria",
+                "integrador_da_rede"
+            ],
+            "agentes": [
+                "agente_central",
+                "agente_coordenacao",
+                "agente_comunicacao",
+                "agente_pesquisa_avancada",
+                "agente_memoria_estrategica",
+                "agente_gestao_conhecimento",
+                "agente_observador",
+                "agente_auditor",
+                "agente_arquiteto",
+                "agente_construtor",
+                "agente_reparador"
+            ],
+            "barramentos": [
+                "barramento_hibrido_inteligente_da_rede"
+            ]
+        }
+
+        # Componentes descobertos por tipo
+        self.modulos_descobertos = []
+        self.sistemas_descobertos = []
+        self.integradores_descobertos = []
+        self.agentes_descobertos = []
+        self.barramentos_descobertos = []
+
+        # ============================================
+        # 12. PONTOS DE EXPANSÃO (STUBS)
+        # ============================================
+
+        # 12.1 Fábrica de Barramentos (futuro)
         self.fabrica_barramentos_ativa = False
 
-        # 11.2 Arquitetura Fractal (futuro)
+        # 12.2 Arquitetura Fractal (futuro)
         self.arquitetura_fractal_ativa = False
         self.dna_estrutural = None
 
-        # 11.3 Autoevolução (futuro)
+        # 12.3 Autoevolução (futuro)
         self.autoevolucao_ativa = False
         self.sistema_autoevolucao = None
 
-        # 11.4 Descoberta automática (futuro)
+        # 12.4 Descoberta automática (futuro)
         self.descoberta_automatica_ativa = False
 
-        # 11.5 Balanceamento de carga (futuro)
+        # 12.5 Balanceamento de carga (futuro)
         self.balanceamento_carga_ativa = False
 
-        # 11.6 Heartbeat (futuro)
+        # 12.6 Heartbeat (futuro)
         self.heartbeat_intervalo = 10
         self.heartbeat_ultimo = None
 
-        # 11.7 Roteamento inteligente (futuro)
+        # 12.7 Roteamento inteligente (futuro)
         self.roteamento_inteligente_ativa = False
 
-        # 11.8 Filas inteligentes (futuro)
+        # 12.8 Filas inteligentes (futuro)
         self.filas_inteligentes_ativa = False
         self.filas = {}
 
-        # 11.9 Eleição automática (futuro)
+        # 12.9 Eleição automática (futuro)
         self.eleicao_automatica_ativa = False
         self.coordenador_atual = None
 
-        # 11.10 Recuperação automática (futuro)
+        # 12.10 Recuperação automática (futuro)
         self.recuperacao_automatica_ativa = False
 
-        # 11.11 Sistema de Autoevolução do Barramento (SAB) (futuro)
+        # 12.11 Sistema de Autoevolução do Barramento (SAB) (futuro)
         self.sab_ativa = False
         self.sab_ciclos = 0
         self.sab_ultima_analise = None
         self.sab_melhores_ideias = []
 
-        # 11.12 Sistema de Sugestões (futuro)
+        # 12.12 Sistema de Sugestões (futuro)
         self.sistema_sugestoes_ativa = False
         self.sugestoes = []
 
-        # 11.13 Sistema de Consenso (futuro)
+        # 12.13 Sistema de Consenso (futuro)
         self.sistema_consenso_ativa = False
         self.consenso_pendente = []
 
@@ -510,75 +580,4 @@ class BarramentoHibridoInteligenteDaRede:
 
     def enviar_mensagem(self, origem: str, destino: str, tipo: str,
                         conteudo: Any, prioridade: str = "NORMAL") -> Dict[str, Any]:
-        """
-        Envia uma mensagem para um destino específico.
-        """
-        mensagem = {
-            "id": self._gerar_id_mensagem(),
-            "origem": origem,
-            "destino": destino,
-            "tipo": tipo,
-            "conteudo": conteudo,
-            "prioridade": prioridade,
-            "horario": datetime.now().strftime("%d/%m/%Y %H:%M:%S"),
-            "status": "ENVIADA"
-        }
-
-        self.mensagens.append(mensagem)
-        self.mensagens_enviadas += 1
-
-        # Adiciona à fila apropriada
-        if prioridade == "CRITICA":
-            self.fila_critica.append(mensagem)
-        elif prioridade == "ALTA":
-            self.fila_alta.append(mensagem)
-        elif prioridade == "BAIXA":
-            self.fila_baixa.append(mensagem)
-        else:
-            self.fila_normal.append(mensagem)
-
-        self.registrar(f"Mensagem enviada: {mensagem['id']} -> {destino}")
-        return mensagem
-
-    def receber_mensagem(self, mensagem_id: str) -> Optional[Dict[str, Any]]:
-        """
-        Recebe uma mensagem pelo ID.
-        """
-        for mensagem in self.mensagens:
-            if mensagem["id"] == mensagem_id:
-                mensagem["status"] = "RECEBIDA"
-                self.mensagens_recebidas += 1
-                self.registrar(f"Mensagem recebida: {mensagem_id}")
-                return mensagem
-        return None
-
-    def broadcast(self, origem: str, tipo: str, conteudo: Any) -> List[Dict[str, Any]]:
-        """
-        Envia uma mensagem para todos os componentes conectados.
-        """
-        mensagens = []
-        for componente in self.componentes_conectados:
-            mensagem = self.enviar_mensagem(origem, componente, tipo, conteudo)
-            mensagens.append(mensagem)
-
-        self.broadcasts_realizados += 1
-        self.registrar(f"Broadcast enviado para {len(mensagens)} componentes.")
-        return mensagens
-
-    def encaminhar_mensagem(self, mensagem: Dict[str, Any], novo_destino: str) -> Dict[str, Any]:
-        """
-        Encaminha uma mensagem para um novo destino.
-        """
-        mensagem_encaminhada = {
-            "id": self._gerar_id_mensagem(),
-            "origem": mensagem["origem"],
-            "destino": novo_destino,
-            "tipo": mensagem["tipo"],
-            "conteudo": mensagem["conteudo"],
-            "prioridade": mensagem.get("prioridade", "NORMAL"),
-            "horario": datetime.now().strftime("%d/%m/%Y %H:%M:%S"),
-            "status": "ENCAMINHADA",
-            "mensagem_original": mensagem["id"]
-        }
-
-     
+  
