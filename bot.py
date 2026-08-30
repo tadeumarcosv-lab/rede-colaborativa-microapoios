@@ -1,6 +1,7 @@
 from flask import Flask, request
 import requests
 import os
+import threading
 
 app = Flask(__name__)
 
@@ -192,25 +193,11 @@ Escolha um assunto, digitando um dos números abaixo:
 ══════════════════
 """
 
-# ============================================
-# INICIALIZAÇÃO DA REDE AUTÔNOMA
-# ============================================
-
-try:
-    from bootstrap import bootstrap
-    bootstrap()
-    print("[BOT] Rede Autônoma iniciada com sucesso.")
-except Exception as e:
-    print(f"[BOT] Erro ao iniciar Rede Autônoma: {e}")
-
-# ============================================
-# FIM DA INICIALIZAÇÃO DA REDE AUTÔNOMA
-# ============================================
-
 
 @app.route("/")
 def home():
     return "BOT ONLINE 🚀"
+
 
 @app.route("/webhook", methods=["POST"])
 def webhook():
@@ -281,6 +268,7 @@ Qualquer dúvida:
 
     return "ok"
 
+
 def responder(chat_id, mensagem):
 
     requests.post(URL, json={
@@ -288,10 +276,13 @@ def responder(chat_id, mensagem):
         "text": mensagem
     })
 
+
 def salvar_lead(nome):
 
     with open("leads.txt", "a", encoding="utf-8") as arquivo:
+
         arquivo.write(f"{nome} - interessado\n")
+
 
 def enviar_para_admin(nome):
 
@@ -305,6 +296,45 @@ Status: interessado"""
         "text": mensagem
     })
 
+
+# ============================================================
+# INICIALIZAÇÃO DA REDE AUTÔNOMA EM SEGUNDO PLANO
+# ============================================================
+
+def iniciar_rede():
+
+    try:
+
+        from bootstrap import bootstrap
+
+        bootstrap()
+
+        print("[BOT] Rede Autônoma iniciada com sucesso.")
+
+    except Exception as e:
+
+        print(f"[BOT] Erro ao iniciar Rede Autônoma: {e}")
+
+
+# A Rede é iniciada em uma thread separada.
+# Isso impede que o loop contínuo do Kernel bloqueie
+# a inicialização do Flask/Gunicorn.
+
+thread_rede = threading.Thread(
+    target=iniciar_rede,
+    daemon=True
+)
+
+thread_rede.start()
+
+print("[BOT] Thread da Rede iniciada em background.")
+
+
 if __name__ == "__main__":
+
     port = int(os.environ.get("PORT", 10000))
-    app.run(host="0.0.0.0", port=port)
+
+    app.run(
+        host="0.0.0.0",
+        port=port
+    )
