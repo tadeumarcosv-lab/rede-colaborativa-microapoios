@@ -6,85 +6,116 @@ from nucleo_operacional.agente_comunicacao import AgenteComunicacao
 from nucleo_operacional.agente_pesquisa_avancada import AgentePesquisaAvancada
 from nucleo_operacional.agente_memoria_estrategica import AgenteMemoriaEstrategica
 from nucleo_operacional.agente_gestao_conhecimento import AgenteGestaoConhecimento
+from motor_de_construcao import MotorDeConstrucao
 
 from config_nucleo import *
 
-
 class IntegracaoCompleta:
 
-    def __init__(self):
+def __init__(self):
 
-        self.status = "ATIVO"
+    self.status = "ATIVO"
 
-        self.agentes = [
-            "Comunicação",
-            "Coordenação",
-            "Central",
-            "Pesquisa",
-            "Memória",
-            "Conhecimento"
-        ]
+    self.agentes = [
+        "Comunicação",
+        "Coordenação",
+        "Central",
+        "Pesquisa",
+        "Memória",
+        "Conhecimento"
+    ]
 
-        self.central = AgenteCentral()
-        self.coordenacao = AgenteCoordenacao()
-        self.comunicacao = AgenteComunicacao()
-        self.pesquisa = AgentePesquisaAvancada()
-        self.memoria = AgenteMemoriaEstrategica()
-        self.conhecimento = AgenteGestaoConhecimento()
+    self.central = AgenteCentral()
+    self.coordenacao = AgenteCoordenacao()
+    self.comunicacao = AgenteComunicacao()
+    self.pesquisa = AgentePesquisaAvancada()
+    self.memoria = AgenteMemoriaEstrategica()
+    self.conhecimento = AgenteGestaoConhecimento()
 
-    def registrar(self, mensagem):
+    self.motor_construcao = MotorDeConstrucao()
 
-        horario = datetime.now().strftime("%d/%m/%Y %H:%M:%S")
+def registrar(self, mensagem):
 
-        print(f"[INTEGRACAO] [{horario}] {mensagem}")
+    horario = datetime.now().strftime("%d/%m/%Y %H:%M:%S")
 
-    def listar_agentes(self):
+    print(f"[INTEGRACAO] [{horario}] {mensagem}")
 
-        self.registrar("Agentes operacionais ativos:")
+def listar_agentes(self):
 
-        for agente in self.agentes:
+    self.registrar("Agentes operacionais ativos:")
 
-            self.registrar(f"- {agente}")
+    for agente in self.agentes:
 
-        return self.agentes
+        self.registrar(f"- {agente}")
 
-    def verificar_status(self):
+    return self.agentes
 
-        self.registrar(f"Status da integração: {self.status}")
+def verificar_status(self):
 
-        return self.status
+    self.registrar(f"Status da integração: {self.status}")
 
-    def executar(self, solicitacao):
+    return self.status
 
-        self.registrar("Iniciando integração completa.")
+def executar(self, solicitacao):
 
-        self.verificar_status()
+    self.registrar("Iniciando integração completa.")
 
-        self.listar_agentes()
+    self.verificar_status()
 
-        etapa1 = self.comunicacao.executar(solicitacao)
+    self.listar_agentes()
 
-        etapa2 = self.coordenacao.executar(etapa1)
+    if (
+        isinstance(solicitacao, dict)
+        and solicitacao.get("acao") == "diagnostico"
+    ):
 
-        etapa3 = self.central.executar(etapa2)
+        self.registrar(
+            "Solicitação de diagnóstico identificada."
+        )
 
-        etapa4 = self.pesquisa.executar(etapa3)
+        resultado = self.motor_construcao.executar(
+            solicitacao
+        )
 
-        etapa5 = self.memoria.executar(etapa4)
+        if (
+            isinstance(resultado, dict)
+            and resultado.get("sucesso") is True
+        ):
 
-        etapa6 = self.conhecimento.executar(etapa5)
+            self.registrar(
+                "Diagnóstico executado com sucesso pelo Motor de Construção."
+            )
 
-        self.registrar("Integração concluída com sucesso.")
+        else:
 
-        return etapa6
+            self.registrar(
+                "Diagnóstico retornou falha no Motor de Construção."
+            )
 
+        return resultado
 
-if __name__ == "__main__":
+    etapa1 = self.comunicacao.executar(solicitacao)
 
-    sistema = IntegracaoCompleta()
+    etapa2 = self.coordenacao.executar(etapa1)
 
-    resultado = sistema.executar(
-        "Teste de integração completa"
-    )
+    etapa3 = self.central.executar(etapa2)
 
-    print(resultado)
+    etapa4 = self.pesquisa.executar(etapa3)
+
+    etapa5 = self.memoria.executar(etapa4)
+
+    etapa6 = self.conhecimento.executar(etapa5)
+
+    self.registrar("Integração concluída com sucesso.")
+
+    return etapa6
+
+if name == "main":
+
+sistema = IntegracaoCompleta()
+
+resultado = sistema.executar(
+    "Teste de integração completa"
+)
+
+print(resultado)
