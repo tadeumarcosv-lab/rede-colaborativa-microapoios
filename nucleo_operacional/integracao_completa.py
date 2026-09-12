@@ -6,7 +6,7 @@ from nucleo_operacional.agente_comunicacao import AgenteComunicacao
 from nucleo_operacional.agente_pesquisa_avancada import AgentePesquisaAvancada
 from nucleo_operacional.agente_memoria_estrategica import AgenteMemoriaEstrategica
 from nucleo_operacional.agente_gestao_conhecimento import AgenteGestaoConhecimento
-from nucleo_operacional.motor_de_construcao import MotorDeConstrucao
+from motor_de_construcao import MotorDeConstrucao
 
 from config_nucleo import *
 
