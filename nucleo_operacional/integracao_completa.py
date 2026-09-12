@@ -6,116 +6,117 @@ from nucleo_operacional.agente_comunicacao import AgenteComunicacao
 from nucleo_operacional.agente_pesquisa_avancada import AgentePesquisaAvancada
 from nucleo_operacional.agente_memoria_estrategica import AgenteMemoriaEstrategica
 from nucleo_operacional.agente_gestao_conhecimento import AgenteGestaoConhecimento
-from motor_de_construcao import MotorDeConstrucao
+from nucleo_operacional.motor_de_construcao import MotorDeConstrucao
 
 from config_nucleo import *
 
+
 class IntegracaoCompleta:
 
-def __init__(self):
+    def __init__(self):
 
-    self.status = "ATIVO"
+        self.status = "ATIVO"
 
-    self.agentes = [
-        "Comunicação",
-        "Coordenação",
-        "Central",
-        "Pesquisa",
-        "Memória",
-        "Conhecimento"
-    ]
+        self.agentes = [
+            "Comunicação",
+            "Coordenação",
+            "Central",
+            "Pesquisa",
+            "Memória",
+            "Conhecimento"
+        ]
 
-    self.central = AgenteCentral()
-    self.coordenacao = AgenteCoordenacao()
-    self.comunicacao = AgenteComunicacao()
-    self.pesquisa = AgentePesquisaAvancada()
-    self.memoria = AgenteMemoriaEstrategica()
-    self.conhecimento = AgenteGestaoConhecimento()
+        self.central = AgenteCentral()
+        self.coordenacao = AgenteCoordenacao()
+        self.comunicacao = AgenteComunicacao()
+        self.pesquisa = AgentePesquisaAvancada()
+        self.memoria = AgenteMemoriaEstrategica()
+        self.conhecimento = AgenteGestaoConhecimento()
+        self.motor_construcao = MotorDeConstrucao()
 
-    self.motor_construcao = MotorDeConstrucao()
+    def registrar(self, mensagem):
 
-def registrar(self, mensagem):
+        horario = datetime.now().strftime("%d/%m/%Y %H:%M:%S")
 
-    horario = datetime.now().strftime("%d/%m/%Y %H:%M:%S")
+        print(f"[INTEGRACAO] [{horario}] {mensagem}")
 
-    print(f"[INTEGRACAO] [{horario}] {mensagem}")
+    def listar_agentes(self):
 
-def listar_agentes(self):
+        self.registrar("Agentes operacionais ativos:")
 
-    self.registrar("Agentes operacionais ativos:")
+        for agente in self.agentes:
 
-    for agente in self.agentes:
+            self.registrar(f"- {agente}")
 
-        self.registrar(f"- {agente}")
+        return self.agentes
 
-    return self.agentes
+    def verificar_status(self):
 
-def verificar_status(self):
+        self.registrar(f"Status da integração: {self.status}")
 
-    self.registrar(f"Status da integração: {self.status}")
+        return self.status
 
-    return self.status
+    def executar(self, solicitacao):
 
-def executar(self, solicitacao):
+        self.registrar("Iniciando integração completa.")
 
-    self.registrar("Iniciando integração completa.")
+        self.verificar_status()
 
-    self.verificar_status()
-
-    self.listar_agentes()
-
-    if (
-        isinstance(solicitacao, dict)
-        and solicitacao.get("acao") == "diagnostico"
-    ):
-
-        self.registrar(
-            "Solicitação de diagnóstico identificada."
-        )
-
-        resultado = self.motor_construcao.executar(
-            solicitacao
-        )
+        self.listar_agentes()
 
         if (
-            isinstance(resultado, dict)
-            and resultado.get("sucesso") is True
+            isinstance(solicitacao, dict)
+            and solicitacao.get("acao") == "diagnostico"
         ):
 
             self.registrar(
-                "Diagnóstico executado com sucesso pelo Motor de Construção."
+                "Solicitação de diagnóstico identificada."
             )
 
-        else:
-
-            self.registrar(
-                "Diagnóstico retornou falha no Motor de Construção."
+            resultado = self.motor_construcao.executar(
+                solicitacao
             )
 
-        return resultado
+            if (
+                isinstance(resultado, dict)
+                and resultado.get("sucesso") is True
+            ):
 
-    etapa1 = self.comunicacao.executar(solicitacao)
+                self.registrar(
+                    "Diagnóstico executado com sucesso pelo Motor de Construção."
+                )
 
-    etapa2 = self.coordenacao.executar(etapa1)
+            else:
 
-    etapa3 = self.central.executar(etapa2)
+                self.registrar(
+                    "Diagnóstico retornou falha no Motor de Construção."
+                )
 
-    etapa4 = self.pesquisa.executar(etapa3)
+            return resultado
 
-    etapa5 = self.memoria.executar(etapa4)
+        etapa1 = self.comunicacao.executar(solicitacao)
 
-    etapa6 = self.conhecimento.executar(etapa5)
+        etapa2 = self.coordenacao.executar(etapa1)
 
-    self.registrar("Integração concluída com sucesso.")
+        etapa3 = self.central.executar(etapa2)
 
-    return etapa6
+        etapa4 = self.pesquisa.executar(etapa3)
 
-if name == "main":
+        etapa5 = self.memoria.executar(etapa4)
 
-sistema = IntegracaoCompleta()
+        etapa6 = self.conhecimento.executar(etapa5)
 
-resultado = sistema.executar(
-    "Teste de integração completa"
-)
+        self.registrar("Integração concluída com sucesso.")
 
-print(resultado)
+        return etapa6
+
+
+if __name__ == "__main__":
+
+    sistema = IntegracaoCompleta()
+
+    resultado = sistema.executar(
+        "Teste de integração completa"
+    )
+
+    print(resultado)
