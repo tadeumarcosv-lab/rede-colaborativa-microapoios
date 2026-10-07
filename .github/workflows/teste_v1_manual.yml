@@ -1,0 +1,165 @@
+name: Teste V1 - Agente de IA
+
+on:
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  teste-v1:
+    name: Laboratório V1 do Agente de IA
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+
+    env:
+      GROQ_API_KEY: ${{ secrets.GROQ_API_KEY }}
+
+    steps:
+      - name: 01 - Baixar o código do repositório
+        uses: actions/checkout@v4
+
+      - name: 02 - Preparar Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+          cache: "pip"
+
+      - name: 03 - Verificar estrutura mínima
+        shell: bash
+        run: |
+          set -euo pipefail
+          echo "===== VERIFICAÇÃO DA ESTRUTURA ====="
+          arquivos=(
+            "teste_agente_ia.py"
+            "agente_ia.py"
+            "camada_ia.py"
+            "gerenciador_memoria.py"
+            "registro_central_eventos.py"
+            "requirements.txt"
+          )
+          for arquivo in "${arquivos[@]}"; do
+            if [ ! -f "$arquivo" ]; then
+              echo "ERRO: arquivo obrigatório não encontrado: $arquivo"
+              exit 1
+            fi
+            echo "OK: $arquivo"
+          done
+          echo "===================================="
+
+      - name: 04 - Verificar Python
+        shell: bash
+        run: |
+          set -euo pipefail
+          echo "===== VERSÃO DO PYTHON ====="
+          python --version
+          python -m pip --version
+          echo "============================"
+
+      - name: 05 - Instalar dependências
+        shell: bash
+        run: |
+          set -euo pipefail
+          python -m pip install --upgrade pip
+          python -m pip install -r requirements.txt
+
+      - name: 06 - Verificar dependências essenciais
+        shell: bash
+        run: |
+          set -euo pipefail
+          echo "===== DEPENDÊNCIAS ESSENCIAIS ====="
+          python - <<'PY'
+          import requests
+          print("OK: requests importado")
+          print("requests:", requests.__version__)
+          PY
+          echo "==================================="
+
+      - name: 07 - Verificar sintaxe Python
+        shell: bash
+        run: |
+          set -euo pipefail
+          echo "===== VERIFICAÇÃO DE SINTAXE ====="
+          python -m py_compile \
+            teste_agente_ia.py \
+            agente_ia.py \
+            camada_ia.py \
+            gerenciador_memoria.py \
+            registro_central_eventos.py
+          echo "OK: sintaxe dos arquivos V1 aprovada."
+          echo "================================="
+
+      - name: 08 - Verificar configuração do segredo
+        shell: bash
+        run: |
+          set -euo pipefail
+          echo "===== VERIFICAÇÃO DO GROQ_API_KEY ====="
+          if [ -z "${GROQ_API_KEY:-}" ]; then
+            echo "ERRO: o segredo GROQ_API_KEY não está disponível."
+            echo "A chave NÃO será exibida."
+            exit 1
+          fi
+          echo "OK: GROQ_API_KEY está disponível."
+          echo "A chave não será exibida no log."
+          echo "======================================"
+
+      - name: 09 - Verificar configuração do modelo
+        shell: bash
+        run: |
+          set -euo pipefail
+          echo "===== CONFIGURAÇÃO DO MODELO ====="
+          if [ -n "${GROQ_MODEL:-}" ]; then
+            echo "GROQ_MODEL configurado."
+          else
+            echo "GROQ_MODEL não configurado como variável de ambiente."
+            echo "Será utilizado o modelo padrão definido pela CamadaIA."
+          fi
+          echo "================================="
+
+      - name: 10 - Confirmar modo do laboratório
+        shell: bash
+        run: |
+          set -euo pipefail
+          echo "===== MODO DO LABORATÓRIO ====="
+          if [ "${TESTE_COMPLETO:-}" = "1" ]; then
+            echo "ERRO: TESTE_COMPLETO=1 não deve ser usado neste workflow."
+            echo "A V1 deve realizar somente o teste planejado."
+            exit 1
+          fi
+          if [ "${TESTE_SEM_API:-}" = "1" ]; then
+            echo "ERRO: TESTE_SEM_API=1 não deve ser usado neste workflow."
+            echo "Este workflow foi criado para realizar o teste real da Groq."
+            exit 1
+          fi
+          echo "OK: modo padrão do laboratório."
+          echo "OK: uma chamada real da Groq será permitida."
+          echo "OK: nenhum modo alternativo foi ativado."
+          echo "==============================="
+
+      - name: 11 - Executar laboratório V1
+        shell: bash
+        run: |
+          set -euo pipefail
+          echo "=============================================="
+          echo " INÍCIO DO TESTE REAL DA V1 DO AGENTE DE IA   "
+          echo "=============================================="
+          python teste_agente_ia.py
+          echo "=============================================="
+          echo " FIM DO TESTE REAL DA V1 DO AGENTE DE IA      "
+          echo "=============================================="
+
+      - name: 12 - Encerrar com diagnóstico
+        if: always()
+        shell: bash
+        run: |
+          echo "=============================================="
+          echo " DIAGNÓSTICO FINAL DO WORKFLOW                "
+          echo "=============================================="
+          echo "Repositório: $GITHUB_REPOSITORY"
+          echo "Branch: $GITHUB_REF_NAME"
+          echo "Commit: $GITHUB_SHA"
+          echo "Workflow: $GITHUB_WORKFLOW"
+          echo "Execução: $GITHUB_RUN_ID"
+          echo "=============================================="
+          echo "O segredo GROQ_API_KEY não é exibido."
+          echo "=============================================="
