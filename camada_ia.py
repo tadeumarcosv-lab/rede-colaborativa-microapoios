@@ -125,8 +125,56 @@ class CamadaIA:
             )
 
             if resposta_http.status_code != 200:
+                try:
+                    detalhes = resposta_http.json()
+                    erro_api = detalhes.get("error", {})
+
+                    if isinstance(erro_api, dict):
+                        mensagem_erro = erro_api.get(
+                            "message",
+                            "",
+                        )
+                        tipo_erro = erro_api.get(
+                            "type",
+                            "",
+                        )
+
+                        partes = []
+
+                        if mensagem_erro:
+                            partes.append(
+                                f"message={mensagem_erro}"
+                            )
+
+                        if tipo_erro:
+                            partes.append(
+                                f"type={tipo_erro}"
+                            )
+
+                        if partes:
+                            erro = (
+                                f"HTTP {resposta_http.status_code}; "
+                                + "; ".join(partes)
+                            )
+                        else:
+                            erro = (
+                                f"HTTP {resposta_http.status_code}; "
+                                f"resposta={resposta_http.text[:2000]}"
+                            )
+                    else:
+                        erro = (
+                            f"HTTP {resposta_http.status_code}; "
+                            f"resposta={resposta_http.text[:2000]}"
+                        )
+
+                except ValueError:
+                    erro = (
+                        f"HTTP {resposta_http.status_code}; "
+                        f"resposta={resposta_http.text[:2000]}"
+                    )
+
                 return self._resultado_falha(
-                    f"HTTP {resposta_http.status_code}",
+                    erro,
                     inicio,
                 )
 
