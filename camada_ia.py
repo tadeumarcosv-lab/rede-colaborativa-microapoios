@@ -135,7 +135,13 @@ class CamadaIA:
         payload = {
             "model": self.MODELO,
             "messages": mensagens_api,
+            "max_completion_tokens": 4096,
         }
+
+        if self.MODELO.startswith(
+            "openai/gpt-oss-"
+        ):
+            payload["reasoning_effort"] = "low"
 
         if tools:
             payload["tools"] = tools
