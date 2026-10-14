@@ -13,7 +13,6 @@ V1:
 - Groq como único provedor operacional;
 - requests;
 - sem SDK;
-- sem retry;
 - sem fallback.
 
 V2:
@@ -21,7 +20,8 @@ V2:
 - suporta definições de ferramentas;
 - preserva tool_calls retornados pelo provedor;
 - não executa ferramentas nesta camada;
-- retry controlado para HTTP 429.
+- retry controlado para HTTP 429;
+- compatibilidade controlada com conclusão JSON emitida pelo GPT-OSS como tool call.
 """
 
 import os
@@ -182,6 +182,142 @@ class CamadaIA:
                 f"{resposta_http.text[:2000]}"
             )
 
+    def _definicao_compatibilidade_json(self):
+        """
+        Define uma ferramenta interna de compatibilidade.
+
+        O GPT-OSS pode, em determinadas situações,
+        tentar entregar a conclusão estruturada como
+        uma tool call chamada 'json'.
+
+        O AgenteTrabalho não deve executar essa
+        ferramenta como ferramenta operacional.
+
+        A CamadaIA reconhece essa chamada e a
+        transforma diretamente em resposta textual JSON.
+        """
+        return {
+            "type": "function",
+            "function": {
+                "name": "json",
+                "description": (
+                    "Use somente para entregar a conclusão "
+                    "final da tarefa como um objeto JSON. "
+                    "Não use para executar ações, pesquisar "
+                    "arquivos ou chamar ferramentas."
+                ),
+                "parameters": {
+                    "type": "object",
+                    "properties": {
+                        "acao": {
+                            "type": "string"
+                        },
+                        "resposta": {
+                            "type": "string"
+                        },
+                        "status": {
+                            "type": "string"
+                        },
+                        "confianca": {
+                            "type": "string"
+                        },
+                        "evidencias": {
+                            "type": "array",
+                            "items": {
+                                "type": "string"
+                            }
+                        },
+                        "observacoes": {
+                            "type": "array",
+                            "items": {
+                                "type": "string"
+                            }
+                        }
+                    },
+                    "required": [
+                        "acao",
+                        "resposta",
+                        "status",
+                        "confianca",
+                        "evidencias",
+                        "observacoes"
+                    ],
+                    "additionalProperties": True
+                }
+            }
+        }
+
+    def _processar_conclusao_json(
+        self,
+        tool_calls,
+    ):
+        """
+        Converte uma tool call 'json' do GPT-OSS
+        em resposta JSON normal para o AgenteTrabalho.
+
+        Retorna:
+        - string JSON, quando a chamada é válida;
+        - None, quando não existe uma chamada 'json'.
+        """
+        if not isinstance(tool_calls, list):
+            return None
+
+        for tool_call in tool_calls:
+
+            if not isinstance(tool_call, dict):
+                continue
+
+            funcao = tool_call.get(
+                "function",
+                {}
+            )
+
+            if not isinstance(funcao, dict):
+                continue
+
+            nome = funcao.get("name")
+
+            if nome != "json":
+                continue
+
+            argumentos = funcao.get(
+                "arguments",
+                ""
+            )
+
+            if isinstance(argumentos, dict):
+                dados = argumentos
+
+            elif isinstance(argumentos, str):
+                try:
+                    import json
+                    dados = json.loads(argumentos)
+                except (TypeError, ValueError) as erro:
+                    raise ValueError(
+                        "A conclusão JSON retornada pelo "
+                        f"provedor é inválida: {erro}"
+                    ) from erro
+
+            else:
+                raise ValueError(
+                    "Os argumentos da conclusão JSON "
+                    "possuem formato inválido."
+                )
+
+            if not isinstance(dados, dict):
+                raise ValueError(
+                    "A conclusão JSON deve ser um objeto."
+                )
+
+            import json
+
+            return json.dumps(
+                dados,
+                ensure_ascii=False,
+            )
+
+        return None
+
     def consultar(
         self,
         prompt,
@@ -253,7 +389,13 @@ class CamadaIA:
             payload["reasoning_effort"] = "low"
 
         if tools:
-            payload["tools"] = tools
+            ferramentas_api = list(tools)
+
+            ferramentas_api.append(
+                self._definicao_compatibilidade_json()
+            )
+
+            payload["tools"] = ferramentas_api
             payload["tool_choice"] = tool_choice
 
         headers = {
@@ -383,6 +525,34 @@ class CamadaIA:
                         tentativas=tentativas,
                     )
 
+                conclusao_json = (
+                    self._processar_conclusao_json(
+                        tool_calls
+                    )
+                )
+
+                if conclusao_json is not None:
+                    return {
+                        "resposta": conclusao_json,
+                        "mensagem": mensagem,
+                        "tool_calls": [],
+                        "provedor": self.PROVEDOR,
+                        "modelo": dados.get(
+                            "model",
+                            self.MODELO,
+                        ),
+                        "status": "sucesso",
+                        "erro": None,
+                        "tempo_ms": int(
+                            (
+                                time.perf_counter()
+                                - inicio
+                            ) * 1000
+                        ),
+                        "timestamp": self._agora(),
+                        "tentativas": tentativas,
+                    }
+
                 modelo = dados.get(
                     "model",
                     self.MODELO,
@@ -439,6 +609,7 @@ class CamadaIA:
                 KeyError,
                 TypeError,
                 IndexError,
+                ValueError,
             ) as erro:
                 return self._resultado_falha(
                     f"Estrutura inesperada da resposta: {erro}",
