@@ -21,9 +21,13 @@ V2:
 - preserva tool_calls retornados pelo provedor;
 - não executa ferramentas nesta camada;
 - retry controlado para HTTP 429;
-- compatibilidade controlada com conclusão JSON emitida pelo GPT-OSS como tool call.
+- normalização controlada de nomes de ferramentas
+  emitidos pelo GPT-OSS com marcador de canal;
+- compatibilidade controlada com conclusão JSON
+  emitida pelo GPT-OSS como tool call.
 """
 
+import json
 import os
 import re
 import time
@@ -49,6 +53,8 @@ class CamadaIA:
         "GROQ_MODEL",
         "openai/gpt-oss-20b",
     )
+
+    MARCADOR_CANAL = "<|channel|>commentary"
 
     def __init__(self):
         self.status = "ATIVO"
@@ -182,19 +188,103 @@ class CamadaIA:
                 f"{resposta_http.text[:2000]}"
             )
 
+    def _normalizar_nome_ferramenta(
+        self,
+        nome,
+    ):
+        """
+        Remove somente marcadores de canal indevidamente
+        incorporados ao nome da ferramenta pelo modelo.
+
+        Exemplo:
+            listar_arquivos<|channel|>commentary
+        torna-se:
+            listar_arquivos
+
+        Nenhuma ferramenta nova é criada aqui.
+        """
+        if not isinstance(nome, str):
+            return nome
+
+        nome_normalizado = nome.strip()
+
+        if self.MARCADOR_CANAL in nome_normalizado:
+            nome_normalizado = nome_normalizado.replace(
+                self.MARCADOR_CANAL,
+                "",
+            ).strip()
+
+        return nome_normalizado
+
+    def _normalizar_tool_calls(
+        self,
+        tool_calls,
+    ):
+        """
+        Normaliza os nomes das ferramentas retornadas
+        pelo provedor antes de entregá-los ao AgenteTrabalho.
+
+        A estrutura original é preservada sempre que possível.
+        """
+        if not isinstance(tool_calls, list):
+            return tool_calls
+
+        resultado = []
+
+        for tool_call in tool_calls:
+
+            if not isinstance(
+                tool_call,
+                dict,
+            ):
+                resultado.append(tool_call)
+                continue
+
+            copia = dict(tool_call)
+
+            funcao = copia.get(
+                "function"
+            )
+
+            if isinstance(
+                funcao,
+                dict,
+            ):
+                funcao_copia = dict(funcao)
+
+                nome_original = funcao_copia.get(
+                    "name"
+                )
+
+                nome_normalizado = (
+                    self._normalizar_nome_ferramenta(
+                        nome_original
+                    )
+                )
+
+                funcao_copia["name"] = (
+                    nome_normalizado
+                )
+
+                copia["function"] = (
+                    funcao_copia
+                )
+
+            resultado.append(copia)
+
+        return resultado
+
     def _definicao_compatibilidade_json(self):
         """
         Define uma ferramenta interna de compatibilidade.
 
         O GPT-OSS pode, em determinadas situações,
-        tentar entregar a conclusão estruturada como
-        uma tool call chamada 'json'.
+        entregar a conclusão estruturada como uma
+        tool call chamada 'json'.
 
-        O AgenteTrabalho não deve executar essa
-        ferramenta como ferramenta operacional.
-
-        A CamadaIA reconhece essa chamada e a
-        transforma diretamente em resposta textual JSON.
+        Essa chamada não é uma ferramenta operacional
+        do AgenteTrabalho. A CamadaIA a converte em
+        resposta JSON normal.
         """
         return {
             "type": "function",
@@ -252,19 +342,25 @@ class CamadaIA:
         tool_calls,
     ):
         """
-        Converte uma tool call 'json' do GPT-OSS
-        em resposta JSON normal para o AgenteTrabalho.
+        Converte uma tool call 'json' do GPT-OSS em
+        resposta JSON normal para o AgenteTrabalho.
 
         Retorna:
         - string JSON, quando a chamada é válida;
         - None, quando não existe uma chamada 'json'.
         """
-        if not isinstance(tool_calls, list):
+        if not isinstance(
+            tool_calls,
+            list,
+        ):
             return None
 
         for tool_call in tool_calls:
 
-            if not isinstance(tool_call, dict):
+            if not isinstance(
+                tool_call,
+                dict,
+            ):
                 continue
 
             funcao = tool_call.get(
@@ -272,10 +368,15 @@ class CamadaIA:
                 {}
             )
 
-            if not isinstance(funcao, dict):
+            if not isinstance(
+                funcao,
+                dict,
+            ):
                 continue
 
-            nome = funcao.get("name")
+            nome = self._normalizar_nome_ferramenta(
+                funcao.get("name")
+            )
 
             if nome != "json":
                 continue
@@ -285,14 +386,25 @@ class CamadaIA:
                 ""
             )
 
-            if isinstance(argumentos, dict):
+            if isinstance(
+                argumentos,
+                dict,
+            ):
                 dados = argumentos
 
-            elif isinstance(argumentos, str):
+            elif isinstance(
+                argumentos,
+                str,
+            ):
                 try:
-                    import json
-                    dados = json.loads(argumentos)
-                except (TypeError, ValueError) as erro:
+                    dados = json.loads(
+                        argumentos
+                    )
+
+                except (
+                    TypeError,
+                    ValueError,
+                ) as erro:
                     raise ValueError(
                         "A conclusão JSON retornada pelo "
                         f"provedor é inválida: {erro}"
@@ -304,12 +416,13 @@ class CamadaIA:
                     "possuem formato inválido."
                 )
 
-            if not isinstance(dados, dict):
+            if not isinstance(
+                dados,
+                dict,
+            ):
                 raise ValueError(
                     "A conclusão JSON deve ser um objeto."
                 )
-
-            import json
 
             return json.dumps(
                 dados,
@@ -329,7 +442,11 @@ class CamadaIA:
         inicio = time.perf_counter()
 
         if mensagens is not None:
-            if not isinstance(mensagens, list):
+
+            if not isinstance(
+                mensagens,
+                list,
+            ):
                 return self._resultado_falha(
                     "As mensagens devem ser uma lista.",
                     inicio,
@@ -338,7 +455,11 @@ class CamadaIA:
             mensagens_api = mensagens
 
         else:
-            if not isinstance(prompt, str):
+
+            if not isinstance(
+                prompt,
+                str,
+            ):
                 return self._resultado_falha(
                     "O prompt deve ser uma string.",
                     inicio,
@@ -369,7 +490,9 @@ class CamadaIA:
                 }
             )
 
-        api_key = os.environ.get("GROQ_API_KEY")
+        api_key = os.environ.get(
+            "GROQ_API_KEY"
+        )
 
         if not api_key:
             return self._resultado_falha(
@@ -389,7 +512,10 @@ class CamadaIA:
             payload["reasoning_effort"] = "low"
 
         if tools:
-            ferramentas_api = list(tools)
+
+            ferramentas_api = list(
+                tools
+            )
 
             ferramentas_api.append(
                 self._definicao_compatibilidade_json()
@@ -397,6 +523,16 @@ class CamadaIA:
 
             payload["tools"] = ferramentas_api
             payload["tool_choice"] = tool_choice
+
+            # Permite que o Groq devolva à aplicação uma
+            # chamada de ferramenta cujo nome tenha sido
+            # gerado de forma incorreta pelo modelo.
+            #
+            # A validação final continua sendo feita pelo
+            # AgenteTrabalho.
+            payload[
+                "disable_tool_validation"
+            ] = True
 
         headers = {
             "Authorization": f"Bearer {api_key}",
@@ -410,6 +546,7 @@ class CamadaIA:
             tentativas += 1
 
             try:
+
                 resposta_http = requests.post(
                     self.ENDPOINT,
                     headers=headers,
@@ -423,6 +560,7 @@ class CamadaIA:
                         tentativas
                         < self.MAX_TENTATIVAS_429
                     ):
+
                         tempo_espera = (
                             self._tempo_retry_429(
                                 resposta_http
@@ -444,6 +582,7 @@ class CamadaIA:
                     )
 
                 if resposta_http.status_code != 200:
+
                     return self._resultado_falha(
                         self._detalhar_erro_http(
                             resposta_http
@@ -453,8 +592,11 @@ class CamadaIA:
                     )
 
                 try:
+
                     dados = resposta_http.json()
+
                 except ValueError:
+
                     return self._resultado_falha(
                         "Resposta do provedor não é "
                         "um JSON válido.",
@@ -468,6 +610,7 @@ class CamadaIA:
                 )
 
                 if not escolhas:
+
                     return self._resultado_falha(
                         "O provedor não retornou choices.",
                         inicio,
@@ -483,6 +626,7 @@ class CamadaIA:
                     mensagem,
                     dict,
                 ):
+
                     return self._resultado_falha(
                         "Mensagem retornada pelo "
                         "provedor é inválida.",
@@ -502,7 +646,9 @@ class CamadaIA:
                     resposta,
                     str,
                 ):
-                    resposta = str(resposta)
+                    resposta = str(
+                        resposta
+                    )
 
                 resposta = resposta.strip()
 
@@ -518,12 +664,19 @@ class CamadaIA:
                     tool_calls,
                     list,
                 ):
+
                     return self._resultado_falha(
                         "tool_calls retornado pelo "
                         "provedor é inválido.",
                         inicio,
                         tentativas=tentativas,
                     )
+
+                tool_calls = (
+                    self._normalizar_tool_calls(
+                        tool_calls
+                    )
+                )
 
                 conclusao_json = (
                     self._processar_conclusao_json(
@@ -532,6 +685,7 @@ class CamadaIA:
                 )
 
                 if conclusao_json is not None:
+
                     return {
                         "resposta": conclusao_json,
                         "mensagem": mensagem,
@@ -564,7 +718,11 @@ class CamadaIA:
                     else "sucesso"
                 )
 
-                if not tool_calls and not resposta:
+                if (
+                    not tool_calls
+                    and not resposta
+                ):
+
                     return self._resultado_falha(
                         "O provedor retornou "
                         "resposta vazia.",
@@ -591,6 +749,7 @@ class CamadaIA:
                 }
 
             except requests.Timeout:
+
                 return self._resultado_falha(
                     "Timeout de 30 segundos excedido.",
                     inicio,
@@ -598,6 +757,7 @@ class CamadaIA:
                 )
 
             except requests.RequestException as erro:
+
                 return self._resultado_falha(
                     "Falha na comunicação com o provedor: "
                     f"{erro}",
@@ -611,6 +771,7 @@ class CamadaIA:
                 IndexError,
                 ValueError,
             ) as erro:
+
                 return self._resultado_falha(
                     f"Estrutura inesperada da resposta: {erro}",
                     inicio,
