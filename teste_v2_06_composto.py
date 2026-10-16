@@ -3,13 +3,15 @@ TESTE 6 — AGENTE DE TRABALHO V2
 
 Objetivo:
 Validar a capacidade do AgenteTrabalho V2 de executar uma tarefa
-composta utilizando mais de uma ferramenta e reunir as evidências
-obtidas em uma única conclusão.
+composta utilizando três ferramentas diferentes e concluir a tarefa
+assim que as evidências necessárias forem obtidas.
 
-A tarefa deve utilizar:
+Ferramentas exigidas:
 - ler_arquivo;
 - extrair_metadados;
 - buscar_texto.
+
+Cada ferramenta deve ser utilizada uma única vez.
 
 O teste não deve modificar nenhum arquivo do repositório.
 
@@ -26,26 +28,28 @@ def main():
 
     resultado = agente.executar(
         tarefa=(
-            "Faça uma análise composta do arquivo agente_ia.py, "
-            "que está na raiz do repositório. "
-            "Primeiro leia o arquivo. "
-            "Depois extraia seus metadados. "
-            "Por fim, pesquise no repositório o texto 'class AgenteIA'. "
-            "Informe, na conclusão, o nome do arquivo analisado, "
-            "a quantidade de linhas, o tamanho em bytes e as "
-            "ocorrências encontradas para 'class AgenteIA', "
-            "identificando arquivo e linha quando houver."
+            "Execute uma tarefa composta sobre o arquivo agente_ia.py "
+            "na raiz do repositório. "
+            "Use exatamente uma vez a ferramenta ler_arquivo para "
+            "verificar o arquivo. "
+            "Use exatamente uma vez a ferramenta extrair_metadados "
+            "para obter o tamanho em bytes e a quantidade de linhas. "
+            "Use exatamente uma vez a ferramenta buscar_texto para "
+            "procurar o texto 'class AgenteIA'. "
+            "Depois das três ferramentas fornecerem seus resultados, "
+            "conclua imediatamente a tarefa. "
+            "Não repita nenhuma ferramenta e não faça novas pesquisas."
         ),
         criterio_conclusao=(
             "A tarefa somente deve ser considerada concluída se "
-            "forem utilizadas as ferramentas ler_arquivo, "
-            "extrair_metadados e buscar_texto. "
-            "A conclusão deve reunir somente informações obtidas "
-            "pelas ferramentas, sem inventar valores ou ocorrências. "
-            "As evidências devem permitir verificar a origem dos dados. "
-            "Se alguma ferramenta falhar, informe a falha e não "
-            "apresente como confirmado nenhum dado que não tenha "
-            "sido verificado."
+            "ler_arquivo, extrair_metadados e buscar_texto tiverem "
+            "sido utilizadas uma vez cada. "
+            "Depois das três evidências, produza imediatamente a "
+            "conclusão final. "
+            "Informe somente dados realmente obtidos pelas ferramentas. "
+            "Não invente valores, ocorrências ou fontes. "
+            "Não repita chamadas de ferramentas depois de obter "
+            "as três evidências necessárias."
         ),
     )
 
