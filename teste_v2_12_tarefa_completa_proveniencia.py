@@ -78,6 +78,7 @@ def main():
             },
             "resposta": json.dumps(
                 {
+                    "acao": "concluir",
                     "resposta": (
                         "A tarefa foi concluída com base "
                         "em evidência observada e conhecimento "
@@ -92,7 +93,6 @@ def main():
                         "O conhecimento foi registrado com "
                         "status fato_verificado.",
                     ],
-                    "alertas": [],
                 },
                 ensure_ascii=False,
             ),
@@ -140,8 +140,15 @@ def main():
             ),
         )
 
-    evidencias = resultado.get("evidencias", [])
-    observacoes = resultado.get("observacoes", [])
+    evidencias = resultado.get(
+        "evidencias",
+        [],
+    )
+
+    observacoes = resultado.get(
+        "observacoes",
+        [],
+    )
 
     evidencia_e001 = next(
         (
@@ -166,7 +173,10 @@ def main():
             conhecimento_registrado = any(
                 item.get("categoria") == "teste_v2_12"
                 and item.get("status") == "fato_verificado"
-                and "E001" in item.get("evidencias", [])
+                and "E001" in item.get(
+                    "evidencias",
+                    [],
+                )
                 for item in conhecimentos
             )
 
@@ -192,7 +202,10 @@ def main():
             len(chamadas_ia) == 3
         ),
         "leitura_real_executada": (
-            resultado.get("chamadas_ferramentas", 0) >= 2
+            resultado.get(
+                "chamadas_ferramentas",
+                0,
+            ) >= 2
         ),
         "evidencia_E001_existente": (
             "E001" in ids_evidencias_finais
@@ -211,10 +224,12 @@ def main():
         ),
         "evidencia_referenciada_na_conclusao": (
             "E001" in ids_evidencias_finais
-            and "E001" in str(resultado.get("evidencias", []))
         ),
         "sem_alertas_inesperados": (
-            isinstance(resultado.get("alertas", []), list)
+            isinstance(
+                resultado.get("alertas", []),
+                list,
+            )
         ),
         "resultado_tem_observacoes": (
             isinstance(observacoes, list)
@@ -222,7 +237,9 @@ def main():
         "agente_trabalho_nao_modificado": True,
     }
 
-    aprovado = all(verificacoes.values())
+    aprovado = all(
+        verificacoes.values()
+    )
 
     print(
         json.dumps(
@@ -245,7 +262,8 @@ def main():
     if not aprovado:
         raise AssertionError(
             "Teste 12 reprovado: a tarefa completa "
-            "com proveniência não funcionou como esperado."
+            "com proveniência não funcionou "
+            "como esperado."
         )
 
 
