@@ -7,23 +7,33 @@ from agente_trabalho import AgenteTrabalho
 def main():
     agente = AgenteTrabalho()
 
-    resposta_ia = {
-        "resposta": json.dumps(
-            {
-                "resposta": (
-                    "A tarefa foi considerada executada, "
-                    "mas não há evidências suficientes para confirmar."
-                ),
-                "status": "EXECUTADO",
-                "confianca": "insuficiente",
-                "evidencias": [],
-                "observacoes": [
-                    "A conclusão foi fornecida sem evidências verificáveis."
-                ],
-                "alertas": [],
-            },
-            ensure_ascii=False,
-        )
+    conclusao = {
+        "acao": "concluir",
+        "resposta": (
+            "A tarefa foi considerada executada, "
+            "mas não há evidências suficientes para confirmar."
+        ),
+        "status": "EXECUTADO",
+        "confianca": "insuficiente",
+        "evidencias": [],
+        "observacoes": [
+            "A conclusão foi fornecida sem evidências verificáveis."
+        ],
+    }
+
+    conteudo_json = json.dumps(
+        conclusao,
+        ensure_ascii=False,
+    )
+
+    resposta_ia_controlada = {
+        "status": "sucesso",
+        "mensagem": {
+            "role": "assistant",
+            "content": conteudo_json,
+        },
+        "resposta": conteudo_json,
+        "tool_calls": [],
     }
 
     chamadas = []
@@ -35,7 +45,7 @@ def main():
                 "kwargs": kwargs,
             }
         )
-        return resposta_ia
+        return resposta_ia_controlada
 
     with patch.object(
         agente,
@@ -60,11 +70,21 @@ def main():
 
     verificacoes = {
         "IA_controlada_chamada": len(chamadas) == 1,
-        "status_nao_permaneceu_EXECUTADO": status_final != "EXECUTADO",
-        "status_PROPOSTO": status_final == "PROPOSTO",
-        "confianca_insuficiente": confianca_final == "insuficiente",
-        "sem_evidencias_inventadas": len(evidencias) == 0,
-        "resultado_tem_observacoes": isinstance(observacoes, list),
+        "status_nao_permaneceu_EXECUTADO": (
+            status_final != "EXECUTADO"
+        ),
+        "status_PROPOSTO": (
+            status_final == "PROPOSTO"
+        ),
+        "confianca_insuficiente": (
+            confianca_final == "insuficiente"
+        ),
+        "sem_evidencias_inventadas": (
+            len(evidencias) == 0
+        ),
+        "resultado_tem_observacoes": (
+            isinstance(observacoes, list)
+        ),
         "agente_trabalho_modificado": False,
     }
 
@@ -86,8 +106,9 @@ def main():
 
     if not aprovado:
         raise AssertionError(
-            "Teste 10 reprovado: a proteção contra conclusão "
-            "sem evidências não funcionou como esperado."
+            "Teste 10 reprovado: a proteção contra "
+            "conclusão sem evidências não funcionou "
+            "como esperado."
         )
 
 
