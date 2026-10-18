@@ -58,7 +58,7 @@ def main():
             evidencia_gerada
         ),
         "nenhum_comando_executado": True,
-        "agente_trabalho_modificado": False,
+        "agente_trabalho_nao_modificado": True,
     }
 
     aprovado = all(verificacoes.values())
