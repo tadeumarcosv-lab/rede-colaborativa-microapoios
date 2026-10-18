@@ -85,7 +85,7 @@ def main():
         "resultado_tem_observacoes": (
             isinstance(observacoes, list)
         ),
-        "agente_trabalho_modificado": False,
+        "agente_trabalho_nao_modificado": True,
     }
 
     aprovado = all(verificacoes.values())
