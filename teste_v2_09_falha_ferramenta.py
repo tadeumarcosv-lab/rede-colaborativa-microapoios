@@ -5,6 +5,10 @@ from agente_trabalho import AgenteTrabalho
 
 
 def resposta_tool_call():
+    """
+    Primeira resposta controlada da IA:
+    solicita uma leitura de arquivo que não existe.
+    """
     return {
         "status": "sucesso",
         "mensagem": {
@@ -12,7 +16,7 @@ def resposta_tool_call():
             "content": None,
             "tool_calls": [
                 {
-                    "id": "call_teste_09",
+                    "id": "call_teste_09_1",
                     "type": "function",
                     "function": {
                         "name": "ler_arquivo",
@@ -30,7 +34,7 @@ def resposta_tool_call():
         },
         "tool_calls": [
             {
-                "id": "call_teste_09",
+                "id": "call_teste_09_1",
                 "type": "function",
                 "function": {
                     "name": "ler_arquivo",
@@ -49,35 +53,63 @@ def resposta_tool_call():
 
 
 def resposta_conclusao():
+    """
+    Segunda resposta controlada da IA.
+    O campo 'resposta' é obrigatório porque é esse campo
+    que AgenteTrabalho.executar() utiliza para interpretar
+    a conclusão.
+    """
     return {
         "status": "sucesso",
         "mensagem": {
             "role": "assistant",
-            "content": json.dumps(
-                {
-                    "acao": "concluir",
-                    "resposta": (
-                        "A ferramenta ler_arquivo falhou de forma "
-                        "controlada porque o arquivo solicitado não existe. "
-                        "O erro foi devolvido ao fluxo como resultado da "
-                        "ferramenta, sem interromper indevidamente o agente."
-                    ),
-                    "status": "EXECUTADO",
-                    "confianca": "alta",
-                    "evidencias": [],
-                    "observacoes": [
-                        "Falha controlada da ferramenta observada."
-                    ],
-                },
-                ensure_ascii=False,
+            "content": (
+                '{"acao":"concluir",'
+                '"resposta":"A falha da ferramenta foi observada e tratada '
+                'sem inventar que o arquivo foi lido.",'
+                '"status":"PROPOSTO",'
+                '"confianca":"insuficiente",'
+                '"evidencias":[],'
+                '"observacoes":["Falha controlada da ferramenta observada."]}'
             ),
         },
+        "resposta": (
+            '{"acao":"concluir",'
+            '"resposta":"A falha da ferramenta foi observada e tratada '
+            'sem inventar que o arquivo foi lido.",'
+            '"status":"PROPOSTO",'
+            '"confianca":"insuficiente",'
+            '"evidencias":[],'
+            '"observacoes":["Falha controlada da ferramenta observada."]}'
+        ),
         "tool_calls": [],
     }
 
 
 def main():
     agente = AgenteTrabalho()
+
+    mensagens_finais = []
+
+    processador_original = agente._processar_tool_calls
+
+    def processar_e_capturar(mensagens, tool_calls):
+        resultado = processador_original(
+            mensagens,
+            tool_calls,
+        )
+
+        # Captura somente a mensagem de resultado da ferramenta.
+        for mensagem in resultado:
+            if (
+                isinstance(mensagem, dict)
+                and mensagem.get("role") == "tool"
+            ):
+                mensagens_finais.append(
+                    dict(mensagem)
+                )
+
+        return resultado
 
     respostas = [
         resposta_tool_call(),
@@ -89,47 +121,76 @@ def main():
         "_consultar_ia",
         side_effect=respostas,
     ):
-        resultado = agente.executar(
-            tarefa=(
-                "Teste o tratamento de uma falha controlada da "
-                "ferramenta ler_arquivo."
-            ),
-            criterio_conclusao=(
-                "A ferramenta deve receber um caminho inexistente, "
-                "produzir um erro controlado e devolver esse erro ao "
-                "fluxo do agente. O agente deve então conseguir "
-                "concluir sem inventar que o arquivo foi lido."
-            ),
+        with patch.object(
+            agente,
+            "_processar_tool_calls",
+            side_effect=processar_e_capturar,
+        ):
+            resultado = agente.executar(
+                tarefa=(
+                    "Teste o tratamento de uma falha controlada "
+                    "da ferramenta ler_arquivo."
+                ),
+                criterio_conclusao=(
+                    "A ferramenta deve receber um caminho inexistente, "
+                    "produzir um erro controlado e devolver esse erro "
+                    "ao fluxo do agente. O agente não deve inventar "
+                    "que o arquivo foi lido."
+                ),
+            )
+
+    falha_tool_observada = False
+    tipo_erro = None
+    mensagem_erro = None
+
+    if mensagens_finais:
+        conteudo = mensagens_finais[0].get(
+            "content",
+            "",
         )
 
-    falha_observada = False
-    for mensagem in resultado.get("observacoes", []):
-        if "falha" in str(mensagem).lower():
-            falha_observada = True
+        try:
+            dados_tool = json.loads(conteudo)
 
-    # A falha real da ferramenta fica registrada na mensagem
-    # enviada pelo _processar_tool_calls para a etapa seguinte.
-    # Para confirmar diretamente o comportamento, verificamos
-    # também o contador: uma ferramenta foi realmente processada.
-    uma_ferramenta_processada = (
+            falha_tool_observada = (
+                dados_tool.get("sucesso") is False
+            )
+
+            tipo_erro = dados_tool.get("erro")
+            mensagem_erro = dados_tool.get("mensagem")
+
+        except (
+            TypeError,
+            json.JSONDecodeError,
+        ):
+            pass
+
+    chamada_registrada = (
         resultado.get("chamadas_ferramentas") == 1
     )
 
-    status_aprovado = (
-        resultado.get("status") == "EXECUTADO"
+    erro_esperado = (
+        tipo_erro == "FileNotFoundError"
     )
 
-    resposta_sem_inventar = (
-        "falhou de forma controlada"
-        in resultado.get("resposta", "").lower()
+    mensagem_esperada = (
+        isinstance(mensagem_erro, str)
+        and "Arquivo não encontrado" in mensagem_erro
+    )
+
+    nao_inventou_leitura = (
+        resultado.get("status") != "EXECUTADO"
+        or not resultado.get("evidencias")
     )
 
     avaliacao = (
         "APROVADO"
         if (
-            uma_ferramenta_processada
-            and status_aprovado
-            and resposta_sem_inventar
+            falha_tool_observada
+            and chamada_registrada
+            and erro_esperado
+            and mensagem_esperada
+            and nao_inventou_leitura
         )
         else "REPROVADO"
     )
@@ -137,14 +198,32 @@ def main():
     saida = {
         "avaliacao_teste_09": avaliacao,
         "resultado_agente": resultado,
-        "verificacoes": {
-            "uma_ferramenta_processada": (
-                uma_ferramenta_processada
+        "resultado_real_da_ferramenta": {
+            "capturado": bool(mensagens_finais),
+            "sucesso": (
+                False if falha_tool_observada else None
             ),
-            "status_final_EXECUTADO": status_aprovado,
-            "agente_nao_inventou_leitura": resposta_sem_inventar,
-            "observacao_de_falha_existente": falha_observada,
-            "chamada_externa_de_IA_real": False,
+            "erro": tipo_erro,
+            "mensagem": mensagem_erro,
+        },
+        "verificacoes": {
+            "falha_da_ferramenta_observada": (
+                falha_tool_observada
+            ),
+            "uma_chamada_de_ferramenta": (
+                chamada_registrada
+            ),
+            "erro_FileNotFoundError": (
+                erro_esperado
+            ),
+            "mensagem_de_arquivo_nao_encontrado": (
+                mensagem_esperada
+            ),
+            "agente_nao_inventou_leitura": (
+                nao_inventou_leitura
+            ),
+            "chamada_real_da_Groq": False,
+            "agente_trabalho_modificado": False,
         },
     }
 
