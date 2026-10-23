@@ -2,6 +2,7 @@ import json
 import os
 
 from agente_trabalho import AgenteTrabalho
+from gerenciador_memoria import GerenciadorMemoria
 
 
 def gerar_resumo_markdown(resultado: dict) -> str:
@@ -42,6 +43,23 @@ def gerar_resumo_markdown(resultado: dict) -> str:
     return "\n".join(linhas)
 
 
+def carregar_contexto_memoria() -> str:
+    """Carrega o memoria.json e retorna um resumo do conhecimento registrado."""
+    try:
+        gerenciador = GerenciadorMemoria()
+        gerenciador.carregar()
+        # Tenta obter o conhecimento registrado
+        conhecimentos = gerenciador.obter_conhecimento()
+        if conhecimentos:
+            resumo = "### Conhecimento já registrado na memória:\n"
+            for item in conhecimentos[-5:]:  # Pega os 5 últimos para não estourar tokens
+                resumo += f"- {json.dumps(item, ensure_ascii=False)}\n"
+            return resumo
+    except Exception:
+        pass
+    return ""
+
+
 def main():
     instrucao = os.environ.get("INSTRUCAO", "").strip()
 
@@ -52,14 +70,21 @@ def main():
         }, ensure_ascii=False, indent=2))
         return
 
+    # Injeta o contexto da memória na instrução
+    contexto = carregar_contexto_memoria()
+    if contexto:
+        instrucao_final = f"{contexto}\n\n### Instrução do usuário:\n{instrucao}"
+    else:
+        instrucao_final = instrucao
+
     agente = AgenteTrabalho()
 
     resultado = agente.executar(
-        tarefa=instrucao,
-        criterio_conclusao="Responda à instrução fornecida pelo usuário da melhor forma possível, usando as ferramentas disponíveis.",
+        tarefa=instrucao_final,
+        criterio_conclusao="Responda à instrução fornecida pelo usuário da melhor forma possível, usando as ferramentas disponíveis e o contexto da memória (se houver).",
     )
 
-    # 1. Imprime o JSON completo nos logs (comportamento anterior)
+    # 1. Imprime o JSON completo nos logs
     print(json.dumps(resultado, ensure_ascii=False, indent=2))
 
     # 2. Gera o resumo no GitHub Step Summary
