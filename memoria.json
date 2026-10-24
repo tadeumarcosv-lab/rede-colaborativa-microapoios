@@ -49,6 +49,53 @@
       "descricao": "run_id=97e7ae54-7eb4-466c-82ce-0272db6d1ffc; task_id=951e71b2-790b-42e6-ba77-b517426c6aba; Conclusão da tarefa V2",
       "resultado": "PROPOSTO",
       "importancia": "normal"
+    },
+    {
+      "data": "24/10/2026",
+      "hora": "18:43:45",
+      "origem": "AgenteTrabalhoV2",
+      "destino": "MemoriaCentral",
+      "responsavel": "AgenteTrabalho",
+      "descricao": "run_id=44f30205-f136-4de9-8565-c23bb66b20b9; task_id=56c76e81-53ad-4cc5-a787-161ae7fa4aaa; Tool call=ler_arquivo; chamada=1",
+      "resultado": "SUCESSO",
+      "importancia": "normal"
+    },
+    {
+      "task_id": "56c76e81-53ad-4cc5-a787-161ae7fa4aaa",
+      "run_id": "44f30205-f136-4de9-8565-c23bb66b20b9",
+      "versao_agente": "2.0.0",
+      "tarefa": "### Conhecimento já registrado na memória:\n- {\"categoria\": \"teste_fase_3_persistencia_final\", \"dado\": {\"descricao\": \"Teste de persistência final entre execuções\"}, \"status\": \"hipotese\", \"origem\": {\"tipo\": \"execucao_agente_trabalho_v2\", \"local\": \"agente_trabalho.py\", \"data\": \"2026-10-24T18:21:47.624535+00:00\", \"task_id\": \"951e71b2-790b-42e6-ba77-b517426c6aba\", \"run_id\": \"97e7ae54-7eb4-466c-82ce-0272db6d1ffc\"}, \"confianca\": \"alta\", \"evidencias\": [\"E001\"], \"sha256\": \"74b67f6700815a69e2bea0394fafea16fde50db4a8594cdfeb475d3a434ca3f8\"}\n\n\n### Instrução do usuário:\nLeia o arquivo memoria.json e me diga se existe a categoria \"teste_fase_3_persistencia_final\". Se existir, me mostre o conteúdo registrado.",
+      "criterio_conclusao": "Responda à instrução fornecida pelo usuário da melhor forma possível, usando as ferramentas disponíveis e o contexto da memória (se houver).",
+      "resposta": "Sim, a categoria \"teste_fase_3_persistencia_final\" existe na memória. O conteúdo registrado é: {\"descricao\": \"Teste de persistência final entre execuções\"}",
+      "status": "EXECUTADO",
+      "confianca": "alta",
+      "iteracoes": 2,
+      "chamadas_ferramentas": 1,
+      "duracao_ms": 1202,
+      "evidencias": [
+        {
+          "evidencia_id": "E001",
+          "ferramenta": "ler_arquivo",
+          "origem": "memoria.json",
+          "data": "2026-10-24T18:43:45.381275+00:00",
+          "sha256": "8091b763fcba4a2f495f0e8fcd2e5d5f34fa1e6664526abe2c066fdc692bb8cf",
+          "resumo": "{\n  \"historico\": [\n    {\n      \"data\": \"24/10/2026\",\n      \"hora\": \"18:21:47\",\n      \"origem\": \"AgenteTrabalhoV2\",\n      \"destino\": \"MemoriaCentral\",\n      \"responsavel\": \"AgenteTrabalho\",\n      \"descricao\": \"run_id=97e7ae54-7eb4-466c-82ce-0272db6d1ffc; task_id=951e71b2-790b-42e6-ba77-b517426c6aba; Conhecimento registrado; categoria=teste_fase_3_persistencia_final; status=hipotese\",\n      \"resultado\": \"SUCESSO\",\n      \"importancia\": \"normal\"\n    },\n    {\n      \"data\": \"24/10/2026\",\n      \"hora\":\n[Conteúdo truncado pelo limite.]"
+        }
+      ],
+      "observacoes": [],
+      "alertas": [],
+      "origem": "agente_trabalho.py",
+      "data": "2026-10-24T18:43:46.160777+00:00"
+    },
+    {
+      "data": "24/10/2026",
+      "hora": "18:43:46",
+      "origem": "AgenteTrabalhoV2",
+      "destino": "MemoriaCentral",
+      "responsavel": "AgenteTrabalho",
+      "descricao": "run_id=44f30205-f136-4de9-8565-c23bb66b20b9; task_id=56c76e81-53ad-4cc5-a787-161ae7fa4aaa; Conclusão da tarefa V2",
+      "resultado": "EXECUTADO",
+      "importancia": "normal"
     }
   ],
   "aprendizados": [],
@@ -76,7 +123,7 @@
   ],
   "contexto": [],
   "estatisticas": {
-    "solicitacoes": 4,
+    "solicitacoes": 7,
     "aprendizados_registrados": 0,
     "decisoes_registradas": 0
   }
