@@ -1,11 +1,82 @@
 {
-  "historico": [],
+  "historico": [
+    {
+      "data": "24/10/2026",
+      "hora": "18:21:47",
+      "origem": "AgenteTrabalhoV2",
+      "destino": "MemoriaCentral",
+      "responsavel": "AgenteTrabalho",
+      "descricao": "run_id=97e7ae54-7eb4-466c-82ce-0272db6d1ffc; task_id=951e71b2-790b-42e6-ba77-b517426c6aba; Conhecimento registrado; categoria=teste_fase_3_persistencia_final; status=hipotese",
+      "resultado": "SUCESSO",
+      "importancia": "normal"
+    },
+    {
+      "data": "24/10/2026",
+      "hora": "18:21:47",
+      "origem": "AgenteTrabalhoV2",
+      "destino": "MemoriaCentral",
+      "responsavel": "AgenteTrabalho",
+      "descricao": "run_id=97e7ae54-7eb4-466c-82ce-0272db6d1ffc; task_id=951e71b2-790b-42e6-ba77-b517426c6aba; Tool call=registrar_conhecimento; chamada=1",
+      "resultado": "SUCESSO",
+      "importancia": "normal"
+    },
+    {
+      "task_id": "951e71b2-790b-42e6-ba77-b517426c6aba",
+      "run_id": "97e7ae54-7eb4-466c-82ce-0272db6d1ffc",
+      "versao_agente": "2.0.0",
+      "tarefa": "Use a ferramenta registrar_conhecimento para registrar a seguinte informação: categoria=\"teste_fase_3_persistencia_final\", dado={\"descricao\": \"Teste de persistência final entre execuções\"}, status=\"fato_verificado\", confianca=\"alta\", evidencias=[\"E001\"]. Depois, me diga o que aconteceu.",
+      "criterio_conclusao": "Responda à instrução fornecida pelo usuário da melhor forma possível, usando as ferramentas disponíveis e o contexto da memória (se houver).",
+      "resposta": "O conhecimento foi registrado com sucesso.",
+      "status": "PROPOSTO",
+      "confianca": "insuficiente",
+      "iteracoes": 2,
+      "chamadas_ferramentas": 1,
+      "duracao_ms": 1250,
+      "evidencias": [],
+      "observacoes": [],
+      "alertas": [
+        "Conhecimento rebaixado para hipótese: não havia evidência válida suficiente."
+      ],
+      "origem": "agente_trabalho.py",
+      "data": "2026-10-24T18:21:48.124495+00:00"
+    },
+    {
+      "data": "24/10/2026",
+      "hora": "18:21:48",
+      "origem": "AgenteTrabalhoV2",
+      "destino": "MemoriaCentral",
+      "responsavel": "AgenteTrabalho",
+      "descricao": "run_id=97e7ae54-7eb4-466c-82ce-0272db6d1ffc; task_id=951e71b2-790b-42e6-ba77-b517426c6aba; Conclusão da tarefa V2",
+      "resultado": "PROPOSTO",
+      "importancia": "normal"
+    }
+  ],
   "aprendizados": [],
   "decisoes": [],
-  "conhecimento": [],
+  "conhecimento": [
+    {
+      "categoria": "teste_fase_3_persistencia_final",
+      "dado": {
+        "descricao": "Teste de persistência final entre execuções"
+      },
+      "status": "hipotese",
+      "origem": {
+        "tipo": "execucao_agente_trabalho_v2",
+        "local": "agente_trabalho.py",
+        "data": "2026-10-24T18:21:47.624535+00:00",
+        "task_id": "951e71b2-790b-42e6-ba77-b517426c6aba",
+        "run_id": "97e7ae54-7eb4-466c-82ce-0272db6d1ffc"
+      },
+      "confianca": "alta",
+      "evidencias": [
+        "E001"
+      ],
+      "sha256": "74b67f6700815a69e2bea0394fafea16fde50db4a8594cdfeb475d3a434ca3f8"
+    }
+  ],
   "contexto": [],
   "estatisticas": {
-    "solicitacoes": 0,
+    "solicitacoes": 4,
     "aprendizados_registrados": 0,
     "decisoes_registradas": 0
   }
