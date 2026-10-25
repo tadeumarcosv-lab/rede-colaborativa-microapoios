@@ -103,7 +103,7 @@ def executar_com_retry(agente: AgenteTrabalho, instrucao_final: str) -> dict:
         if status == "EXECUTADO_PARCIALMENTE":
             if "Ferramenta solicitada não permitida" in observacoes:
                 print(json.dumps({
-                    "retry": f"Alucinação detectada na tentativa {tentativa}. Tentando novamente."
+                    "retry": f"Alucinação (ferramenta não permitida) na tentativa {tentativa}. Tentando novamente."
                 }, ensure_ascii=False))
                 ultimo_resultado = resultado
                 time.sleep(TEMPO_ENTRE_TENTATIVAS_S)
@@ -111,6 +111,13 @@ def executar_com_retry(agente: AgenteTrabalho, instrucao_final: str) -> dict:
             elif "Failed to parse tool call" in observacoes:
                 print(json.dumps({
                     "retry": f"Erro de parse na tentativa {tentativa}. Tentando novamente."
+                }, ensure_ascii=False))
+                ultimo_resultado = resultado
+                time.sleep(TEMPO_ENTRE_TENTATIVAS_S)
+                continue
+            elif "duas ações consecutivas com a mesma assinatura" in observacoes:
+                print(json.dumps({
+                    "retry": f"Repetição de assinatura na tentativa {tentativa}. Tentando novamente."
                 }, ensure_ascii=False))
                 ultimo_resultado = resultado
                 time.sleep(TEMPO_ENTRE_TENTATIVAS_S)
