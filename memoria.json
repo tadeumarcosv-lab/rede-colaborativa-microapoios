@@ -286,6 +286,56 @@
       "descricao": "run_id=39e21b3e-9d22-40b7-9509-8c53dbae16d7; task_id=e649028d-7087-4fe1-a228-960aa0e1e32b; Conclusão da tarefa V2",
       "resultado": "EXECUTADO_PARCIALMENTE",
       "importancia": "normal"
+    },
+    {
+      "data": "25/10/2026",
+      "hora": "21:26:19",
+      "origem": "AgenteTrabalhoV2",
+      "destino": "MemoriaCentral",
+      "responsavel": "AgenteTrabalho",
+      "descricao": "run_id=4a57140c-9fa2-4564-9a86-087465daf1db; task_id=0c7e01fb-f2de-4de4-8b49-36f910393a64; Tool call=ler_arquivo; chamada=1",
+      "resultado": "FALHA",
+      "importancia": "alta"
+    },
+    {
+      "data": "25/10/2026",
+      "hora": "21:26:20",
+      "origem": "AgenteTrabalhoV2",
+      "destino": "MemoriaCentral",
+      "responsavel": "AgenteTrabalho",
+      "descricao": "run_id=4a57140c-9fa2-4564-9a86-087465daf1db; task_id=0c7e01fb-f2de-4de4-8b49-36f910393a64; Tool call=listar_arquivos; chamada=2",
+      "resultado": "FALHA",
+      "importancia": "alta"
+    },
+    {
+      "task_id": "0c7e01fb-f2de-4de4-8b49-36f910393a64",
+      "run_id": "4a57140c-9fa2-4564-9a86-087465daf1db",
+      "versao_agente": "2.0.0",
+      "tarefa": "### Conhecimento já registrado na memória:\n- {\"categoria\": \"teste_fase_3_persistencia_final\", \"dado\": {\"descricao\": \"Teste de persistência final entre execuções\"}, \"status\": \"hipotese\", \"origem\": {\"tipo\": \"execucao_agente_trabalho_v2\", \"local\": \"agente_trabalho.py\", \"data\": \"2026-10-24T18:21:47.624535+00:00\", \"task_id\": \"951e71b2-790b-42e6-ba77-b517426c6aba\", \"run_id\": \"97e7ae54-7eb4-466c-82ce-0272db6d1ffc\"}, \"confianca\": \"alta\", \"evidencias\": [\"E001\"], \"sha256\": \"74b67f6700815a69e2bea0394fafea16fde50db4a8594cdfeb475d3a434ca3f8\"}\n\n\n### Instrução do usuário:\nLeia o arquivo .github/workflows/conversar_com_agente.yml e me mostre o conteúdo completo.",
+      "criterio_conclusao": "Responda à instrução fornecida pelo usuário da melhor forma possível, usando as ferramentas disponíveis e o contexto da memória (se houver).",
+      "resposta": "A tarefa não foi concluída integralmente. Consulte as observações, evidências e alertas.",
+      "status": "EXECUTADO_PARCIALMENTE",
+      "confianca": "insuficiente",
+      "iteracoes": 3,
+      "chamadas_ferramentas": 2,
+      "duracao_ms": 1689,
+      "evidencias": [],
+      "observacoes": [
+        "Falha no processamento de tool call: ValueError: Ferramenta solicitada não permitida: ler_arquivo<|channel|>functions.ler_arquivo"
+      ],
+      "alertas": [],
+      "origem": "agente_trabalho.py",
+      "data": "2026-10-25T21:26:20.323272+00:00"
+    },
+    {
+      "data": "25/10/2026",
+      "hora": "21:26:20",
+      "origem": "AgenteTrabalhoV2",
+      "destino": "MemoriaCentral",
+      "responsavel": "AgenteTrabalho",
+      "descricao": "run_id=4a57140c-9fa2-4564-9a86-087465daf1db; task_id=0c7e01fb-f2de-4de4-8b49-36f910393a64; Conclusão da tarefa V2",
+      "resultado": "EXECUTADO_PARCIALMENTE",
+      "importancia": "normal"
     }
   ],
   "aprendizados": [],
@@ -313,7 +363,7 @@
   ],
   "contexto": [],
   "estatisticas": {
-    "solicitacoes": 19,
+    "solicitacoes": 23,
     "aprendizados_registrados": 0,
     "decisoes_registradas": 0
   }
