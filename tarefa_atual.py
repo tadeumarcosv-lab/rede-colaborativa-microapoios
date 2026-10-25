@@ -1,5 +1,6 @@
 import json
 import os
+import hashlib
 
 from agente_trabalho import AgenteTrabalho
 from gerenciador_memoria import GerenciadorMemoria
@@ -48,16 +49,24 @@ def carregar_contexto_memoria() -> str:
     try:
         gerenciador = GerenciadorMemoria()
         gerenciador.carregar()
-        # Tenta obter o conhecimento registrado
         conhecimentos = gerenciador.obter_conhecimento()
         if conhecimentos:
             resumo = "### Conhecimento já registrado na memória:\n"
-            for item in conhecimentos[-5:]:  # Pega os 5 últimos para não estourar tokens
+            for item in conhecimentos[-5:]:
                 resumo += f"- {json.dumps(item, ensure_ascii=False)}\n"
             return resumo
     except Exception:
         pass
     return ""
+
+
+def calcular_hash_arquivo(caminho: str) -> str:
+    """Calcula o hash SHA-256 de um arquivo."""
+    try:
+        with open(caminho, "rb") as f:
+            return hashlib.sha256(f.read()).hexdigest()
+    except Exception:
+        return ""
 
 
 def main():
@@ -70,19 +79,59 @@ def main():
         }, ensure_ascii=False, indent=2))
         return
 
-    # Injeta o contexto da memória na instrução
+    # --- AUTOVERIFICAÇÃO 1: Verificar se memoria.json existe ---
+    caminho_memoria = "memoria.json"
+    memoria_existe = os.path.exists(caminho_memoria)
+    print(json.dumps({
+        "autoverificacao": "1. memoria.json existe",
+        "resultado": memoria_existe
+    }, ensure_ascii=False))
+
+    # --- AUTOVERIFICAÇÃO 2: Hash antes da execução ---
+    hash_antes = calcular_hash_arquivo(caminho_memoria) if memoria_existe else ""
+    print(json.dumps({
+        "autoverificacao": "2. Hash antes da execução",
+        "hash": hash_antes
+    }, ensure_ascii=False))
+
+    # --- Injeção do contexto da memória ---
     contexto = carregar_contexto_memoria()
     if contexto:
         instrucao_final = f"{contexto}\n\n### Instrução do usuário:\n{instrucao}"
     else:
         instrucao_final = instrucao
 
+    # --- Execução do agente ---
     agente = AgenteTrabalho()
-
     resultado = agente.executar(
         tarefa=instrucao_final,
         criterio_conclusao="Responda à instrução fornecida pelo usuário da melhor forma possível, usando as ferramentas disponíveis e o contexto da memória (se houver).",
     )
+
+    # --- AUTOVERIFICAÇÃO 3: Hash depois da execução ---
+    hash_depois = calcular_hash_arquivo(caminho_memoria) if memoria_existe else ""
+    hash_mudou = hash_antes != hash_depois
+    print(json.dumps({
+        "autoverificacao": "3. Hash depois da execução",
+        "hash": hash_depois,
+        "mudou": hash_mudou
+    }, ensure_ascii=False))
+
+    # --- AUTOVERIFICAÇÃO 4: Resultado é JSON válido? ---
+    resultado_valido = isinstance(resultado, dict) and "status" in resultado
+    print(json.dumps({
+        "autoverificacao": "4. Resultado é JSON válido",
+        "resultado": resultado_valido
+    }, ensure_ascii=False))
+
+    # --- Adiciona as autoverificações ao resultado ---
+    resultado["autoverificacoes"] = {
+        "memoria_existe": memoria_existe,
+        "hash_antes": hash_antes,
+        "hash_depois": hash_depois,
+        "hash_mudou": hash_mudou,
+        "resultado_valido": resultado_valido
+    }
 
     # 1. Imprime o JSON completo nos logs
     print(json.dumps(resultado, ensure_ascii=False, indent=2))
