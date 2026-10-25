@@ -237,6 +237,55 @@
       "descricao": "run_id=fb35ec29-3a34-476a-b461-c2685449bca3; task_id=3524f18e-5b95-4d93-ad3d-f6952144449b; Conclusão da tarefa V2",
       "resultado": "EXECUTADO_PARCIALMENTE",
       "importancia": "normal"
+    },
+    {
+      "data": "25/10/2026",
+      "hora": "21:21:10",
+      "origem": "AgenteTrabalhoV2",
+      "destino": "MemoriaCentral",
+      "responsavel": "AgenteTrabalho",
+      "descricao": "run_id=39e21b3e-9d22-40b7-9509-8c53dbae16d7; task_id=e649028d-7087-4fe1-a228-960aa0e1e32b; Tool call=listar_arquivos; chamada=1",
+      "resultado": "SUCESSO",
+      "importancia": "normal"
+    },
+    {
+      "task_id": "e649028d-7087-4fe1-a228-960aa0e1e32b",
+      "run_id": "39e21b3e-9d22-40b7-9509-8c53dbae16d7",
+      "versao_agente": "2.0.0",
+      "tarefa": "### Conhecimento já registrado na memória:\n- {\"categoria\": \"teste_fase_3_persistencia_final\", \"dado\": {\"descricao\": \"Teste de persistência final entre execuções\"}, \"status\": \"hipotese\", \"origem\": {\"tipo\": \"execucao_agente_trabalho_v2\", \"local\": \"agente_trabalho.py\", \"data\": \"2026-10-24T18:21:47.624535+00:00\", \"task_id\": \"951e71b2-790b-42e6-ba77-b517426c6aba\", \"run_id\": \"97e7ae54-7eb4-466c-82ce-0272db6d1ffc\"}, \"confianca\": \"alta\", \"evidencias\": [\"E001\"], \"sha256\": \"74b67f6700815a69e2bea0394fafea16fde50db4a8594cdfeb475d3a434ca3f8\"}\n\n\n### Instrução do usuário:\nListe os arquivos do diretório .github/workflows/ e me mostre a lista completa.",
+      "criterio_conclusao": "Responda à instrução fornecida pelo usuário da melhor forma possível, usando as ferramentas disponíveis e o contexto da memória (se houver).",
+      "resposta": "A tarefa não foi concluída integralmente. Consulte as observações, evidências e alertas.",
+      "status": "EXECUTADO_PARCIALMENTE",
+      "confianca": "insuficiente",
+      "iteracoes": 2,
+      "chamadas_ferramentas": 1,
+      "duracao_ms": 1144,
+      "evidencias": [
+        {
+          "evidencia_id": "E001",
+          "ferramenta": "listar_arquivos",
+          "origem": ".github/workflows",
+          "data": "2026-10-25T21:21:10.474767+00:00",
+          "sha256": "3f946e0d559c293669cfa80b306104141cb7f0ba45c569af387a6ba1882ee3f2",
+          "resumo": ".github/workflows/README.md\n.github/workflows/bootstrap.yml\n.github/workflows/conversar_com_agente.yml\n.github/workflows/teste_primeira_implantacao_manual.yml\n.github/workflows/teste_segunda_implantacao_manual.yml\n.github/workflows/teste_terceira_implantacao_manual.yml\n.github/workflows/teste_v1_manual.yml\n.github/workflows/teste_v2_02_manual.yml\n.github/workflows/teste_v2_03_manual.yml\n.github/workflows/teste_v2_04_manual.yml\n.github/workflows/teste_v2_05_manual.yml\n.github/workflows/teste_v2_0\n[Conteúdo truncado pelo limite.]"
+        }
+      ],
+      "observacoes": [
+        "Falha no processamento de tool call: ValueError: Ferramenta solicitada não permitida: functions.json"
+      ],
+      "alertas": [],
+      "origem": "agente_trabalho.py",
+      "data": "2026-10-25T21:21:11.125420+00:00"
+    },
+    {
+      "data": "25/10/2026",
+      "hora": "21:21:11",
+      "origem": "AgenteTrabalhoV2",
+      "destino": "MemoriaCentral",
+      "responsavel": "AgenteTrabalho",
+      "descricao": "run_id=39e21b3e-9d22-40b7-9509-8c53dbae16d7; task_id=e649028d-7087-4fe1-a228-960aa0e1e32b; Conclusão da tarefa V2",
+      "resultado": "EXECUTADO_PARCIALMENTE",
+      "importancia": "normal"
     }
   ],
   "aprendizados": [],
@@ -264,7 +313,7 @@
   ],
   "contexto": [],
   "estatisticas": {
-    "solicitacoes": 16,
+    "solicitacoes": 19,
     "aprendizados_registrados": 0,
     "decisoes_registradas": 0
   }
