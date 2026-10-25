@@ -96,6 +96,53 @@
       "descricao": "run_id=44f30205-f136-4de9-8565-c23bb66b20b9; task_id=56c76e81-53ad-4cc5-a787-161ae7fa4aaa; Conclusão da tarefa V2",
       "resultado": "EXECUTADO",
       "importancia": "normal"
+    },
+    {
+      "data": "25/10/2026",
+      "hora": "15:23:49",
+      "origem": "AgenteTrabalhoV2",
+      "destino": "MemoriaCentral",
+      "responsavel": "AgenteTrabalho",
+      "descricao": "run_id=2aa4124f-4e44-4fca-98e2-222943d1985a; task_id=9447011f-afad-42c5-b299-a82fb917c6cc; Tool call=extrair_metadados; chamada=1",
+      "resultado": "SUCESSO",
+      "importancia": "normal"
+    },
+    {
+      "task_id": "9447011f-afad-42c5-b299-a82fb917c6cc",
+      "run_id": "2aa4124f-4e44-4fca-98e2-222943d1985a",
+      "versao_agente": "2.0.0",
+      "tarefa": "### Conhecimento já registrado na memória:\n- {\"categoria\": \"teste_fase_3_persistencia_final\", \"dado\": {\"descricao\": \"Teste de persistência final entre execuções\"}, \"status\": \"hipotese\", \"origem\": {\"tipo\": \"execucao_agente_trabalho_v2\", \"local\": \"agente_trabalho.py\", \"data\": \"2026-10-24T18:21:47.624535+00:00\", \"task_id\": \"951e71b2-790b-42e6-ba77-b517426c6aba\", \"run_id\": \"97e7ae54-7eb4-466c-82ce-0272db6d1ffc\"}, \"confianca\": \"alta\", \"evidencias\": [\"E001\"], \"sha256\": \"74b67f6700815a69e2bea0394fafea16fde50db4a8594cdfeb475d3a434ca3f8\"}\n\n\n### Instrução do usuário:\nUse a ferramenta extrair_metadados no arquivo motor_de_verificacao.py e me mostre a lista de funções e classes definidas nele. Depois, me diga se ele parece fazer autoverificação de arquivos ou se é apenas um esqueleto.",
+      "criterio_conclusao": "Responda à instrução fornecida pelo usuário da melhor forma possível, usando as ferramentas disponíveis e o contexto da memória (se houver).",
+      "resposta": "O arquivo motor_de_verificacao.py define a classe `MotorDeVerificacao` e diversas funções relacionadas à verificação e registro de estado, como `verificar_integridade`, `verificar_dependencias`, `verificar_protocolos`, `verificar_constituicao`, `verificar_dna`, `verificar_arquitetura`, entre outras. A presença dessas funções indica que o motor implementa verificação automática de arquivos e dependências, não sendo apenas um esqueleto. Entretanto, sem analisar a implementação interna de cada função, não se pode afirmar com certeza que todas são efetivamente executadas – apenas que o esqueleto sugere autoverificação.",
+      "status": "EXECUTADO",
+      "confianca": "media",
+      "iteracoes": 2,
+      "chamadas_ferramentas": 1,
+      "duracao_ms": 1013,
+      "evidencias": [
+        {
+          "evidencia_id": "E001",
+          "ferramenta": "extrair_metadados",
+          "origem": "motor_de_verificacao.py",
+          "data": "2026-10-25T15:23:49.330383+00:00",
+          "sha256": "d4732865b03aa8b114d8b8b04f8961e7dc0571bfc454bc711b242624c9c42392",
+          "resumo": "{\"bytes\": 5292, \"caminho\": \"motor_de_verificacao.py\", \"classes\": [\"MotorDeVerificacao\"], \"extensao\": \".py\", \"funcoes\": [\"__init__\", \"registrar\", \"adicionar_verificacao\", \"remover_verificacao\", \"listar_verificacoes\", \"quantidade_verificacoes\", \"obter_status\", \"alterar_status\", \"listar_historico\", \"verificar_integridade\", \"verificar_dependencias\", \"verificar_protocolos\", \"verificar_constituicao\", \"verificar_dna\", \"verificar_arquitetura\", \"registrar_execucao\", \"resumo_operacional\", \"obter_resumo_op\n[Conteúdo truncado pelo limite.]"
+        }
+      ],
+      "observacoes": [],
+      "alertas": [],
+      "origem": "agente_trabalho.py",
+      "data": "2026-10-25T15:23:49.932327+00:00"
+    },
+    {
+      "data": "25/10/2026",
+      "hora": "15:23:49",
+      "origem": "AgenteTrabalhoV2",
+      "destino": "MemoriaCentral",
+      "responsavel": "AgenteTrabalho",
+      "descricao": "run_id=2aa4124f-4e44-4fca-98e2-222943d1985a; task_id=9447011f-afad-42c5-b299-a82fb917c6cc; Conclusão da tarefa V2",
+      "resultado": "EXECUTADO",
+      "importancia": "normal"
     }
   ],
   "aprendizados": [],
@@ -123,7 +170,7 @@
   ],
   "contexto": [],
   "estatisticas": {
-    "solicitacoes": 7,
+    "solicitacoes": 10,
     "aprendizados_registrados": 0,
     "decisoes_registradas": 0
   }
