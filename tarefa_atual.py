@@ -1,9 +1,14 @@
 import json
 import os
 import hashlib
+import time
 
 from agente_trabalho import AgenteTrabalho
 from gerenciador_memoria import GerenciadorMemoria
+
+
+MAX_TENTATIVAS = 3
+TEMPO_ENTRE_TENTATIVAS_S = 2
 
 
 def gerar_resumo_markdown(resultado: dict) -> str:
@@ -69,6 +74,70 @@ def calcular_hash_arquivo(caminho: str) -> str:
         return ""
 
 
+def executar_com_retry(agente: AgenteTrabalho, instrucao_final: str) -> dict:
+    """Executa o agente com retry automático para lidar com alucinação da IA."""
+    ultimo_resultado = None
+
+    for tentativa in range(1, MAX_TENTATIVAS + 1):
+        print(json.dumps({
+            "retry": f"Tentativa {tentativa} de {MAX_TENTATIVAS}"
+        }, ensure_ascii=False))
+
+        resultado = agente.executar(
+            tarefa=instrucao_final,
+            criterio_conclusao="Responda à instrução fornecida pelo usuário da melhor forma possível, usando as ferramentas disponíveis e o contexto da memória (se houver).",
+        )
+
+        status = resultado.get("status", "")
+        observacoes = " ".join(resultado.get("observacoes", []))
+
+        # Se o status for EXECUTADO ou PROPOSTO, aceita e para.
+        if status in ("EXECUTADO", "PROPOSTO"):
+            print(json.dumps({
+                "retry": f"Sucesso na tentativa {tentativa}",
+                "status": status
+            }, ensure_ascii=False))
+            return resultado
+
+        # Se o status for EXECUTADO_PARCIALMENTE, verifica se foi por alucinação.
+        if status == "EXECUTADO_PARCIALMENTE":
+            if "Ferramenta solicitada não permitida" in observacoes:
+                print(json.dumps({
+                    "retry": f"Alucinação detectada na tentativa {tentativa}. Tentando novamente."
+                }, ensure_ascii=False))
+                ultimo_resultado = resultado
+                time.sleep(TEMPO_ENTRE_TENTATIVAS_S)
+                continue
+            elif "Failed to parse tool call" in observacoes:
+                print(json.dumps({
+                    "retry": f"Erro de parse na tentativa {tentativa}. Tentando novamente."
+                }, ensure_ascii=False))
+                ultimo_resultado = resultado
+                time.sleep(TEMPO_ENTRE_TENTATIVAS_S)
+                continue
+            else:
+                # Outros erros: aceita o resultado parcial.
+                print(json.dumps({
+                    "retry": f"Erro não relacionado a alucinação na tentativa {tentativa}. Aceitando resultado parcial."
+                }, ensure_ascii=False))
+                return resultado
+
+        # Se o status for NAO_EXECUTADO, aceita e para.
+        if status == "NAO_EXECUTADO":
+            print(json.dumps({
+                "retry": f"Tarefa não executada na tentativa {tentativa}. Aceitando resultado."
+            }, ensure_ascii=False))
+            return resultado
+
+        ultimo_resultado = resultado
+        time.sleep(TEMPO_ENTRE_TENTATIVAS_S)
+
+    print(json.dumps({
+        "retry": f"Todas as {MAX_TENTATIVAS} tentativas falharam. Retornando último resultado."
+    }, ensure_ascii=False))
+    return ultimo_resultado
+
+
 def main():
     instrucao = os.environ.get("INSTRUCAO", "").strip()
 
@@ -101,12 +170,9 @@ def main():
     else:
         instrucao_final = instrucao
 
-    # --- Execução do agente ---
+    # --- Execução do agente com retry ---
     agente = AgenteTrabalho()
-    resultado = agente.executar(
-        tarefa=instrucao_final,
-        criterio_conclusao="Responda à instrução fornecida pelo usuário da melhor forma possível, usando as ferramentas disponíveis e o contexto da memória (se houver).",
-    )
+    resultado = executar_com_retry(agente, instrucao_final)
 
     # --- AUTOVERIFICAÇÃO 3: Hash depois da execução ---
     hash_depois = calcular_hash_arquivo(caminho_memoria) if memoria_existe else ""
