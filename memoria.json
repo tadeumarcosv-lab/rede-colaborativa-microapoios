@@ -336,6 +336,55 @@
       "descricao": "run_id=4a57140c-9fa2-4564-9a86-087465daf1db; task_id=0c7e01fb-f2de-4de4-8b49-36f910393a64; Conclusão da tarefa V2",
       "resultado": "EXECUTADO_PARCIALMENTE",
       "importancia": "normal"
+    },
+    {
+      "data": "25/10/2026",
+      "hora": "21:45:48",
+      "origem": "AgenteTrabalhoV2",
+      "destino": "MemoriaCentral",
+      "responsavel": "AgenteTrabalho",
+      "descricao": "run_id=049db299-9a93-4280-970d-8c99819fe8a8; task_id=c7128aaa-f42d-4ec7-b93e-20ac1486fce5; Tool call=listar_arquivos; chamada=1",
+      "resultado": "SUCESSO",
+      "importancia": "normal"
+    },
+    {
+      "task_id": "c7128aaa-f42d-4ec7-b93e-20ac1486fce5",
+      "run_id": "049db299-9a93-4280-970d-8c99819fe8a8",
+      "versao_agente": "2.0.0",
+      "tarefa": "### Conhecimento já registrado na memória:\n- {\"categoria\": \"teste_fase_3_persistencia_final\", \"dado\": {\"descricao\": \"Teste de persistência final entre execuções\"}, \"status\": \"hipotese\", \"origem\": {\"tipo\": \"execucao_agente_trabalho_v2\", \"local\": \"agente_trabalho.py\", \"data\": \"2026-10-24T18:21:47.624535+00:00\", \"task_id\": \"951e71b2-790b-42e6-ba77-b517426c6aba\", \"run_id\": \"97e7ae54-7eb4-466c-82ce-0272db6d1ffc\"}, \"confianca\": \"alta\", \"evidencias\": [\"E001\"], \"sha256\": \"74b67f6700815a69e2bea0394fafea16fde50db4a8594cdfeb475d3a434ca3f8\"}\n\n\n### Instrução do usuário:\nListe os arquivos .py na raiz do repositório.",
+      "criterio_conclusao": "Responda à instrução fornecida pelo usuário da melhor forma possível, usando as ferramentas disponíveis e o contexto da memória (se houver).",
+      "resposta": "A tarefa não foi concluída integralmente. Consulte as observações, evidências e alertas.",
+      "status": "EXECUTADO_PARCIALMENTE",
+      "confianca": "insuficiente",
+      "iteracoes": 2,
+      "chamadas_ferramentas": 2,
+      "duracao_ms": 1217,
+      "evidencias": [
+        {
+          "evidencia_id": "E001",
+          "ferramenta": "listar_arquivos",
+          "origem": ".",
+          "data": "2026-10-25T21:45:48.973289+00:00",
+          "sha256": "0a39b85aa8e5a05842ce43f1a277f63d72461b948b498dc1d1d582ea30660ca4",
+          "resumo": "AGENT.md\nAGENTE_ANALISE_RISCOS.md\nAGENTE_APRENDIZADO_CONTINUO.md\nAGENTE_ARMAZENAMENTO.md\nAGENTE_AUDITORIA.md\nAGENTE_AUTOMACAO.md\nAGENTE_BACKUP.md\nAGENTE_CENTRAL.md\nAGENTE_COMUNICACAO.md\nAGENTE_CONHECIMENTO.md\nAGENTE_COORDENACAO.md\nAGENTE_DESCOBERTA_BANCOS.md\nAGENTE_DESCOBERTA_FERRAMENTAS.md\nAGENTE_DOCUMENTACAO.md\nAGENTE_ESTATISTICAS.md\nAGENTE_EXPANSAO.md\nAGENTE_GESTAO_CONHECIMENTO.md\nAGENTE_GOVERNANCA.md\nAGENTE_INTEGRACAO.md\nAGENTE_INTELIGENCIA_ESTRATEGICA.md\nAGENTE_MAPEAMENTO_RECURSOS.md\nAGENTE\n[Conteúdo truncado pelo limite.]"
+        }
+      ],
+      "observacoes": [
+        "Falha no processamento de tool call: RuntimeError: Execução interrompida: duas ações consecutivas com a mesma assinatura."
+      ],
+      "alertas": [],
+      "origem": "agente_trabalho.py",
+      "data": "2026-10-25T21:45:49.625220+00:00"
+    },
+    {
+      "data": "25/10/2026",
+      "hora": "21:45:49",
+      "origem": "AgenteTrabalhoV2",
+      "destino": "MemoriaCentral",
+      "responsavel": "AgenteTrabalho",
+      "descricao": "run_id=049db299-9a93-4280-970d-8c99819fe8a8; task_id=c7128aaa-f42d-4ec7-b93e-20ac1486fce5; Conclusão da tarefa V2",
+      "resultado": "EXECUTADO_PARCIALMENTE",
+      "importancia": "normal"
     }
   ],
   "aprendizados": [],
@@ -363,7 +412,7 @@
   ],
   "contexto": [],
   "estatisticas": {
-    "solicitacoes": 23,
+    "solicitacoes": 26,
     "aprendizados_registrados": 0,
     "decisoes_registradas": 0
   }
