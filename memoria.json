@@ -479,6 +479,122 @@
       "descricao": "run_id=254d6c70-c618-415e-804b-f6a324c38a1e; task_id=f8875323-35c3-456a-a77d-d28db2760ae0; Conclusão da tarefa V2",
       "resultado": "EXECUTADO",
       "importancia": "normal"
+    },
+    {
+      "data": "26/10/2026",
+      "hora": "23:54:50",
+      "origem": "AgenteTrabalhoV2",
+      "destino": "MemoriaCentral",
+      "responsavel": "AgenteTrabalho",
+      "descricao": "run_id=1f914316-0f0d-43e4-859b-091cb5b6e80c; task_id=3c123383-c9a8-45d9-9911-661c930f6f4c; Tool call=ler_arquivo; chamada=1",
+      "resultado": "SUCESSO",
+      "importancia": "normal"
+    },
+    {
+      "task_id": "3c123383-c9a8-45d9-9911-661c930f6f4c",
+      "run_id": "1f914316-0f0d-43e4-859b-091cb5b6e80c",
+      "versao_agente": "2.0.0",
+      "tarefa": "### Conhecimento já registrado na memória:\n- {\"categoria\": \"teste_fase_3_persistencia_final\", \"dado\": {\"descricao\": \"Teste de persistência final entre execuções\"}, \"status\": \"hipotese\", \"origem\": {\"tipo\": \"execucao_agente_trabalho_v2\", \"local\": \"agente_trabalho.py\", \"data\": \"2026-10-24T18:21:47.624535+00:00\", \"task_id\": \"951e71b2-790b-42e6-ba77-b517426c6aba\", \"run_id\": \"97e7ae54-7eb4-466c-82ce-0272db6d1ffc\"}, \"confianca\": \"alta\", \"evidencias\": [\"E001\"], \"sha256\": \"74b67f6700815a69e2bea0394fafea16fde50db4a8594cdfeb475d3a434ca3f8\"}\n\n\n### Instrução do usuário:\nLeia o arquivo tarefa_atual.py e proponha uma alteração mínima para adicionar uma verificação de segurança que verifique se o arquivo memoria.json é um JSON válido antes de executar o agente. Me mostre a proposta de alteração (apenas o trecho que seria modificado), sem alterar o arquivo.",
+      "criterio_conclusao": "Responda à instrução fornecida pelo usuário da melhor forma possível, usando as ferramentas disponíveis e o contexto da memória (se houver).",
+      "resposta": "A tarefa não foi concluída integralmente. Consulte as observações, evidências e alertas.",
+      "status": "EXECUTADO_PARCIALMENTE",
+      "confianca": "insuficiente",
+      "iteracoes": 2,
+      "chamadas_ferramentas": 1,
+      "duracao_ms": 1273,
+      "evidencias": [
+        {
+          "evidencia_id": "E001",
+          "ferramenta": "ler_arquivo",
+          "origem": "tarefa_atual.py",
+          "data": "2026-10-26T23:54:50.796123+00:00",
+          "sha256": "ed60a80d9166b3f7734d4ef9b08f2b73364106083b5ca751a81c3a8ee76bcfea",
+          "resumo": "import json\nimport os\nimport hashlib\nimport time\n\nfrom agente_trabalho import AgenteTrabalho\nfrom gerenciador_memoria import GerenciadorMemoria\n\n\nMAX_TENTATIVAS = 3\nTEMPO_ENTRE_TENTATIVAS_S = 2\n\n\ndef gerar_resumo_markdown(resultado: dict) -> str:\n    \"\"\"Gera um resumo em Markdown para o GitHub Step Summary.\"\"\"\n    linhas = []\n    linhas.append(\"## Resultado da Tarefa\\n\")\n    linhas.append(f\"**Status:** `{resultado.get('status', 'N/A')}`\\n\")\n    linhas.append(f\"**Confiança:** `{resultado.get('con\n[Conteúdo truncado pelo limite.]"
+        }
+      ],
+      "observacoes": [
+        "Falha na consulta ou interpretação da IA: RuntimeError: Falha na consulta à IA: HTTP 400; message=Failed to parse tool call arguments as JSON; type=invalid_request_error; failed_generation={\"name\": \"registrar_conhecimento<|channel|>commentary\", \"arguments\": {\"categoria\":\"proposta_alteracao\",\"confianca\":\"alta\",\"dado\":{\"trecho\":\"# Adicionar verificação de JSON válido antes da execução\\n    if memoria_existe:\\n        try:\\n            with open(caminho_memoria, 'r', encoding='utf-8') as f:\\n                json.load(f)\\n            json_valido = True\\n        except Exception:\\n            json_valido = False\\n        print(json.dumps({\\n            \\\"autoverificacao\\\": \\\"0. memoria.json é JSON válido\\\",\\n            \\\"resultado\\\": json_valido\\n        }, ensure_ascii=False))\\n        if not json_valido:\\n            print(json.dumps({\\n                \\\"erro\\\": \\\"memoria.json contém dados inválidos JSON.\\\",\\n                \\\"status\\\": \\\"NAO_EXECUTADO\\\"\\n            }, ensure_ascii=False, indent=2))\\n            return\\n\",\"evidencias\":[\"E001\"],\"status\":\"proposta\"}\"}"
+      ],
+      "alertas": [],
+      "origem": "agente_trabalho.py",
+      "data": "2026-10-26T23:54:51.587649+00:00"
+    },
+    {
+      "data": "26/10/2026",
+      "hora": "23:54:51",
+      "origem": "AgenteTrabalhoV2",
+      "destino": "MemoriaCentral",
+      "responsavel": "AgenteTrabalho",
+      "descricao": "run_id=1f914316-0f0d-43e4-859b-091cb5b6e80c; task_id=3c123383-c9a8-45d9-9911-661c930f6f4c; Conclusão da tarefa V2",
+      "resultado": "EXECUTADO_PARCIALMENTE",
+      "importancia": "normal"
+    },
+    {
+      "data": "26/10/2026",
+      "hora": "23:54:53",
+      "origem": "AgenteTrabalhoV2",
+      "destino": "MemoriaCentral",
+      "responsavel": "AgenteTrabalho",
+      "descricao": "run_id=8d64db8d-14ba-408a-98ca-6e8b8437540b; task_id=65ad1297-76df-42fd-b5a0-9129752d3ea6; Tool call=ler_arquivo; chamada=1",
+      "resultado": "SUCESSO",
+      "importancia": "normal"
+    },
+    {
+      "data": "26/10/2026",
+      "hora": "23:55:15",
+      "origem": "AgenteTrabalhoV2",
+      "destino": "MemoriaCentral",
+      "responsavel": "AgenteTrabalho",
+      "descricao": "run_id=8d64db8d-14ba-408a-98ca-6e8b8437540b; task_id=65ad1297-76df-42fd-b5a0-9129752d3ea6; Conhecimento registrado; categoria=alteracao_proposta; status=proposta",
+      "resultado": "SUCESSO",
+      "importancia": "normal"
+    },
+    {
+      "data": "26/10/2026",
+      "hora": "23:55:15",
+      "origem": "AgenteTrabalhoV2",
+      "destino": "MemoriaCentral",
+      "responsavel": "AgenteTrabalho",
+      "descricao": "run_id=8d64db8d-14ba-408a-98ca-6e8b8437540b; task_id=65ad1297-76df-42fd-b5a0-9129752d3ea6; Tool call=registrar_conhecimento; chamada=2",
+      "resultado": "SUCESSO",
+      "importancia": "normal"
+    },
+    {
+      "task_id": "65ad1297-76df-42fd-b5a0-9129752d3ea6",
+      "run_id": "8d64db8d-14ba-408a-98ca-6e8b8437540b",
+      "versao_agente": "2.0.0",
+      "tarefa": "### Conhecimento já registrado na memória:\n- {\"categoria\": \"teste_fase_3_persistencia_final\", \"dado\": {\"descricao\": \"Teste de persistência final entre execuções\"}, \"status\": \"hipotese\", \"origem\": {\"tipo\": \"execucao_agente_trabalho_v2\", \"local\": \"agente_trabalho.py\", \"data\": \"2026-10-24T18:21:47.624535+00:00\", \"task_id\": \"951e71b2-790b-42e6-ba77-b517426c6aba\", \"run_id\": \"97e7ae54-7eb4-466c-82ce-0272db6d1ffc\"}, \"confianca\": \"alta\", \"evidencias\": [\"E001\"], \"sha256\": \"74b67f6700815a69e2bea0394fafea16fde50db4a8594cdfeb475d3a434ca3f8\"}\n\n\n### Instrução do usuário:\nLeia o arquivo tarefa_atual.py e proponha uma alteração mínima para adicionar uma verificação de segurança que verifique se o arquivo memoria.json é um JSON válido antes de executar o agente. Me mostre a proposta de alteração (apenas o trecho que seria modificado), sem alterar o arquivo.",
+      "criterio_conclusao": "Responda à instrução fornecida pelo usuário da melhor forma possível, usando as ferramentas disponíveis e o contexto da memória (se houver).",
+      "resposta": "Para garantir que o arquivo memoria.json seja um JSON válido antes de executar o agente, insira o bloco de verificação abaixo logo após a verificação de existência do arquivo e antes da criação do AgenteTrabalho:\n\n```python\n    # --- AUTOVERIFICAÇÃO 2.5: Verificar se memoria.json é JSON válido ---\n    if memoria_existe:\n        try:\n            with open(caminho_memoria, 'r', encoding='utf-8') as f:\n                json.load(f)\n        except Exception as e:\n            print(json.dumps({\n                \"erro\": f\"memoria.json não é JSON válido: {e}\",\n                \"status\": \"NAO_EXECUTADO\"\n            }, ensure_ascii=False, indent=2))\n            return\n```\n\nEsta alteração mínima garante que o fluxo só prosseguirá quando o arquivo estiver bem‑formado.",
+      "status": "EXECUTADO",
+      "confianca": "alta",
+      "iteracoes": 3,
+      "chamadas_ferramentas": 2,
+      "duracao_ms": 51117,
+      "evidencias": [
+        {
+          "evidencia_id": "E001",
+          "ferramenta": "ler_arquivo",
+          "origem": "tarefa_atual.py",
+          "data": "2026-10-26T23:54:53.996344+00:00",
+          "sha256": "ed60a80d9166b3f7734d4ef9b08f2b73364106083b5ca751a81c3a8ee76bcfea",
+          "resumo": "import json\nimport os\nimport hashlib\nimport time\n\nfrom agente_trabalho import AgenteTrabalho\nfrom gerenciador_memoria import GerenciadorMemoria\n\n\nMAX_TENTATIVAS = 3\nTEMPO_ENTRE_TENTATIVAS_S = 2\n\n\ndef gerar_resumo_markdown(resultado: dict) -> str:\n    \"\"\"Gera um resumo em Markdown para o GitHub Step Summary.\"\"\"\n    linhas = []\n    linhas.append(\"## Resultado da Tarefa\\n\")\n    linhas.append(f\"**Status:** `{resultado.get('status', 'N/A')}`\\n\")\n    linhas.append(f\"**Confiança:** `{resultado.get('con\n[Conteúdo truncado pelo limite.]"
+        }
+      ],
+      "observacoes": [],
+      "alertas": [],
+      "origem": "agente_trabalho.py",
+      "data": "2026-10-26T23:55:44.707538+00:00"
+    },
+    {
+      "data": "26/10/2026",
+      "hora": "23:55:44",
+      "origem": "AgenteTrabalhoV2",
+      "destino": "MemoriaCentral",
+      "responsavel": "AgenteTrabalho",
+      "descricao": "run_id=8d64db8d-14ba-408a-98ca-6e8b8437540b; task_id=65ad1297-76df-42fd-b5a0-9129752d3ea6; Conclusão da tarefa V2",
+      "resultado": "EXECUTADO",
+      "importancia": "normal"
     }
   ],
   "aprendizados": [],
@@ -502,11 +618,28 @@
         "E001"
       ],
       "sha256": "74b67f6700815a69e2bea0394fafea16fde50db4a8594cdfeb475d3a434ca3f8"
+    },
+    {
+      "categoria": "alteracao_proposta",
+      "dado": "Adicionar bloco:\n    try:\n        with open(caminho_memoria, 'r', encoding='utf-8') as f:\n            json.load(f)\n    except Exception as e:\n        print(json.dumps({\n            \"erro\": f\"memoria.json não é JSON válido: {e}\",\n            \"status\": \"NAO_EXECUTADO\"\n        }, ensure_ascii=False, indent=2))\n        return\n",
+      "status": "proposta",
+      "origem": {
+        "tipo": "execucao_agente_trabalho_v2",
+        "local": "agente_trabalho.py",
+        "data": "2026-10-26T23:55:15.782972+00:00",
+        "task_id": "65ad1297-76df-42fd-b5a0-9129752d3ea6",
+        "run_id": "8d64db8d-14ba-408a-98ca-6e8b8437540b"
+      },
+      "confianca": "alta",
+      "evidencias": [
+        "E001"
+      ],
+      "sha256": "62b98a6208dd81f91770ca6d9bf0e3ad92d71b5db7d76352462d5b675fcb4b69"
     }
   ],
   "contexto": [],
   "estatisticas": {
-    "solicitacoes": 32,
+    "solicitacoes": 40,
     "aprendizados_registrados": 0,
     "decisoes_registradas": 0
   }
