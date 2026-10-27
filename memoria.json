@@ -595,6 +595,53 @@
       "descricao": "run_id=8d64db8d-14ba-408a-98ca-6e8b8437540b; task_id=65ad1297-76df-42fd-b5a0-9129752d3ea6; Conclusão da tarefa V2",
       "resultado": "EXECUTADO",
       "importancia": "normal"
+    },
+    {
+      "data": "27/10/2026",
+      "hora": "13:48:21",
+      "origem": "AgenteTrabalhoV2",
+      "destino": "MemoriaCentral",
+      "responsavel": "AgenteTrabalho",
+      "descricao": "run_id=346aa864-6c13-4383-badc-4b645288388a; task_id=37fcf634-23fd-4861-9761-a194a2d96608; Tool call=extrair_metadados; chamada=1",
+      "resultado": "SUCESSO",
+      "importancia": "normal"
+    },
+    {
+      "task_id": "37fcf634-23fd-4861-9761-a194a2d96608",
+      "run_id": "346aa864-6c13-4383-badc-4b645288388a",
+      "versao_agente": "2.0.0",
+      "tarefa": "### Conhecimento já registrado na memória:\n- {\"categoria\": \"teste_fase_3_persistencia_final\", \"dado\": {\"descricao\": \"Teste de persistência final entre execuções\"}, \"status\": \"hipotese\", \"origem\": {\"tipo\": \"execucao_agente_trabalho_v2\", \"local\": \"agente_trabalho.py\", \"data\": \"2026-10-24T18:21:47.624535+00:00\", \"task_id\": \"951e71b2-790b-42e6-ba77-b517426c6aba\", \"run_id\": \"97e7ae54-7eb4-466c-82ce-0272db6d1ffc\"}, \"confianca\": \"alta\", \"evidencias\": [\"E001\"], \"sha256\": \"74b67f6700815a69e2bea0394fafea16fde50db4a8594cdfeb475d3a434ca3f8\"}\n- {\"categoria\": \"alteracao_proposta\", \"dado\": \"Adicionar bloco:\\n    try:\\n        with open(caminho_memoria, 'r', encoding='utf-8') as f:\\n            json.load(f)\\n    except Exception as e:\\n        print(json.dumps({\\n            \\\"erro\\\": f\\\"memoria.json não é JSON válido: {e}\\\",\\n            \\\"status\\\": \\\"NAO_EXECUTADO\\\"\\n        }, ensure_ascii=False, indent=2))\\n        return\\n\", \"status\": \"proposta\", \"origem\": {\"tipo\": \"execucao_agente_trabalho_v2\", \"local\": \"agente_trabalho.py\", \"data\": \"2026-10-26T23:55:15.782972+00:00\", \"task_id\": \"65ad1297-76df-42fd-b5a0-9129752d3ea6\", \"run_id\": \"8d64db8d-14ba-408a-98ca-6e8b8437540b\"}, \"confianca\": \"alta\", \"evidencias\": [\"E001\"], \"sha256\": \"62b98a6208dd81f91770ca6d9bf0e3ad92d71b5db7d76352462d5b675fcb4b69\"}\n\n\n### Instrução do usuário:\nUse a ferramenta extrair_metadados no arquivo integrador_de_autoconstrucao.py e me mostre a lista de funções e classes definidas nele. Depois, me diga se ele parece fazer autoconstrução controlada (identificar necessidade, propor solução) ou se é apenas um esqueleto.",
+      "criterio_conclusao": "Responda à instrução fornecida pelo usuário da melhor forma possível, usando as ferramentas disponíveis e o contexto da memória (se houver).",
+      "resposta": "O arquivo integrador_de_autoconstrucao.py contém a classe IntegradorDeAutoconstrucao e as seguintes funções definidas dentro dela: __init__, registrar, verificar, integrar, validar, finalizar e executar. Os nomes das funções indicam apenas um esqueleto de fluxo de processo (registro, verificação, integração, validação, finalização e execução) sem evidência de lógica específica de necessidade ou solução de autoconstrução controlada. Portanto, o arquivo parece ser apenas um esqueleto ou template, e não uma implementação completa de autoconstrução controlada.",
+      "status": "EXECUTADO",
+      "confianca": "media",
+      "iteracoes": 2,
+      "chamadas_ferramentas": 1,
+      "duracao_ms": 1273,
+      "evidencias": [
+        {
+          "evidencia_id": "E001",
+          "ferramenta": "extrair_metadados",
+          "origem": "integrador_de_autoconstrucao.py",
+          "data": "2026-10-27T13:48:21.680439+00:00",
+          "sha256": "62443cdd9712a09fd2ff414c88033a3d43dd3e9f2225039eb800d4c0de9d9d8e",
+          "resumo": "{\"bytes\": 1509, \"caminho\": \"integrador_de_autoconstrucao.py\", \"classes\": [\"IntegradorDeAutoconstrucao\"], \"extensao\": \".py\", \"funcoes\": [\"__init__\", \"registrar\", \"verificar\", \"integrar\", \"validar\", \"finalizar\", \"executar\"], \"imports\": [\"datetime\"], \"linhas\": 79, \"modificado_em\": \"2026-10-27T13:48:15.564683+00:00\", \"sintaxe_python_valida\": true}"
+        }
+      ],
+      "observacoes": [],
+      "alertas": [],
+      "origem": "agente_trabalho.py",
+      "data": "2026-10-27T13:48:22.485075+00:00"
+    },
+    {
+      "data": "27/10/2026",
+      "hora": "13:48:22",
+      "origem": "AgenteTrabalhoV2",
+      "destino": "MemoriaCentral",
+      "responsavel": "AgenteTrabalho",
+      "descricao": "run_id=346aa864-6c13-4383-badc-4b645288388a; task_id=37fcf634-23fd-4861-9761-a194a2d96608; Conclusão da tarefa V2",
+      "resultado": "EXECUTADO",
+      "importancia": "normal"
     }
   ],
   "aprendizados": [],
@@ -639,7 +686,7 @@
   ],
   "contexto": [],
   "estatisticas": {
-    "solicitacoes": 40,
+    "solicitacoes": 43,
     "aprendizados_registrados": 0,
     "decisoes_registradas": 0
   }
