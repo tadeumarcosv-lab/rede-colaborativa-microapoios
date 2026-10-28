@@ -1,5 +1,7 @@
 {
-  "primeira_ativacao": {},
+  "primeira_ativacao": {
+    "agente_trabalho": true
+  },
   "vetados": [],
   "fixados": [],
   "historico_decisoes": []
