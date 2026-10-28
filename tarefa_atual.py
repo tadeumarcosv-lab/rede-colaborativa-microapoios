@@ -4,7 +4,9 @@ import hashlib
 import time
 
 from agente_trabalho import AgenteTrabalho
+from agente_trabalho_reserva import AgenteTrabalho as AgenteTrabalhoReserva
 from gerenciador_memoria import GerenciadorMemoria
+from nucleo_operacional.painel_agentes import painel
 
 
 MAX_TENTATIVAS = 3
@@ -74,7 +76,45 @@ def calcular_hash_arquivo(caminho: str) -> str:
         return ""
 
 
-def executar_com_retry(agente: AgenteTrabalho, instrucao_final: str) -> dict:
+def obter_agente_para_execucao():
+    """Seleciona o agente (principal ou reserva) com base no painel de autoridade."""
+    estado_principal = painel.status_agente("agente_trabalho")
+    estado_reserva = painel.status_agente("agente_trabalho_reserva")
+
+    if estado_principal == "ATIVO":
+        print(json.dumps({
+            "selecao_agente": "Usando agente_trabalho (principal)"
+        }, ensure_ascii=False))
+        return AgenteTrabalho()
+
+    if estado_reserva == "ATIVO":
+        print(json.dumps({
+            "selecao_agente": "Usando agente_trabalho_reserva (reserva)"
+        }, ensure_ascii=False))
+        return AgenteTrabalhoReserva()
+
+    # Se nenhum estiver ativo, tenta ativar o principal (se já foi aprovado)
+    tentativa = painel.ativar_agente("agente_trabalho")
+    if tentativa.get("sucesso"):
+        print(json.dumps({
+            "selecao_agente": "Ativando agente_trabalho (principal)"
+        }, ensure_ascii=False))
+        return AgenteTrabalho()
+
+    # Se não conseguiu ativar, tenta o reserva
+    tentativa = painel.ativar_agente("agente_trabalho_reserva")
+    if tentativa.get("sucesso"):
+        print(json.dumps({
+            "selecao_agente": "Ativando agente_trabalho_reserva (reserva)"
+        }, ensure_ascii=False))
+        return AgenteTrabalhoReserva()
+
+    raise RuntimeError(
+        "Nenhum agente disponível. O humano precisa ativar o principal ou o reserva."
+    )
+
+
+def executar_com_retry(agente, instrucao_final: str) -> dict:
     """Executa o agente com retry automático para lidar com alucinação da IA."""
     ultimo_resultado = None
 
@@ -91,7 +131,6 @@ def executar_com_retry(agente: AgenteTrabalho, instrucao_final: str) -> dict:
         status = resultado.get("status", "")
         observacoes = " ".join(resultado.get("observacoes", []))
 
-        # Se o status for EXECUTADO ou PROPOSTO, aceita e para.
         if status in ("EXECUTADO", "PROPOSTO"):
             print(json.dumps({
                 "retry": f"Sucesso na tentativa {tentativa}",
@@ -99,7 +138,6 @@ def executar_com_retry(agente: AgenteTrabalho, instrucao_final: str) -> dict:
             }, ensure_ascii=False))
             return resultado
 
-        # Se o status for EXECUTADO_PARCIALMENTE, verifica se foi por alucinação.
         if status == "EXECUTADO_PARCIALMENTE":
             if "Ferramenta solicitada não permitida" in observacoes:
                 print(json.dumps({
@@ -123,13 +161,11 @@ def executar_com_retry(agente: AgenteTrabalho, instrucao_final: str) -> dict:
                 time.sleep(TEMPO_ENTRE_TENTATIVAS_S)
                 continue
             else:
-                # Outros erros: aceita o resultado parcial.
                 print(json.dumps({
                     "retry": f"Erro não relacionado a alucinação na tentativa {tentativa}. Aceitando resultado parcial."
                 }, ensure_ascii=False))
                 return resultado
 
-        # Se o status for NAO_EXECUTADO, aceita e para.
         if status == "NAO_EXECUTADO":
             print(json.dumps({
                 "retry": f"Tarefa não executada na tentativa {tentativa}. Aceitando resultado."
@@ -177,8 +213,17 @@ def main():
     else:
         instrucao_final = instrucao
 
+    # --- Seleção do agente (principal ou reserva) ---
+    try:
+        agente = obter_agente_para_execucao()
+    except Exception as e:
+        print(json.dumps({
+            "erro": str(e),
+            "status": "NAO_EXECUTADO"
+        }, ensure_ascii=False, indent=2))
+        return
+
     # --- Execução do agente com retry ---
-    agente = AgenteTrabalho()
     resultado = executar_com_retry(agente, instrucao_final)
 
     # --- AUTOVERIFICAÇÃO 3: Hash depois da execução ---
