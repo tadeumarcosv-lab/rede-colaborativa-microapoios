@@ -1,0 +1,41 @@
+name: Workflow Base Reutilizável
+
+on:
+  workflow_call:
+    inputs:
+      script:
+        description: 'Nome do script Python a ser executado'
+        required: true
+        type: string
+      dependencias:
+        description: 'Dependências a instalar (separadas por espaço)'
+        required: false
+        type: string
+        default: 'groq requests'
+    secrets:
+      GROQ_API_KEY:
+        required: true
+
+jobs:
+  executar:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout do código
+        uses: actions/checkout@v4
+
+      - name: Configurar Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+
+      - name: Instalar dependências
+        run: |
+          python -m pip install --upgrade pip
+          pip install ${{ inputs.dependencias }}
+
+      - name: Executar script
+        env:
+          GROQ_API_KEY: ${{ secrets.GROQ_API_KEY }}
+        run: |
+          python ${{ inputs.script }}
