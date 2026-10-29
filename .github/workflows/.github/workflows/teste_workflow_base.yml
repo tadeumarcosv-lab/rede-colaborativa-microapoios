@@ -1,0 +1,13 @@
+name: Teste do Workflow Base
+
+on:
+  workflow_dispatch:
+
+jobs:
+  chamar_base:
+    uses: ./.github/workflows/workflow_base.yml
+    with:
+      script: 'tarefa_atual.py'
+      dependencias: 'groq requests'
+    secrets:
+      GROQ_API_KEY: ${{ secrets.GROQ_API_KEY }}
