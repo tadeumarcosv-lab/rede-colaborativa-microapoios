@@ -1,0 +1,32 @@
+name: Copiar Todos os .md da Raiz
+
+on:
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+jobs:
+  copiar:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout do código
+        uses: actions/checkout@v4
+
+      - name: Configurar Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+
+      - name: Executar script de cópia
+        run: |
+          python copiar_todos_md.py
+
+      - name: Commitar arquivo consolidado
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "github-actions[bot]@users.noreply.github.com"
+          git add docs/TODOS_OS_MD.md
+          git commit -m "chore: consolida todos os .md da raiz em docs/TODOS_OS_MD.md [skip ci]" || echo "Sem alterações"
+          git push
