@@ -2950,6 +2950,81 @@
       "descricao": "run_id=68666642-190c-4492-af35-6d1813532443; task_id=9f1c8128-a8fd-4fff-8ea5-6289251ef6f3; Conclusão da tarefa V2",
       "resultado": "EXECUTADO",
       "importancia": "normal"
+    },
+    {
+      "data": "30/10/2026",
+      "hora": "11:38:56",
+      "origem": "AgenteTrabalhoV2",
+      "destino": "MemoriaCentral",
+      "responsavel": "AgenteTrabalho",
+      "descricao": "run_id=e34fe739-5a7f-4780-9f52-0f7b4ccd9713; task_id=7fba1fdb-2b13-46c7-856a-e6c91f535385; Tool call=ler_arquivo; chamada=1",
+      "resultado": "FALHA",
+      "importancia": "alta"
+    },
+    {
+      "data": "30/10/2026",
+      "hora": "11:38:57",
+      "origem": "AgenteTrabalhoV2",
+      "destino": "MemoriaCentral",
+      "responsavel": "AgenteTrabalho",
+      "descricao": "run_id=e34fe739-5a7f-4780-9f52-0f7b4ccd9713; task_id=7fba1fdb-2b13-46c7-856a-e6c91f535385; Tool call=listar_arquivos; chamada=2",
+      "resultado": "SUCESSO",
+      "importancia": "normal"
+    },
+    {
+      "data": "30/10/2026",
+      "hora": "11:38:57",
+      "origem": "AgenteTrabalhoV2",
+      "destino": "MemoriaCentral",
+      "responsavel": "AgenteTrabalho",
+      "descricao": "run_id=e34fe739-5a7f-4780-9f52-0f7b4ccd9713; task_id=7fba1fdb-2b13-46c7-856a-e6c91f535385; Tool call=ler_arquivo; chamada=3",
+      "resultado": "SUCESSO",
+      "importancia": "normal"
+    },
+    {
+      "task_id": "7fba1fdb-2b13-46c7-856a-e6c91f535385",
+      "run_id": "e34fe739-5a7f-4780-9f52-0f7b4ccd9713",
+      "versao_agente": "2.0.0",
+      "tarefa": "### Conhecimento já registrado na memória:\n- {\"categoria\": \"teste_fase_3_persistencia_final\", \"dado\": {\"descricao\": \"Teste de persistência final entre execuções\"}, \"status\": \"hipotese\", \"origem\": {\"tipo\": \"execucao_agente_trabalho_v2\", \"local\": \"agente_trabalho.py\", \"data\": \"2026-10-24T18:21:47.624535+00:00\", \"task_id\": \"951e71b2-790b-42e6-ba77-b517426c6aba\", \"run_id\": \"97e7ae54-7eb4-466c-82ce-0272db6d1ffc\"}, \"confianca\": \"alta\", \"evidencias\": [\"E001\"], \"sha256\": \"74b67f6700815a69e2bea0394fafea16fde50db4a8594cdfeb475d3a434ca3f8\"}\n- {\"categoria\": \"alteracao_proposta\", \"dado\": \"Adicionar bloco:\\n    try:\\n        with open(caminho_memoria, 'r', encoding='utf-8') as f:\\n            json.load(f)\\n    except Exception as e:\\n        print(json.dumps({\\n            \\\"erro\\\": f\\\"memoria.json não é JSON válido: {e}\\\",\\n            \\\"status\\\": \\\"NAO_EXECUTADO\\\"\\n        }, ensure_ascii=False, indent=2))\\n        return\\n\", \"status\": \"proposta\", \"origem\": {\"tipo\": \"execucao_agente_trabalho_v2\", \"local\": \"agente_trabalho.py\", \"data\": \"2026-10-26T23:55:15.782972+00:00\", \"task_id\": \"65ad1297-76df-42fd-b5a0-9129752d3ea6\", \"run_id\": \"8d64db8d-14ba-408a-98ca-6e8b8437540b\"}, \"confianca\": \"alta\", \"evidencias\": [\"E001\"], \"sha256\": \"62b98a6208dd81f91770ca6d9bf0e3ad92d71b5db7d76352462d5b675fcb4b69\"}\n- {\"categoria\": \"constituicao_rede\", \"dado\": \"# CONSTITUIÇÃO DA REDE COLABORATIVA DE MICROAPOIOS\\n\\n## MISSÃO\\n\\nA Rede Colaborativa de Microapoios existe para ajudar pessoas a melhorar sua qualidade de vida através da colaboração, do conhecimento, da tecnologia e da Inteligência Artificial.\\n\\nSeu principal objetivo é reduzir dificuldades financeiras de forma ética, transparente, segura e sustentável.\\n\\n---\\n\\n## PRINCÍPIOS FUNDAMENTAIS\\n\\n1. Ajudar pessoas sempre que possível.\\n\\n2. Transparência em todas as ações.\\n\\n3. Segurança acima de velocidade.\\n\\n4. Evolução contínua.\\n\\n5. Nenhuma informação importante poderá ser perdida.\\n\\n6. Toda melhoria deverá fortalecer o sistema.\\n\\n7. Nenhum agente deverá depender exclusivamente de outro agente.\\n\\n8. Sempre que possível haverá redundância.\\n\\n9. O ser humano permanecerá no controle das decisões importantes.\\n\\n10. Toda evolução deverá respeitar a legislação vigente e princípios éticos.\\n\\n---\\n\\n## VISÃO\\n\\nConstruir uma organização digital composta por agentes especializados capazes de colaborar entre si para criar conhecimento, organizar informações, desenvolver novos agentes, orientar participantes e apoiar a geração de oportunidades de maneira contínua.\\n\\n---\\n\\n## ORGANIZAÇÃO\\n\\nA Rede será organizada em Departamentos.\\n\\nCada Departamento poderá possuir diversos agentes especializados.\\n\\nTodos trabalharão de forma coordenada através do Núcleo Executivo.\\n\\n---\\n\\n## EVOLUÇÃO\\n\\nO sistema será desenvolvido em etapas.\\n\\nTudo que puder ser implementado posteriormente poderá ser adicionado futuramente sem comprometer a estrutura principal.\\n\\nA arquitetura deverá permitir crescimento contínuo durante muitos anos.\\n\\n---\\n\\n## RESPONSÁVEL\\n\\nFundador:\\n\\nTadeu Marcos Viana\\n\", \"status\": \"fato_verificado\", \"origem\": {\"tipo\": \"execucao_agente_trabalho_v2\", \"local\": \"agente_trabalho.py\", \"data\": \"2026-10-29T23:35:42.262812+00:00\", \"task_id\": \"c4a09fad-0221-42be-9df2-9e6cbf20933f\", \"run_id\": \"d4844375-bb10-478f-ac6d-8b09b02ac13b\"}, \"confianca\": \"alta\", \"evidencias\": [\"E001\"], \"sha256\": \"71ce983673c30fb152a278e2e555471196da83d8e27dbe1fad78e086706e7dfa\"}\n\n\n### Instrução do usuário:\nLeia o arquivo docs/FASE_10_AUTOCONSTRUCAO_CONCLUIDA.md e me mostre o conteúdo completo.",
+      "criterio_conclusao": "Responda à instrução fornecida pelo usuário da melhor forma possível, usando as ferramentas disponíveis e o contexto da memória (se houver).",
+      "resposta": "# FASE 10 — AUTOCONSTRUÇÃO CONTROLADA: CONCLUSÃO OFICIAL\n\n**Data:** 28/10/2026\n**Registro Estrutural:** 0094\n**Status:** ✅ **CONCLUÍDA COM SUCESSO ABSOLUTO**\n\n---\n\n## 1. Objetivo da Fase 10\n\nO objetivo era implementar a **Autoconstrução Controlada**: permitir que o sistema identificasse necessidades, propusesse soluções e as executasse, mas **sempre com aprovação humana** e **com redundância** (arquivos reserva e chaves de controle).\n\n---\n\n## 2. O que foi descoberto (Investigação)\n\nDurante a investigação, descobrimos que:\n\n1.  O `supervisor.py` **não é** um controlador de componentes (é um monitor passivo).\n2.  O `painel_agentes.py` **já tinha** funções básicas de ligar/desligar agentes.\n3.  O `config_nucleo.py` tem chaves, mas não é usado no fluxo principal.\n4.  A pasta `backup/` tem apenas um README (não é um gerenciador funcional).\n5.  Não existia um arquivo reserva para o `agente_trabalho.py`.\n\n---\n\n## 3. A Solução Implementada\n\nA solução foi dividida em três partes:\n\n### 3.1. Expansão do Painel de Agentes (`painel_agentes.py`)\n*   Adicionamos a **Camada 1 (Autoridade Humana)**: apenas o Tadeu pode ativar um agente pela primeira vez, vetar ou fixar.\n*   Adicionamos a **Camada 2 (Controle Automático)**: o sistema pode ligar/desligar agentes já aprovados, respeitando os vetos e fixações.\n*   Criamos o arquivo `redundancia/autoridade_humana.json` para armazenar as decisões do Tadeu.\n\n### 3.2. Criação do Arquivo Reserva (`agente_trabalho_reserva.py`)\n*   Criamos uma cópia idêntica do `agente_trabalho.py` na raiz do repositório.\n*   O reserva está pronto para assumir se o principal falhar.\n\n### 3.3. Integração com o `tarefa_atual.py`\n*   O `tarefa_atual.py` agora consulta o `painel_agentes.py` antes de executar.\n*   Se o agente principal estiver ativo, ele é usado. Se não, o reserva é tentado.\n*   Se nenhum estiver ativo, o sistema bloqueia a execução e informa que o humano precisa ativar.\n\n---\n\n## 4. Evidências da Conclusão\n\n### Teste A — Bloqueio por Autoridade (Workflow #50)\n*   **Instrução:** Listar arquivos `.py`.\n*   **Resultado:** O sistema bloqueou a execução porque nenhum agente estava ativo.\n*   **Mensagem:** `\"Nenhum agente disponível. O humano precisa ativar o principal ou o reserva.\"`\n*   **Conclusão:** A Camada 1 (Autoridade Humana) está funcionando.\n\n### Teste B — Ativação e Execução (Workflow #51)\n*   **Instrução:** Listar arquivos `.py`.\n*   **Resultado:** O sistema selecionou o `agente_trabalho` (principal) e executou a tarefa com sucesso.\n*   **Status:** `EXECUTADO` com `confianca: alta`.\n*   **Evidência:** A lista de arquivos inclui o `agente_trabalho_reserva.py` (prova de que a reserva existe).\n*   **Conclusão:** A Camada 2 (Controle Automático) está funcionando.\n\n---\n\n## 5. O que foi Validado (FATO_VERIFICADO)\n\n*   **Camada 1 (Autoridade Humana):** O humano controla a primeira ativação, vetos e fixações.\n*   **Camada 2 (Controle Automático):** O sistema liga/desliga agentes já aprovados.\n*   **Redundância:** O arquivo reserva existe e está pronto.\n*   **Integração:** O `tarefa_atual.py` respeita o painel de agentes.\n\n---\n\n## 6. O que Permanece Validado da V2\n\nA V2 continua válida nos componentes que já haviam sido testados:\n*   Leitura de arquivos (`ler_arquivo`).\n*   Listagem (`listar_arquivos`).\n*   Busca textual (`buscar_texto`).\n*   Extração de metadados (`extrair_metadados`).\n*   Controle de repetição (SHA-256).\n*   Timeout cooperativo (60s).\n*   Tratamento de falhas.\n*   Controle de confiança.\n*   Proteção contra prompt injection.\n*   Produção de evidências e proveniência.\n\n---\n\n## 7. Impacto da Correção\n\n*   **Arquivos alterados:** `nucleo_operacional/painel_agentes.py`, `tarefa_atual.py`.\n*   **Arquivos criados:** `redundancia/autoridade_humana.json`, `agente_trabalho_reserva.py`.\n*   **Arquivos NÃO alterados:** `agente_trabalho.py`, `camada_ia.py`, `agente_ia.py`.\n*   **Custo:** R$ 0 (gratuito).\n*   **Risco:** Baixo (a integração foi testada e o bloqueio por autoridade funciona).\n\n---\n\n## 8. Limitações Conhecidas\n\n*   A troca automática de reserva (quando o principal falha) ainda não foi implementada. Por enquanto, a troca é manual (o humano ativa o reserva no `autoridade_humana.json`).\n*   A economia de recursos (Camada 3 - Ociosidade) ainda não foi implementada. Os agentes ficam ativos mesmo quando não há tarefas.\n\n---\n\n## 9. Próximos Passos\n\n*   **Fase 11 — Otimização Global:** Mapear o que ainda está manual, o que se repete e o que pode ser automatizado.\n*   **Fase 12 — Novo Mapa de Evolução:** Produzir um novo mapa do sistema após as fases 1-11.\n*   **Implementação da Camada 3 (Ociosidade):** Desligar agentes quando não há tarefas, para economizar recursos.\n\n---\n\n## 10. Conclusão\n\nA Fase 10 foi concluída com sucesso. O sistema agora tem:\n*   **Controle de autoridade humana** (Camada 1).\n*   **Controle automático de estado** (Camada 2).\n*   **Redundância do núcleo** (arquivo reserva).\n*   **Integração do painel com o `tarefa_atual.py`**.\n\nEste é um marco histórico para o projeto: a **autoconstrução controlada** está funcionando. O sistema pode evoluir, mas sempre com a supervisão humana e com a segurança da redundância.\n\n**Fim do registro da Fase 10.**",
+      "status": "EXECUTADO",
+      "confianca": "alta",
+      "iteracoes": 4,
+      "chamadas_ferramentas": 3,
+      "duracao_ms": 30595,
+      "evidencias": [
+        {
+          "evidencia_id": "E001",
+          "ferramenta": "listar_arquivos",
+          "origem": "docs",
+          "data": "2026-10-30T11:38:57.128957+00:00",
+          "sha256": "b3d022cc42f3e49fe9dde21807c2b0d39cab552975d8f11e4abf0f415447f4ff",
+          "resumo": "docs/BIBLIOTECA_TAREFAS.md\ndocs/CONHECIMENTO_FUNDAMENTAL_DOS_MICROAPOIOS_PARA_AGENTES_IA.md\ndocs/FASE_3_MEMORIA_CONCLUIDA.md\ndocs/INDEX.md\ndocs/PROTOCOLO_REDUNDANCIA.md\ndocs/VALIDACAO_TESTE_1_V2.md\ndocs/VALIDACAO_V1_AGENTE_IA.md\ndocs/VALIDACAO_V2_AGENTE_TRABALHO.md\ndocs/docs/FASE_10_AUTOCONSTRUCAO_CONCLUIDA.md\ndocs/docs/FASE_11_OTIMIZACAO_CONCLUIDA.md\ndocs/docs/FASE_12_MAPA_FINAL.md"
+        },
+        {
+          "evidencia_id": "E002",
+          "ferramenta": "ler_arquivo",
+          "origem": "docs/docs/FASE_10_AUTOCONSTRUCAO_CONCLUIDA.md",
+          "data": "2026-10-30T11:38:57.543107+00:00",
+          "sha256": "29c7e4ef5ac027c456772799c1c336b68b54265d8b27aa1ec21974f287d9750a",
+          "resumo": "# FASE 10 — AUTOCONSTRUÇÃO CONTROLADA: CONCLUSÃO OFICIAL\n\n**Data:** 28/10/2026\n**Registro Estrutural:** 0094\n**Status:** ✅ **CONCLUÍDA COM SUCESSO ABSOLUTO**\n\n---\n\n## 1. Objetivo da Fase 10\n\nO objetivo era implementar a **Autoconstrução Controlada**: permitir que o sistema identificasse necessidades, propusesse soluções e as executasse, mas **sempre com aprovação humana** e **com redundância** (arquivos reserva e chaves de controle).\n\n---\n\n## 2. O que foi descoberto (Investigação)\n\nDurante a inv\n[Conteúdo truncado pelo limite.]"
+        }
+      ],
+      "observacoes": [],
+      "alertas": [],
+      "origem": "agente_trabalho.py",
+      "data": "2026-10-30T11:39:26.863770+00:00"
+    },
+    {
+      "data": "30/10/2026",
+      "hora": "11:39:26",
+      "origem": "AgenteTrabalhoV2",
+      "destino": "MemoriaCentral",
+      "responsavel": "AgenteTrabalho",
+      "descricao": "run_id=e34fe739-5a7f-4780-9f52-0f7b4ccd9713; task_id=7fba1fdb-2b13-46c7-856a-e6c91f535385; Conclusão da tarefa V2",
+      "resultado": "EXECUTADO",
+      "importancia": "normal"
     }
   ],
   "aprendizados": [],
@@ -3011,7 +3086,7 @@
   ],
   "contexto": [],
   "estatisticas": {
-    "solicitacoes": 191,
+    "solicitacoes": 196,
     "aprendizados_registrados": 0,
     "decisoes_registradas": 0
   }
