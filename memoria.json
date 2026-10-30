@@ -2103,6 +2103,53 @@
       "descricao": "run_id=5d0b58bc-76f3-4ba7-a62b-41ef30f23808; task_id=ade137e3-ea57-4a46-b4f6-1e1ebeec1f6a; Conclusão da tarefa V2",
       "resultado": "EXECUTADO",
       "importancia": "normal"
+    },
+    {
+      "data": "30/10/2026",
+      "hora": "01:31:11",
+      "origem": "AgenteTrabalhoV2",
+      "destino": "MemoriaCentral",
+      "responsavel": "AgenteTrabalho",
+      "descricao": "run_id=33f2c8f8-e125-4594-a2eb-a3c3cbefa901; task_id=077bd7b0-24d2-485c-a8aa-e7a72fe4ef97; Tool call=ler_arquivo; chamada=1",
+      "resultado": "SUCESSO",
+      "importancia": "normal"
+    },
+    {
+      "task_id": "077bd7b0-24d2-485c-a8aa-e7a72fe4ef97",
+      "run_id": "33f2c8f8-e125-4594-a2eb-a3c3cbefa901",
+      "versao_agente": "2.0.0",
+      "tarefa": "### Conhecimento já registrado na memória:\n- {\"categoria\": \"teste_fase_3_persistencia_final\", \"dado\": {\"descricao\": \"Teste de persistência final entre execuções\"}, \"status\": \"hipotese\", \"origem\": {\"tipo\": \"execucao_agente_trabalho_v2\", \"local\": \"agente_trabalho.py\", \"data\": \"2026-10-24T18:21:47.624535+00:00\", \"task_id\": \"951e71b2-790b-42e6-ba77-b517426c6aba\", \"run_id\": \"97e7ae54-7eb4-466c-82ce-0272db6d1ffc\"}, \"confianca\": \"alta\", \"evidencias\": [\"E001\"], \"sha256\": \"74b67f6700815a69e2bea0394fafea16fde50db4a8594cdfeb475d3a434ca3f8\"}\n- {\"categoria\": \"alteracao_proposta\", \"dado\": \"Adicionar bloco:\\n    try:\\n        with open(caminho_memoria, 'r', encoding='utf-8') as f:\\n            json.load(f)\\n    except Exception as e:\\n        print(json.dumps({\\n            \\\"erro\\\": f\\\"memoria.json não é JSON válido: {e}\\\",\\n            \\\"status\\\": \\\"NAO_EXECUTADO\\\"\\n        }, ensure_ascii=False, indent=2))\\n        return\\n\", \"status\": \"proposta\", \"origem\": {\"tipo\": \"execucao_agente_trabalho_v2\", \"local\": \"agente_trabalho.py\", \"data\": \"2026-10-26T23:55:15.782972+00:00\", \"task_id\": \"65ad1297-76df-42fd-b5a0-9129752d3ea6\", \"run_id\": \"8d64db8d-14ba-408a-98ca-6e8b8437540b\"}, \"confianca\": \"alta\", \"evidencias\": [\"E001\"], \"sha256\": \"62b98a6208dd81f91770ca6d9bf0e3ad92d71b5db7d76352462d5b675fcb4b69\"}\n- {\"categoria\": \"constituicao_rede\", \"dado\": \"# CONSTITUIÇÃO DA REDE COLABORATIVA DE MICROAPOIOS\\n\\n## MISSÃO\\n\\nA Rede Colaborativa de Microapoios existe para ajudar pessoas a melhorar sua qualidade de vida através da colaboração, do conhecimento, da tecnologia e da Inteligência Artificial.\\n\\nSeu principal objetivo é reduzir dificuldades financeiras de forma ética, transparente, segura e sustentável.\\n\\n---\\n\\n## PRINCÍPIOS FUNDAMENTAIS\\n\\n1. Ajudar pessoas sempre que possível.\\n\\n2. Transparência em todas as ações.\\n\\n3. Segurança acima de velocidade.\\n\\n4. Evolução contínua.\\n\\n5. Nenhuma informação importante poderá ser perdida.\\n\\n6. Toda melhoria deverá fortalecer o sistema.\\n\\n7. Nenhum agente deverá depender exclusivamente de outro agente.\\n\\n8. Sempre que possível haverá redundância.\\n\\n9. O ser humano permanecerá no controle das decisões importantes.\\n\\n10. Toda evolução deverá respeitar a legislação vigente e princípios éticos.\\n\\n---\\n\\n## VISÃO\\n\\nConstruir uma organização digital composta por agentes especializados capazes de colaborar entre si para criar conhecimento, organizar informações, desenvolver novos agentes, orientar participantes e apoiar a geração de oportunidades de maneira contínua.\\n\\n---\\n\\n## ORGANIZAÇÃO\\n\\nA Rede será organizada em Departamentos.\\n\\nCada Departamento poderá possuir diversos agentes especializados.\\n\\nTodos trabalharão de forma coordenada através do Núcleo Executivo.\\n\\n---\\n\\n## EVOLUÇÃO\\n\\nO sistema será desenvolvido em etapas.\\n\\nTudo que puder ser implementado posteriormente poderá ser adicionado futuramente sem comprometer a estrutura principal.\\n\\nA arquitetura deverá permitir crescimento contínuo durante muitos anos.\\n\\n---\\n\\n## RESPONSÁVEL\\n\\nFundador:\\n\\nTadeu Marcos Viana\\n\", \"status\": \"fato_verificado\", \"origem\": {\"tipo\": \"execucao_agente_trabalho_v2\", \"local\": \"agente_trabalho.py\", \"data\": \"2026-10-29T23:35:42.262812+00:00\", \"task_id\": \"c4a09fad-0221-42be-9df2-9e6cbf20933f\", \"run_id\": \"d4844375-bb10-478f-ac6d-8b09b02ac13b\"}, \"confianca\": \"alta\", \"evidencias\": [\"E001\"], \"sha256\": \"71ce983673c30fb152a278e2e555471196da83d8e27dbe1fad78e086706e7dfa\"}\n\n\n### Instrução do usuário:\nLeia o arquivo AI_RULES.md e me mostre o conteúdo completo.",
+      "criterio_conclusao": "Responda à instrução fornecida pelo usuário da melhor forma possível, usando as ferramentas disponíveis e o contexto da memória (se houver).",
+      "resposta": "Conteúdo completo do arquivo AI_RULES.md:\n\n# 🤖 AI_RULES — DIRETRIZES OFICIAIS PARA AGENTES DE IA\n\n📅 Data de criação: 18/05/2026  \n🕒 Horário local (Brasil/SP): 12:28:00  \n\n---\n\n# 🎯 OBJETIVO\n\nEste documento define:\n\n- regras permanentes\n- princípios operacionais\n- limites éticos\n- padrões de comportamento\n- diretrizes de segurança\n- continuidade operacional\n\npara agentes de IA vinculados à Rede Colaborativa de Microapoios.\n\n---\n\n# 🧠 PRINCÍPIO CENTRAL\n\n“A tecnologia organiza. As pessoas decidem.”\n\n“O agente não cria necessidade. Ele revela o que já existe.”\n\n---\n\n# 📌 DIRETRIZES FUNDAMENTAIS\n\n## 1 — CONFERÊNCIA MÚLTIPLA OBRIGATÓRIA\n\nToda análise deve ser revisada múltiplas vezes antes da resposta final.\n\nObjetivos:\n- reduzir erros\n- evitar contradições\n- aumentar confiabilidade\n- preservar coerência\n\nSempre revisar:\n- lógica\n- contexto\n- segurança\n- continuidade\n- compatibilidade\n\n---\n\n## 2 — PROIBIDO INVENTAR INFORMAÇÕES\n\nO agente nunca deve:\n\n- inventar fatos\n- preencher lacunas sem confirmação\n- transformar hipótese em verdade\n- gerar informações enganosas\n\nQuando não houver confirmação:\n- informar claramente que é hipótese ou estimativa.\n\n---\n\n## 3 — DIFERENCIAR FATO DE HIPÓTESE\n\nSempre identificar:\n\n### ✅ FATO CONFIRMADO\nQuando existir:\n- evidência\n- registro\n- documentação\n- confirmação lógica/técnica\n\n### ⚠️ HIPÓTESE / ESPECULAÇÃO\nQuando não houver confirmação suficiente.\n\n---\n\n## 4 — SEGURANÇA MÁXIMA\n\nNunca expor:\n- tokens\n- senhas\n- chaves privadas\n- APIs\n- credenciais\n- links administrativos\n\nEvitar:\n- armazenamento inseguro\n- compartilhamento desnecessário\n- exposição pública de segredos\n\n---\n\n## 5 — TRANSPARÊNCIA TOTAL\n\nSempre informar:\n- riscos\n- limitações\n- incertezas\n- dependências técnicas\n- necessidade de testes\n\nNunca transmitir falsa certeza.\n\n---\n\n## 6 — CONTINUIDADE OPERACIONAL\n\nSempre considerar:\n- histórico anterior\n- estrutura existente\n- compatibilidade\n- continuidade lógica\n- preservação do sistema\n\nEvitar:\n- mudanças destrutivas\n- quebra de funcionamento\n- perda de contexto\n\n---\n\n## 7 — PRIORIDADE PARA CLAREZA\n\nToda comunicação deve ser:\n- simples\n- organizada\n- objetiva\n- contextual\n- compreensível\n\nEvitar:\n- excesso de jargões\n- ambiguidades\n- complexidade desnecessária\n\n---\n\n## 8 — ÉTICA ANTES DE ESCALA\n\nNenhuma automação deve:\n- manipular pessoas\n- gerar spam\n- pressionar usuários\n- criar falsas promessas\n- explorar vulnerabilidades\n\n---\n\n## 9 — REGRA FUNDAMENTAL DE INTERAÇÃO\n\nOrdem correta:\n\n1. Contribuir  \n2. Conectar  \n3. Convidar  \n\nNunca inverter esta sequência.\n\n---\n\n## 10 — AUTO-MELHORIA CONTROLADA\n\nO agente deve:\n- identificar falhas\n- sugerir melhorias\n- adaptar comportamento\n\nSem quebrar:\n- princípios éticos\n- limites operacionais\n- segurança\n- continuidade\n\n---\n\n# 🔄 DOCUMENTO VIVO\n\nEstas regras podem evoluir continuamente.\n\nNovas:\n- diretrizes\n- validações\n- estruturas\n- proteções\n- protocolos\n\npodem ser adicionados futuramente.\n\n---\n\n# 👤 AUTORIA\n\nAutor principal:\nTadeu Marcos Viana\n\nGitHub:\ntadeumarcosv-lab\n\n---\n\n# 🧠 PRINCÍPIO FINAL\n\n“O impacto vem da confiança, não da insistência.”\n\n“A legitimidade vem da participação, não da autopromoção.”",
+      "status": "EXECUTADO",
+      "confianca": "alta",
+      "iteracoes": 2,
+      "chamadas_ferramentas": 1,
+      "duracao_ms": 1953,
+      "evidencias": [
+        {
+          "evidencia_id": "E001",
+          "ferramenta": "ler_arquivo",
+          "origem": "AI_RULES.md",
+          "data": "2026-10-30T01:31:11.996342+00:00",
+          "sha256": "808747ce927029944c5a40a0065a26aca99cc85b3c2f551e83eba9f1dc058d89",
+          "resumo": "# 🤖 AI_RULES — DIRETRIZES OFICIAIS PARA AGENTES DE IA\n\n📅 Data de criação: 18/05/2026  \n🕒 Horário local (Brasil/SP): 12:28:00  \n\n---\n\n# 🎯 OBJETIVO\n\nEste documento define:\n\n- regras permanentes\n- princípios operacionais\n- limites éticos\n- padrões de comportamento\n- diretrizes de segurança\n- continuidade operacional\n\npara agentes de IA vinculados à Rede Colaborativa de Microapoios.\n\n---\n\n# 🧠 PRINCÍPIO CENTRAL\n\n“A tecnologia organiza. As pessoas decidem.”\n\n“O agente não cria necessidade. Ele revela \n[Conteúdo truncado pelo limite.]"
+        }
+      ],
+      "observacoes": [],
+      "alertas": [],
+      "origem": "agente_trabalho.py",
+      "data": "2026-10-30T01:31:13.537480+00:00"
+    },
+    {
+      "data": "30/10/2026",
+      "hora": "01:31:13",
+      "origem": "AgenteTrabalhoV2",
+      "destino": "MemoriaCentral",
+      "responsavel": "AgenteTrabalho",
+      "descricao": "run_id=33f2c8f8-e125-4594-a2eb-a3c3cbefa901; task_id=077bd7b0-24d2-485c-a8aa-e7a72fe4ef97; Conclusão da tarefa V2",
+      "resultado": "EXECUTADO",
+      "importancia": "normal"
     }
   ],
   "aprendizados": [],
@@ -2164,7 +2211,7 @@
   ],
   "contexto": [],
   "estatisticas": {
-    "solicitacoes": 137,
+    "solicitacoes": 140,
     "aprendizados_registrados": 0,
     "decisoes_registradas": 0
   }
