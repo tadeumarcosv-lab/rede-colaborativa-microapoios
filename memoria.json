@@ -3449,6 +3449,55 @@
       "descricao": "run_id=a454953a-d0fe-4052-93b3-58b6251428ba; task_id=18e2948f-2489-4172-890a-b176662d3c51; Conclusão da tarefa V2",
       "resultado": "EXECUTADO",
       "importancia": "normal"
+    },
+    {
+      "data": "30/10/2026",
+      "hora": "12:45:36",
+      "origem": "AgenteTrabalhoV2",
+      "destino": "MemoriaCentral",
+      "responsavel": "AgenteTrabalho",
+      "descricao": "run_id=714a2086-8a0b-40ec-8005-5daf29dafaf9; task_id=a9fead72-96cd-4ea3-91e3-eaddda0a40ce; Tool call=listar_arquivos; chamada=1",
+      "resultado": "SUCESSO",
+      "importancia": "normal"
+    },
+    {
+      "task_id": "a9fead72-96cd-4ea3-91e3-eaddda0a40ce",
+      "run_id": "714a2086-8a0b-40ec-8005-5daf29dafaf9",
+      "versao_agente": "2.0.0",
+      "tarefa": "### Conhecimento já registrado na memória:\n- {\"categoria\": \"teste_fase_3_persistencia_final\", \"dado\": {\"descricao\": \"Teste de persistência final entre execuções\"}, \"status\": \"hipotese\", \"origem\": {\"tipo\": \"execucao_agente_trabalho_v2\", \"local\": \"agente_trabalho.py\", \"data\": \"2026-10-24T18:21:47.624535+00:00\", \"task_id\": \"951e71b2-790b-42e6-ba77-b517426c6aba\", \"run_id\": \"97e7ae54-7eb4-466c-82ce-0272db6d1ffc\"}, \"confianca\": \"alta\", \"evidencias\": [\"E001\"], \"sha256\": \"74b67f6700815a69e2bea0394fafea16fde50db4a8594cdfeb475d3a434ca3f8\"}\n- {\"categoria\": \"alteracao_proposta\", \"dado\": \"Adicionar bloco:\\n    try:\\n        with open(caminho_memoria, 'r', encoding='utf-8') as f:\\n            json.load(f)\\n    except Exception as e:\\n        print(json.dumps({\\n            \\\"erro\\\": f\\\"memoria.json não é JSON válido: {e}\\\",\\n            \\\"status\\\": \\\"NAO_EXECUTADO\\\"\\n        }, ensure_ascii=False, indent=2))\\n        return\\n\", \"status\": \"proposta\", \"origem\": {\"tipo\": \"execucao_agente_trabalho_v2\", \"local\": \"agente_trabalho.py\", \"data\": \"2026-10-26T23:55:15.782972+00:00\", \"task_id\": \"65ad1297-76df-42fd-b5a0-9129752d3ea6\", \"run_id\": \"8d64db8d-14ba-408a-98ca-6e8b8437540b\"}, \"confianca\": \"alta\", \"evidencias\": [\"E001\"], \"sha256\": \"62b98a6208dd81f91770ca6d9bf0e3ad92d71b5db7d76352462d5b675fcb4b69\"}\n- {\"categoria\": \"constituicao_rede\", \"dado\": \"# CONSTITUIÇÃO DA REDE COLABORATIVA DE MICROAPOIOS\\n\\n## MISSÃO\\n\\nA Rede Colaborativa de Microapoios existe para ajudar pessoas a melhorar sua qualidade de vida através da colaboração, do conhecimento, da tecnologia e da Inteligência Artificial.\\n\\nSeu principal objetivo é reduzir dificuldades financeiras de forma ética, transparente, segura e sustentável.\\n\\n---\\n\\n## PRINCÍPIOS FUNDAMENTAIS\\n\\n1. Ajudar pessoas sempre que possível.\\n\\n2. Transparência em todas as ações.\\n\\n3. Segurança acima de velocidade.\\n\\n4. Evolução contínua.\\n\\n5. Nenhuma informação importante poderá ser perdida.\\n\\n6. Toda melhoria deverá fortalecer o sistema.\\n\\n7. Nenhum agente deverá depender exclusivamente de outro agente.\\n\\n8. Sempre que possível haverá redundância.\\n\\n9. O ser humano permanecerá no controle das decisões importantes.\\n\\n10. Toda evolução deverá respeitar a legislação vigente e princípios éticos.\\n\\n---\\n\\n## VISÃO\\n\\nConstruir uma organização digital composta por agentes especializados capazes de colaborar entre si para criar conhecimento, organizar informações, desenvolver novos agentes, orientar participantes e apoiar a geração de oportunidades de maneira contínua.\\n\\n---\\n\\n## ORGANIZAÇÃO\\n\\nA Rede será organizada em Departamentos.\\n\\nCada Departamento poderá possuir diversos agentes especializados.\\n\\nTodos trabalharão de forma coordenada através do Núcleo Executivo.\\n\\n---\\n\\n## EVOLUÇÃO\\n\\nO sistema será desenvolvido em etapas.\\n\\nTudo que puder ser implementado posteriormente poderá ser adicionado futuramente sem comprometer a estrutura principal.\\n\\nA arquitetura deverá permitir crescimento contínuo durante muitos anos.\\n\\n---\\n\\n## RESPONSÁVEL\\n\\nFundador:\\n\\nTadeu Marcos Viana\\n\", \"status\": \"fato_verificado\", \"origem\": {\"tipo\": \"execucao_agente_trabalho_v2\", \"local\": \"agente_trabalho.py\", \"data\": \"2026-10-29T23:35:42.262812+00:00\", \"task_id\": \"c4a09fad-0221-42be-9df2-9e6cbf20933f\", \"run_id\": \"d4844375-bb10-478f-ac6d-8b09b02ac13b\"}, \"confianca\": \"alta\", \"evidencias\": [\"E001\"], \"sha256\": \"71ce983673c30fb152a278e2e555471196da83d8e27dbe1fad78e086706e7dfa\"}\n\n\n### Instrução do usuário:\nLeia o arquivo SISTEMA_DE_RECUPERACAO_DA_REDE.md e me mostre o conteúdo completo. Se o conteúdo estiver incompleto ou incorreto, repita a leitura até entregar o conteúdo completo.",
+      "criterio_conclusao": "Responda à instrução fornecida pelo usuário da melhor forma possível, usando as ferramentas disponíveis e o contexto da memória (se houver).",
+      "resposta": "A tarefa não foi concluída integralmente. Consulte as observações, evidências e alertas.",
+      "status": "EXECUTADO_PARCIALMENTE",
+      "confianca": "insuficiente",
+      "iteracoes": 2,
+      "chamadas_ferramentas": 1,
+      "duracao_ms": 4098,
+      "evidencias": [
+        {
+          "evidencia_id": "E001",
+          "ferramenta": "listar_arquivos",
+          "origem": ".",
+          "data": "2026-10-30T12:45:36.657351+00:00",
+          "sha256": "59cc36901d6f060471d71abb37265ba42ccc0d5f50ac2a48b2ead7596e7465b2",
+          "resumo": "AGENT.md\nAGENTE_ANALISE_RISCOS.md\nAGENTE_APRENDIZADO_CONTINUO.md\nAGENTE_ARMAZENAMENTO.md\nAGENTE_AUDITORIA.md\nAGENTE_AUTOMACAO.md\nAGENTE_BACKUP.md\nAGENTE_CENTRAL.md\nAGENTE_COMUNICACAO.md\nAGENTE_CONHECIMENTO.md\nAGENTE_COORDENACAO.md\nAGENTE_DESCOBERTA_BANCOS.md\nAGENTE_DESCOBERTA_FERRAMENTAS.md\nAGENTE_DOCUMENTACAO.md\nAGENTE_ESTATISTICAS.md\nAGENTE_EXPANSAO.md\nAGENTE_GESTAO_CONHECIMENTO.md\nAGENTE_GOVERNANCA.md\nAGENTE_INTEGRACAO.md\nAGENTE_INTELIGENCIA_ESTRATEGICA.md\nAGENTE_MAPEAMENTO_RECURSOS.md\nAGENTE\n[Conteúdo truncado pelo limite.]"
+        }
+      ],
+      "observacoes": [
+        "Falha na consulta ou interpretação da IA: RuntimeError: Falha na consulta à IA: HTTP 429; message=Rate limit reached for model `openai/gpt-oss-20b` in organization `org_01m46wtxg0e82ssmhszna91dxk` service tier `on_demand` on tokens per minute (TPM): Limit 8000, Used 1627, Requested 6389. Please try again in 120ms. Need more tokens? Upgrade to Dev Tier today at https://console.groq.com/settings/billing; type=tokens"
+      ],
+      "alertas": [],
+      "origem": "agente_trabalho.py",
+      "data": "2026-10-30T12:45:39.903602+00:00"
+    },
+    {
+      "data": "30/10/2026",
+      "hora": "12:45:39",
+      "origem": "AgenteTrabalhoV2",
+      "destino": "MemoriaCentral",
+      "responsavel": "AgenteTrabalho",
+      "descricao": "run_id=714a2086-8a0b-40ec-8005-5daf29dafaf9; task_id=a9fead72-96cd-4ea3-91e3-eaddda0a40ce; Conclusão da tarefa V2",
+      "resultado": "EXECUTADO_PARCIALMENTE",
+      "importancia": "normal"
     }
   ],
   "aprendizados": [],
@@ -3510,7 +3559,7 @@
   ],
   "contexto": [],
   "estatisticas": {
-    "solicitacoes": 223,
+    "solicitacoes": 226,
     "aprendizados_registrados": 0,
     "decisoes_registradas": 0
   }
